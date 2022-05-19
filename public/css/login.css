@@ -1,0 +1,73 @@
+@import url('./styles.css');
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+form {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    border: solid .5px #c4c4c4;
+    border-radius: .4rem;
+    padding: .8rem;
+    box-shadow: #29292933 .4rem .4rem .8rem;
+}
+.form-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+form h1 {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    color: #292929;
+    margin: .8rem 0;
+}
+
+.form-col {
+    display: flex;
+    width: 100%;
+    flex-flow: column nowrap;
+    padding: .8rem;
+}
+
+.form-col label {
+    margin-bottom: .4rem;
+    margin-left: .2rem;
+    color: #292929;
+}
+.form-col input {
+    padding: .8rem;
+    border-radius: .2rem;
+    border: solid .1rem #c4c4c4;
+    outline: none;
+}
+.form-col input:active,
+.form-col input:focus {
+    border: solid .1rem var(--color-blue);
+}
+
+.form-col input[type="submit"] {
+    border: none;
+    background-color: var(--color-blue);
+    color: #fefefe;
+    transition: background-color .3s ease-out;
+}
+.form-col input[type="submit"]:hover {
+    background-color: var(--color-orange);
+}
+
+.form-box a {
+    color: var(--color-blue);
+    margin: .4rem;
+}
+.form-box a:hover {
+    color: var(--color-orange);
+    text-decoration: underline;
+}
