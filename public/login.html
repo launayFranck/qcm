@@ -1,37 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="css/login.css">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/login.css">
 </head>
 <body>
-    <main>
-        <form>
-            <div clas="form-box">
-                <h1>Connexion</h1>
-                <p class="msg"></p>
-            </div>
-            <div class="form-box">
-                <div class="form-col">
-                    <label for="email">Email</label>
-                    <input type="email" name="email" placeholder="">
-                </div>
-                <div class="form-col">
-                    <label for="email">Mot de passe</label>
-                    <input type="password" name="password" placeholder="">
-                </div>
-                <div class="form-col">
-                    <input type="submit" value="Connexion">
-                </div>
-            </div>
-            <div class="form-box">
-                <a href="#">Mot de passe oublié</a>
-            </div>
-        </form>
-    </main>
-    <script type="module" src="js/login.js"></script>
+	<main>
+		<form>
+			<div clas="form-box">
+				<h1>Connexion</h1>
+				<p class="msg"></p>
+			</div>
+			<div class="form-box">
+				<div class="form-col">
+					<label for="email">Email</label>
+					<input type="email" name="email" placeholder="">
+				</div>
+				<div class="form-col">
+					<label for="email">Mot de passe</label>
+					<input type="password" name="password" placeholder="">
+				</div>
+				<div class="form-col">
+					<input type="submit" value="Connexion">
+				</div>
+			</div>
+			<div class="form-box">
+				<a href="#">Mot de passe oublié</a>
+			</div>
+		</form>
+		<button id="deleteTokenBtn">Delete token</button>
+	</main>
+	<script type="module" src="js/login.js"></script>
 </body>
 </html>

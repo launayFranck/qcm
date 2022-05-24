@@ -1,4 +1,3 @@
-
 function b64DecodeUnicode(str) {
 	return decodeURIComponent(
 		atob(str).replace(/(.)/g, function (m, p) {

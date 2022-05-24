@@ -30,6 +30,10 @@ form h1 {
     margin: .8rem 0;
 }
 
+form .msg {
+    text-align: center;
+}
+
 .form-col {
     display: flex;
     width: 100%;
