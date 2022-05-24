@@ -5,9 +5,12 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
-	<link rel="stylesheet" href="css/login.css">
+	<link rel="stylesheet" href="css/pages/login.css">
 </head>
 <body>
+	<header>
+		<%- include("../partials/navbar") %>
+	</header>
 	<main>
 		<form>
 			<div clas="form-box">
@@ -31,8 +34,9 @@
 				<a href="#">Mot de passe oublié</a>
 			</div>
 		</form>
-		<button id="deleteTokenBtn">Delete token</button>
+		<!-- <button id="deleteTokenBtn">Delete token</button> -->
 	</main>
+	<footer></footer>
 	<script type="module" src="js/login.js"></script>
 </body>
 </html>

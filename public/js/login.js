@@ -3,7 +3,7 @@ import {jwtDecode} from "./jwt-decode.js";
 const api_url = 'http://localhost:3000/api';
 
 const formLogin = document.querySelector("form");
-const deleteTokenBtn = document.querySelector('#deleteTokenBtn');
+const msg = document.querySelector(".msg");
 
 formLogin.onsubmit = async (e) => {
 	e.preventDefault();
@@ -13,7 +13,6 @@ formLogin.onsubmit = async (e) => {
 	const loginDetails = await login({email, password});
 	console.log(loginDetails);
 
-	const msg = document.querySelector(".msg");
 	if (loginDetails.error) {
 		msg.style.setProperty('color', 'red');
 		msg.innerText = loginDetails.error;
@@ -31,10 +30,20 @@ formLogin.onsubmit = async (e) => {
 	});
 
 	const accessToken = loginDetails.accessToken;
-	localStorage.setItem('jwt', accessToken);
+	localStorage.setItem('Authorization', accessToken);
 	const jwtDecoded = jwtDecode(accessToken);
-	console.log(jwtDecoded);
-	// window.location.href = "/";
+	console.dir(jwtDecoded);
+	window.location.href = jwtDecoded.role === 1 ? "/admin" : "/";
+
+	// const response = await fetch(`http://localhost:3000/`, {
+	// 	method: 'GET',
+	// 	credentials:'include',
+	// 	cache:'no-cache',
+	// 	headers: {
+	// 		'Content-Type': 'application/json',
+	// 		"Authorization": `Bearer ${accessToken}`
+	// 	}
+	// });
 };
 
 async function login(data) {
@@ -50,18 +59,30 @@ async function login(data) {
 	return await res.json();
 };
 
-deleteTokenBtn.onclick = async (e) => {
-	const deleteDetails = await deleteToken();
-	if (deleteDetails.error) {
-	  pStatus.innerText = deleteDetails.error;
-	  return;
-	};
-	accessToken = "";
-	pStatus.innerText = deleteDetails.message;
-	showLoginPanel(true);
+async function fetchRefreshToken() {
+	const res = await fetch(`${api_url}/auth/refresh_token`, {
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		mode: 'cors',
+		credentials: 'include'
+	});
+	const jsonResponse = await res.json();
+	return jsonResponse;
 };
 
-async function deleteToken(){
+// document.querySelector('#deleteTokenBtn').onclick = async (e) => {
+// 	const deleteDetails = await deleteToken();
+// 	if (deleteDetails.error) {
+// 		pStatus.innerText = deleteDetails.error;
+// 		return;
+// 	};
+// 	accessToken = "";
+// 	pStatus.innerText = deleteDetails.message;
+// 	showLoginPanel(true);
+// };
+
+async function deleteToken() {
 	const res = await fetch(`${api_url}/auth/refresh_token`,{
 		method: 'DELETE',
 		headers: {

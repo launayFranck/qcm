@@ -5,8 +5,9 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import {dirname, join} from 'path';
 import {fileURLToPath} from 'url';
-import usersRouter from './src/routes/users-routes.js';
-import authRouter from './src/routes/auth-routes.js';
+import { authenticateToken } from './middleware/authorization.js';
+import usersRouter from './routes/users-routes.js';
+import authRouter from './routes/auth-routes.js';
 
 dotenv.config();
 
@@ -20,9 +21,27 @@ app.use(cors(corsOptions));
 app.use(json());
 app.use(cookieParser());
 
-app.use('/', express.static(join(__dirname, 'public')));
+app.set('views engine', 'ejs');
+
+app.use('/', express.static('public'));
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
+
+app.get('/', (req, res) => {
+	res.render('pages/index.ejs');
+});
+
+app.get('/login', (req, res) => {
+	res.render('pages/login.ejs');
+});
+
+app.get('/admin', (req, res) => {
+    if (true) {
+	    res.render('pages/admin.ejs');
+    } else {
+        res.redirect('/');
+    }
+});
 
 app.listen(PORT, () => console.log(`App started on http://localhost:${PORT}`));
 

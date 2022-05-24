@@ -18,7 +18,7 @@ router.post('/login', async (req, res) => {
 
 		if(!user.activated) return res.status(401).json({error: 'Ce compte a été désactivé'});
 
-		//JWT
+		// JWT
 		delete user.password;
 		let tokens = jwtTokens(user);
 		res.cookie('refresh_token', tokens.refreshToken, {

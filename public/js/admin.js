@@ -1,18 +1,17 @@
 import {jwtDecode} from "./jwt-decode.js";
 
-const api_url = 'http://localhost:3000/api';
+if (!localStorage.getItem('Authorization') || jwtDecode(localStorage.getItem('Authorization')).role !== 1) {
+	window.location = "/";
+};
 
-if (localStorage.getItem('Authorization')) {
+(async () => {
 	const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 
 	const h1 = document.createElement('h1');
 	h1.innerText = `Bienvenue, ${jwtDecoded.firstname} ${jwtDecoded.lastname}`;
-
 	const p = document.createElement('p');
 	p.innerText = `Votre email est ${jwtDecoded.email}`;
 
-	document.body.querySelector('main').appendChild(h1);
-	document.body.querySelector('main').appendChild(p);
-} else {
-	window.location.href = "/login";
-};
+	document.body.appendChild(h1);
+	document.body.appendChild(p);
+})();
