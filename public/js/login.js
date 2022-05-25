@@ -1,9 +1,9 @@
 import {jwtDecode} from "./jwt-decode.js";
 
-const api_url = 'http://localhost:3000/api';
-
 const formLogin = document.querySelector("form");
 const msg = document.querySelector(".msg");
+
+const hostname = window.location.href.split(window.location.pathname)[0];
 
 formLogin.onsubmit = async (e) => {
 	e.preventDefault();
@@ -33,7 +33,7 @@ formLogin.onsubmit = async (e) => {
 	localStorage.setItem('Authorization', accessToken);
 	const jwtDecoded = jwtDecode(accessToken);
 	console.dir(jwtDecoded);
-	window.location.href = jwtDecoded.role === 1 ? "/admin" : "/";
+	window.location = jwtDecoded.role === 1 ? "/admin" : "/";
 
 	// const response = await fetch(`http://localhost:3000/`, {
 	// 	method: 'GET',
@@ -47,7 +47,7 @@ formLogin.onsubmit = async (e) => {
 };
 
 async function login(data) {
-	const res = await fetch(`${api_url}/auth/login`, {
+	const res = await fetch(`${hostname}/api/auth/login`, {
 		method: 'POST',
 		credentials:'include',
 		cache:'no-cache',
@@ -60,7 +60,7 @@ async function login(data) {
 };
 
 async function fetchRefreshToken() {
-	const res = await fetch(`${api_url}/auth/refresh_token`, {
+	const res = await fetch(`${hostname}/api/auth/refresh_token`, {
 		headers: {
 			'Content-Type': 'application/json'
 		},
@@ -82,14 +82,5 @@ async function fetchRefreshToken() {
 // 	showLoginPanel(true);
 // };
 
-async function deleteToken() {
-	const res = await fetch(`${api_url}/auth/refresh_token`,{
-		method: 'DELETE',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		mode: 'cors',
-		credentials: 'include'
-	});
-	return await res.json();
-};
+
+ 

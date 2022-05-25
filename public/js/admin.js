@@ -1,4 +1,4 @@
-import {jwtDecode} from "./jwt-decode.js";
+import { jwtDecode } from "./jwt-decode.js";
 
 if (!localStorage.getItem('Authorization') || jwtDecode(localStorage.getItem('Authorization')).role !== 1) {
 	window.location = "/";
@@ -11,7 +11,10 @@ if (!localStorage.getItem('Authorization') || jwtDecode(localStorage.getItem('Au
 	h1.innerText = `Bienvenue, ${jwtDecoded.firstname} ${jwtDecoded.lastname}`;
 	const p = document.createElement('p');
 	p.innerText = `Votre email est ${jwtDecoded.email}`;
+	const role = document.createElement('p');
+	role.innerText = `Votre role est ${jwtDecoded.role}`;
 
-	document.body.appendChild(h1);
-	document.body.appendChild(p);
+	document.body.querySelector('main').appendChild(h1);
+	document.body.querySelector('main').appendChild(p);
+	document.body.querySelector('main').appendChild(role);
 })();

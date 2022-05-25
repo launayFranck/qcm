@@ -1,37 +1,43 @@
 #navbar {
 	position: fixed;
 	top: 0;
-	right: 0;
+	bottom: 0;
 	left: 0;
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
+	justify-content: space-between;
 	align-items: center;
-	height: var(--navbar-size);
+	width: calc(var(--navbar-size) * 4);
 	background-color: var(--color-blue);
 	z-index: 999;
 }
 #navbar ul {
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	height: 100%;
+	width: 100%;
 }
 #navbar ul li {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 100%;
+	width: 100%;
 }
-#navbar ul li a {
+#navbar ul li a,
+#navbar button {
 	display: flex;
-	justify-content: center;
+	justify-content: flex-start;
 	align-items: center;
-	padding: .8rem;
-	height: 100%;
+	padding: .8rem 1.6rem;
+	width: 100%;
+	height: var(--navbar-size);
 	color: #fefefe;
+	border: none;
 }
-#navbar ul li a:hover {
-	text-decoration: underline;
+#navbar ul li a:hover,
+#navbar button:hover {
+	/* text-decoration: underline; */
 	background-color: var(--color-blue-hover);
 }
 
@@ -39,5 +45,5 @@ main {
 	display: flex;
 	flex-direction: column;
 	min-height: calc(100vh - var(--navbar-size));
-	margin-top: var(--navbar-size);
+	margin-left: calc(var(--navbar-size) * 4);
 }

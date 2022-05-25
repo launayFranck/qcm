@@ -1,7 +1,7 @@
 import express from 'express';
 import knex from '../models/knexClient.js';
 import bcrypt from 'bcrypt';
-import {authenticateToken} from '../middleware/authorization.js';
+import { authenticateToken } from '../middleware/authorization.js';
 
 const router = express.Router();
 

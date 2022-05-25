@@ -21,6 +21,11 @@ router.post('/login', async (req, res) => {
 		// JWT
 		delete user.password;
 		let tokens = jwtTokens(user);
+		res.cookie('access_token', tokens.accessToken, {
+			httpOnly: true,
+			sameSite: 'none',
+			secure: true
+		});
 		res.cookie('refresh_token', tokens.refreshToken, {
 			httpOnly: true,
 			sameSite: 'none',
@@ -54,7 +59,7 @@ router.get('/refresh_token', (req, res) => {
 router.delete('/refresh_token', (req, res) => {
 	try {
 		res.clearCookie('refresh_token');
-		return res.status(200).json({message: 'refresh token deleted.'});
+		res.status(200).json({message: 'refresh token deleted.'});
 	} catch (err) {
 		res.status(401).json({error: err.message});
 	};
