@@ -27,11 +27,11 @@ app.use(cookieParser());
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 
+// • Redirect to the right pages
+
 app.get('/', (req, res) => {
 	res.render('pages/index.ejs');
 });
-
-// • Redirect to the right pages
 
 app.get('/login', (req, res) => {
 	res.render('pages/login.ejs');
@@ -40,9 +40,9 @@ app.get('/login', (req, res) => {
 // Admin
 app.get('/admin', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
-	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
-		if (error) {
-			console.log(error.message);
+	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+		if (err) {
+			console.log(err.message);
 			res.redirect('/');
 		};
 		if (user.role !== 1) res.redirect('/');

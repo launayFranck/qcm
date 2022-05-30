@@ -28,10 +28,10 @@ router.get('/:id', async (req, res) => {
 	};
 });
 
-router.get('/email/:email', async (req, res) => {
+router.post('/email', async (req, res) => {
 	console.log(req.body.email);
 	try {
-		const result = await users.findByEmail(req.params.username);
+		const result = await users.findByEmail(req.body.email);
 		res.status(200).json({users : result});
 	} catch (err) {
 		res.status(500).json({error : err.message});
@@ -41,18 +41,8 @@ router.get('/email/:email', async (req, res) => {
 // • Creating new user
 router.post("/", async (req, res) => {
 	try {
-		const payload = {
-			username : req.body.username,
-			firstname : req.body.firstname,
-			lastname : req.body.lastname,
-			email : req.body.email,
-			phone : req.body.phone,
-			password : await bcrypt.hash(req.body.password, 10),
-			role : req.body.role || 4
-		};
-
-		const result = await users.create(payload);
-		res.status(200).json({users : newUser});
+		const result = await users.create(req.body);
+		res.status(200).json({users : result});
 	} catch (err) {
 		res.status(500).json({error : err.message});
 	};
