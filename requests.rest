@@ -1,0 +1,8 @@
+### Find All
+GET http://localhost:3000/api/users
+
+### Find by Id
+GET http://localhost:3000/api/users/1
+
+### Find by Email
+POST http://localhost:3000/api/users
