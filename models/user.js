@@ -1,6 +1,6 @@
 import knex from './knexClient.js';
 
-const findAll = async (order = "ASC") => {
+const findAll = async () => {
 	const result = await knex('user').select();
 	return result;
 };
