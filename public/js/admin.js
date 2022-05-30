@@ -4,6 +4,7 @@ if (!localStorage.getItem('Authorization') || jwtDecode(localStorage.getItem('Au
 	window.location = "/";
 };
 
+// Create html elements if Authorized
 (async () => {
 	const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 

@@ -2,6 +2,7 @@ import {jwtDecode} from "./jwt-decode.js";
 
 const api_url = 'http://localhost:3000/api';
 
+// Create html elements if Authorized
 if (localStorage.getItem('Authorization')) {
 	const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 

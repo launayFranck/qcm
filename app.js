@@ -31,10 +31,13 @@ app.get('/', (req, res) => {
 	res.render('pages/index.ejs');
 });
 
+// • Redirect to the right pages
+
 app.get('/login', (req, res) => {
 	res.render('pages/login.ejs');
 });
 
+// Admin
 app.get('/admin', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
 	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
@@ -48,4 +51,11 @@ app.get('/admin', (req, res) => {
 	});
 });
 
+// Manager
+
+// Former
+
+// Intern
+
+// • Server Listening
 app.listen(PORT, () => console.log(`App started on http://localhost:${PORT}`));

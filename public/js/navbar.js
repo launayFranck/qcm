@@ -1,5 +1,6 @@
 const hostname = window.location.href.split(window.location.pathname)[0];
 
+// • Delete Refresh token to logout
 async function deleteToken() {
 	const res = await fetch(`${hostname}/api/auth/refresh_token`, {
 		method: 'DELETE',
@@ -12,7 +13,10 @@ async function deleteToken() {
 	return await res.json();
 };
 
-document.querySelector('.logoutBtn').onclick = async () => {
+/**
+ * Login out
+ */
+const logout = () => {
 	try {
 		const deleteDetails = await deleteToken();
 		console.log(deleteDetails);
@@ -22,3 +26,5 @@ document.querySelector('.logoutBtn').onclick = async () => {
 	localStorage.removeItem('Authorization');
 	window.location = '/login';
 };
+
+document.querySelector('.logoutBtn').onclick = logout;
