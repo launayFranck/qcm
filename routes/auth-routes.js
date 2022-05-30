@@ -6,6 +6,7 @@ import {jwtTokens} from '../utils/jwt-helpers.js';
 
 const router = express.Router();
 
+// • Login
 router.post('/login', async (req, res) => {
 	try {
 		const {email, password} = req.body;
@@ -37,6 +38,7 @@ router.post('/login', async (req, res) => {
 	};
 });
 
+// • Generate new Refresh Token
 router.get('/refresh_token', (req, res) => {
 	try {
 		const refreshToken = req.cookies.refresh_token;
@@ -56,6 +58,7 @@ router.get('/refresh_token', (req, res) => {
 	};
 });
 
+// • Delete refresh token
 router.delete('/refresh_token', (req, res) => {
 	try {
 		res.clearCookie('refresh_token');

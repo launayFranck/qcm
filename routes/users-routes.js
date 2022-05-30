@@ -5,6 +5,7 @@ import { authenticateToken } from '../middleware/authorization.js';
 
 const router = express.Router();
 
+// • Fetching all users
 router.get('/', authenticateToken, async (req, res) => {
 	console.log(req.headers);
 	try {
@@ -15,6 +16,7 @@ router.get('/', authenticateToken, async (req, res) => {
 	};
 });
 
+// • Creating new user
 router.post("/", authenticateToken, async (req, res) => {
 	try {
 		const payload = {

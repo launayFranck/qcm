@@ -1,11 +1,10 @@
 import { jwtDecode } from "./jwt-decode.js";
 
-// Vérification d l'état de 
 if (!localStorage.getItem('Authorization') || jwtDecode(localStorage.getItem('Authorization')).role !== 1) {
 	window.location = "/";
 };
 
-// Récupération des infos du token
+// Create html elements if Authorized
 (async () => {
 	const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 
