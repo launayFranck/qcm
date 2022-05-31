@@ -7,7 +7,6 @@ const router = express.Router();
 
 // • Fetching all users
 router.get('/', async (req, res) => {
-	console.log(req.headers);
 	try {
 		const result = await users.findAll();
 		res.status(200).json({users : result});
@@ -16,8 +15,8 @@ router.get('/', async (req, res) => {
 	};
 });
 
+// • Fetching user by id
 router.get('/:id', async (req, res) => {
-	console.log(req.params.id);
 	try {
 		const result = await users.findById(req.params.id);
 		res.status(200).json({users : result});
@@ -36,6 +35,7 @@ router.get('/username/:username', async (req, res) => {
 	};
 });
 
+// • Fetching user by email
 router.get('/email/:email', async (req, res) => {
 	try {
 		const result = await users.findByEmail(req.body.email);

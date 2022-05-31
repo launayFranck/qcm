@@ -1,6 +1,10 @@
 import knex from './knexClient.js';
 import bcrypt from 'bcrypt';
 
+/**
+ * Finds all the users
+ * @returns {array<object>} Returns all the users from the DB
+ */
 const findAll = async () => {
 	try {
 		const result = await knex('user').select(
@@ -20,6 +24,11 @@ const findAll = async () => {
 	};
 };
 
+/**
+ * Find a user by its id
+ * @param {number} id An integer used to find a specific user in the DB
+ * @returns 
+ */
 const findById = async (id) => {
 	try {
 		const result = await knex('user').select(
@@ -43,22 +52,27 @@ const findById = async (id) => {
  * Get a user by username in the database and returns in an object
  * @async
  * @param {string} username of a user
- * @returns {object} the wanted user 
+ * @returns {object} the wanted user
  */
 const findByUsername = async (username) => {
-    username = username.trim();
 	try {
 		if (username === "") {
 			throw new Error("Veuillez entrer un nom d'utilisateur valide.");
 		};
-		const result = await knex("user").select().whereRaw('LOWER(username) = ?', [username]).first();
+		const result = await knex("user").select().whereRaw('LOWER(username) = ?', [username.trim()]).first();
         delete result.password;
         return result;
 	} catch (err) {
-		throw new Error(err.message);
+		throw err;
 	};
 };
 
+/**
+ * Find a user by its email address
+ * @param {string} email The email to use as a filter
+ * @param {boolean} strict Defines if the email should be exact or approximative
+ * @returns 
+ */
 const findByEmail = async (email, strict = true) => {
 	try {
 		if (strict) {
@@ -77,6 +91,11 @@ const findByEmail = async (email, strict = true) => {
 	};
 };
 
+/**
+ * Creating a new user
+ * @param {object} payload Contains the properties to add to the DB
+ * @returns 
+ */
 const create = async (payload) => {
 	try {
 		// Verifying and forbidding unauthorized property
