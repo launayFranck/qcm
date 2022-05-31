@@ -26,7 +26,17 @@ router.get('/:id', async (req, res) => {
 	};
 });
 
-router.post('/email', async (req, res) => {
+// • Fetching user by username
+router.get('/username/:username', async (req, res) => {
+	try {
+		const result = await users.findByUsername(req.params.username);
+		res.status(200).json({users : result});
+	} catch (err) {
+		res.status(500).json({error : err.message});
+	};
+});
+
+router.get('/email/:email', async (req, res) => {
 	try {
 		const result = await users.findByEmail(req.body.email);
 		res.status(200).json({users : result});
@@ -42,6 +52,26 @@ router.post("/", async (req, res) => {
 		res.status(200).json({users : result});
 	} catch (err) {
 		res.status(500).json({error : err.message});
+	};
+});
+
+// • Updating user
+router.put('/:id', async (req, res) => {
+	try {
+		const response = await users.update(req.params.id, req.body);
+		res.status(200).json(response);
+	} catch (err) {
+		res.status(400).json({error : err.message});
+	};
+});
+
+// • Deleting user
+router.delete('/:id', async (req, res) => {
+	try {
+		const response = await users.destroy(req.params.id);
+		res.status(200).json(response);
+	} catch (err) {
+		res.status(400).json(err.message);
 	};
 });
 
