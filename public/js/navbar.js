@@ -14,9 +14,10 @@ async function deleteToken() {
 };
 
 /**
- * Login out
+ * Log out
  */
-const logout = () => {
+const logout = async () => {
+	console.log('Logout');
 	try {
 		const deleteDetails = await deleteToken();
 		console.log(deleteDetails);
@@ -27,4 +28,4 @@ const logout = () => {
 	window.location = '/login';
 };
 
-document.querySelector('.logoutBtn').onclick = logout;
+document.querySelector('.logoutBtn').addEventListener('click', logout);
