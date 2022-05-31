@@ -13,6 +13,7 @@ dotenv.config();
 import usersRouter from './routes/user-routes.js';
 import authRouter from './routes/auth-routes.js';
 import themeRouter from './routes/theme-routes.js';
+import chapterRouter from './routes/chapter-routes.js';
 
 // • Server Config
 const PORT = process.env.PORT || 5000;
@@ -28,6 +29,7 @@ app.use(cookieParser());
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/themes', themeRouter);
+app.use('/api/chapters', chapterRouter);
 
 app.get('/', (req, res) => {
 	res.render('pages/index.ejs');

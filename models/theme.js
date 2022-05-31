@@ -67,7 +67,7 @@ const findById = async (id) => {
 /**
  * Get a theme by its name in the database and returns in an object
  * @async
- * @param {string} themeName
+ * @param {string} name
  * @returns {object} the wanted theme 
  */
 const findByName = async (name) => {
