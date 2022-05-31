@@ -5,14 +5,35 @@ import { authenticateToken } from '../middleware/authorization.js';
 
 const router = express.Router();
 
-// • Fetching all users
-router.get('/', authenticateToken, async (req, res) => {
-	console.log(req.headers);
+import users from '../models/user.js';
+
+// • Fetching user by unsername
+router.get('/username/:username', async (req, res) => {
 	try {
-		const users = await knex('user').select();
-		res.json({users});
+		const result = await users.findByUsername(req.params.username);
+		res.status(200).json({users : result});
 	} catch (err) {
 		res.status(500).json({error : err.message});
+	};
+});
+
+// • Updating user
+router.put('/:id', async (req, res) => {
+	try {
+		const response = await users.update(req.params.id, req.body);
+		res.status(200).json(response);
+	} catch (err) {
+		res.status(400).json({error : err.message});
+	};
+});
+
+// • Deleting user
+router.delete('/:id', async (req, res) => {
+	try {
+		const response = await users.destroy(req.params.id);
+		res.status(200).json(response);
+	} catch (err) {
+		res.status(400).json(err.message);
 	};
 });
 
