@@ -10,8 +10,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // • External Scripts Imports
-import usersRouter from './routes/users-routes.js';
+import usersRouter from './routes/user-routes.js';
 import authRouter from './routes/auth-routes.js';
+import themeRouter from './routes/theme-routes.js';
 
 // • Server Config
 const PORT = process.env.PORT || 5000;
@@ -26,6 +27,7 @@ app.use(cookieParser());
 // • Routes Config
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/themes', themeRouter);
 
 app.get('/', (req, res) => {
 	res.render('pages/index.ejs');

@@ -26,7 +26,7 @@ const findByUsername = async (username) => {
         delete result.password;
         return result;
 	} catch (err) {
-		throw new Error(err.message);
+		throw err;
 	};
 };
 
@@ -52,9 +52,19 @@ const update = async (id, payload) => {
 		if (verif.length <= 0) {
 			throw new Error(`id ${id} not found`);
 		};
-		return await knex('user').update(payload).where({id}).returning('*').first();
+		return await knex('user').update(payload).where({id}).returning(
+			"id",
+			"username",
+			"firstname",
+			"lastname",
+			"email",
+			"phone",
+			"role",
+			"created_at",
+			"updated_at"
+		).first();
 	} catch (err) {
-		throw new Error(err.message);
+		throw err;
 	};
 };
 
@@ -78,7 +88,7 @@ const destroy = async (id) => {
         const response = await knex('user').delete().where('id', '=', id).returning('*').first();
         return response;
     } catch (err) {
-        throw new Error(err.message);
+        throw err;
     };
 };
 
