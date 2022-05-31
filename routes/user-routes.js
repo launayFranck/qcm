@@ -3,14 +3,45 @@ import knex from '../models/knexClient.js';
 import bcrypt from 'bcrypt';
 import { authenticateToken } from '../middleware/authorization.js';
 
-const router = express.Router();
-
 import users from '../models/user.js';
 
-// • Fetching user by unsername
+const router = express.Router();
+
+// • Fetching all users
+router.get('/', async (req, res) => {
+	console.log(req.headers);
+	try {
+		const result = await users.findAll();
+		res.status(200).json({users : result});
+	} catch (err) {
+		res.status(500).json({error : err.message});
+	};
+});
+
+router.get('/:id', async (req, res) => {
+	console.log(req.params.id);
+	try {
+		const result = await users.findById(req.params.id);
+		res.status(200).json({users : result});
+	} catch (err) {
+		res.status(500).json({error : err.message});
+	};
+});
+
+// • Fetching user by username
 router.get('/username/:username', async (req, res) => {
 	try {
 		const result = await users.findByUsername(req.params.username);
+		res.status(200).json({users : result});
+	} catch (err) {
+		res.status(500).json({error : err.message});
+	};
+});
+
+router.get('/email/:email', async (req, res) => {
+	console.log(req.body.email);
+	try {
+		const result = await users.findByEmail(req.params.username);
 		res.status(200).json({users : result});
 	} catch (err) {
 		res.status(500).json({error : err.message});
@@ -38,7 +69,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // • Creating new user
-router.post("/", authenticateToken, async (req, res) => {
+router.post("/", async (req, res) => {
 	try {
 		const payload = {
 			username : req.body.username,
@@ -49,8 +80,9 @@ router.post("/", authenticateToken, async (req, res) => {
 			password : await bcrypt.hash(req.body.password, 10),
 			role : req.body.role || 4
 		};
-		const newUser = await knex('user').insert(payload).returning();
-		res.json({users : newUser});
+
+		const result = await users.create(payload);
+		res.status(200).json({users : newUser});
 	} catch (err) {
 		res.status(500).json({error : err.message});
 	};
