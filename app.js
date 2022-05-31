@@ -10,7 +10,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // • External Scripts Imports
-import usersRouter from './routes/users-routes.js';
+import usersRouter from './routes/user-routes.js';
 import authRouter from './routes/auth-routes.js';
 
 // • Server Config
