@@ -18,7 +18,7 @@ const findByUsername = async (username) => {
     username = username.trim();
 	try {
 		if (username === "") {
-			throw new Error("Veuillez entrer un nom valide.");
+			throw new Error("Veuillez entrer un nom d'utilisateur valide.");
 		};
 		const result = await knex("user").select().whereRaw('LOWER(username) = ?', [username]).first();
         delete result.password;
