@@ -1,6 +1,4 @@
 import express from 'express';
-import knex from '../models/knexClient.js';
-import bcrypt from 'bcrypt';
 import { authenticateToken } from '../middleware/authorization.js';
 
 import users from '../models/user.js';
@@ -29,7 +27,6 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/email', async (req, res) => {
-	console.log(req.body.email);
 	try {
 		const result = await users.findByEmail(req.body.email);
 		res.status(200).json({users : result});

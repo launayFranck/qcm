@@ -17,10 +17,10 @@ POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-    "username": "jd35",
-    "firstname": "Jean-Dimitri",
-    "lastname": "Nomdefamille",
-    "email": "jeandimitri.n@hotmail.com",
+    "username": "test.2",
+    "firstname": "TestFname",
+    "lastname": "TestLname",
+    "email": "test.2@hotmail.com",
     "phone": "0123456789",
     "password": "password",
     "role": 4
