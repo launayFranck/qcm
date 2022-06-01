@@ -11,8 +11,10 @@ dotenv.config();
 
 // • External Scripts Imports
 import usersRouter from './routes/user-routes.js';
-import examinationsRouter from './routes/examination-routes.js';
 import authRouter from './routes/auth-routes.js';
+import themeRouter from './routes/theme-routes.js';
+import chapterRouter from './routes/chapter-routes.js';
+import questionRouter from './routes/question-routes.js';
 
 // • Server Config
 const PORT = process.env.PORT || 5000;
@@ -28,6 +30,9 @@ app.use(cookieParser());
 app.use('/api/users', usersRouter);
 app.use('/api/examinations', examinationsRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/themes', themeRouter);
+app.use('/api/chapters', chapterRouter);
+app.use('/api/questions', questionRouter);
 
 // • Redirect to the right pages
 

@@ -38,6 +38,7 @@ router.get('/username/:username', async (req, res) => {
 // • Fetching user by email
 router.get('/email/:email', async (req, res) => {
 	try {
+<<<<<<< HEAD
 		const result = await user.findByEmail(req.body.email);
 		res.status(200).json({users : result});
 	} catch (err) {
@@ -49,6 +50,9 @@ router.get('/email/:email', async (req, res) => {
 router.post("/", async (req, res) => {
 	try {
 		const result = await user.create(req.body);
+=======
+		const result = await user.findByEmail(req.params.username);
+>>>>>>> cindy
 		res.status(200).json({users : result});
 	} catch (err) {
 		res.status(500).json({error : err.message});
@@ -75,4 +79,28 @@ router.delete('/:id', async (req, res) => {
 	};
 });
 
+<<<<<<< HEAD
 export default router;
+=======
+// • Creating new user
+router.post("/", async (req, res) => {
+	try {
+		const payload = {
+			username : req.body.username,
+			firstname : req.body.firstname,
+			lastname : req.body.lastname,
+			email : req.body.email,
+			phone : req.body.phone,
+			password : await bcrypt.hash(req.body.password, 10),
+			role : req.body.role || 4
+		};
+
+		const result = await user.create(payload);
+		res.status(200).json({users : newUser});
+	} catch (err) {
+		res.status(500).json({error : err.message});
+	};
+});
+
+export default router;
+>>>>>>> cindy
