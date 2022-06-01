@@ -39,7 +39,10 @@ app.get('/login', (req, res) => {
 	res.render('pages/login.ejs');
 });
 
-// Admin
+app.get('/users', (req, res) => {
+	res.render('pages/users.ejs');
+});
+
 app.get('/admin', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
 	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
@@ -52,12 +55,6 @@ app.get('/admin', (req, res) => {
 		res.render('pages/admin.ejs');
 	});
 });
-
-// Manager
-
-// Former
-
-// Intern
 
 // • Server Listening
 app.listen(PORT, () => console.log(`App started on http://localhost:${PORT}`));

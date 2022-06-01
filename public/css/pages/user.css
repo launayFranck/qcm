@@ -1,0 +1,18 @@
+@import url('../styles.css');
+@import url('../partials/navbar.css');
+@import url('../partials/footer.css');
+
+.role-box {
+    margin: 1.2rem;
+    border-radius: .4rem;
+    overflow: hidden;
+}
+.role-header {
+    background-color: rgb(55, 215, 55);
+    color: white;
+    padding: .8rem;
+}
+article {
+    color: #292929;
+    padding: .8rem;
+}

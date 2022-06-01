@@ -7,16 +7,17 @@ import bcrypt from 'bcrypt';
  */
 const findAll = async () => {
 	try {
-		const result = await knex('user').select(
-			"id",
-			"username",
-			"firstname",
-			"lastname",
-			"email",
-			"phone",
-			"role",
-			"created_at",
-			"updated_at"
+		const result = await knex('user').join('role', 'user.role', '=', 'role.id').select(
+			"user.id",
+			"user.username",
+			"user.firstname",
+			"user.lastname",
+			"user.email",
+			"user.phone",
+			"user.role",
+			"role.name",
+			"user.created_at",
+			"user.updated_at"
 		);
 		return result;
 	} catch (err) {
