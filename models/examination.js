@@ -30,7 +30,7 @@ const create = async (payload) => {
 const update = async (id, payload) => {
 	try {
 		const result = await knex('examination').update(payload).where({id}).returning('*');
-		return result;
+		return result[0];
 	} catch (err) {
 		throw err;
 	};

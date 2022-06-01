@@ -11,6 +11,7 @@ dotenv.config();
 
 // • External Scripts Imports
 import usersRouter from './routes/user-routes.js';
+import examinationsRouter from './routes/examination-routes.js';
 import authRouter from './routes/auth-routes.js';
 
 // • Server Config
@@ -25,6 +26,7 @@ app.use(cookieParser());
 
 // • Routes Config
 app.use('/api/users', usersRouter);
+app.use('/api/examinations', examinationsRouter);
 app.use('/api/auth', authRouter);
 
 // • Redirect to the right pages
