@@ -1,5 +1,10 @@
 const hostname = window.location.href.split(window.location.pathname)[0];
 
+/**
+ * Get all users
+ * @async
+ * @returns users
+ */
 const getAllUsers = async () => {
 	const res = await fetch(`${hostname}/api/users`, {
 		method: 'GET',
@@ -12,8 +17,33 @@ const getAllUsers = async () => {
 	return await res.json();
 };
 
+/**
+ * Count users and users by role
+ * @async
+ * @returns number of users
+ */
+const countAllUsers = async () => {
+	const res = await fetch(`${hostname}/api/users/count`, {
+		method: 'GET',
+		credentials:'include',
+		cache:'no-cache',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
+	return await res.json();
+};
+
 (async () => {
 	const usersSection = document.querySelector('#users-section');
+
+	// Display informations for the admin
+	const { users : number } = await countAllUsers();
+	document.querySelector('.users-number').innerText = number.users_number;
+	document.querySelector('.admins-number').innerText = number.admins_number;
+	document.querySelector('.managers-number').innerText = number.managers_number;
+	document.querySelector('.formers-number').innerText = number.formers_number;
+	document.querySelector('.interns-number').innerText = number.interns_number;
 
 	// Fetching users
 	const {users} = await getAllUsers();
@@ -35,6 +65,7 @@ const getAllUsers = async () => {
 	usersSection.innerHTML = '';
 	rolesIds.forEach(roleId => {
 		const newRoleBox = document.createElement('section');
+		newRoleBox.setAttribute('id', roles[roleId]);
 		newRoleBox.classList.add('role-box');
 		newRoleBox.innerHTML = `
 			<div class="role-header">

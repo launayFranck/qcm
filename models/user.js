@@ -26,6 +26,28 @@ const findAll = async () => {
 };
 
 /**
+ * Count all users and users by roles
+ * @async
+ * @returns {object} Returns all the users from the DB
+ */
+const countAllByRole = async () => {
+	try {
+		const result = await knex.raw(`
+			SELECT
+				COUNT(*) AS users_number,
+				SUM(CASE WHEN "user".role = 1 THEN 1 ELSE 0 END) AS admins_number,
+				SUM(CASE WHEN "user".role = 2 THEN 1 ELSE 0 END) AS managers_number,
+				SUM(CASE WHEN "user".role = 3 THEN 1 ELSE 0 END) AS formers_number,
+				SUM(CASE WHEN "user".role = 4 THEN 1 ELSE 0 END) AS interns_number
+			FROM "user";
+		`);
+		return result.rows[0];
+	} catch (err) {
+		throw err;
+	};
+};
+
+/**
  * Find a user by its id
  * @param {number} id An integer used to find a specific user in the DB
  * @returns 
@@ -175,6 +197,7 @@ const destroy = async (id) => {
 
 export default {
 	findAll,
+	countAllByRole,
 	findById,
 	findByUsername,
 	findByEmail,

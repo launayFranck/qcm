@@ -15,6 +15,16 @@ router.get('/', async (req, res) => {
 	};
 });
 
+// • Counting all users
+router.get('/count', async (req, res) => {
+	try {
+		const result = await user.countAllByRole();
+		res.status(200).json({users : result});
+	} catch (err) {
+		res.status(500).json({error : err.message});
+	};
+});
+
 // • Fetching user by id
 router.get('/:id', async (req, res) => {
 	try {
