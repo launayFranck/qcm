@@ -11,10 +11,11 @@ dotenv.config();
 
 // • External Scripts Imports
 import usersRouter from './routes/user-routes.js';
-import authRouter from './routes/auth-routes.js';
 import themeRouter from './routes/theme-routes.js';
 import chapterRouter from './routes/chapter-routes.js';
 import questionRouter from './routes/question-routes.js';
+import examinationsRouter from './routes/examination-routes.js';
+import authRouter from './routes/auth-routes.js';
 
 // • Server Config
 const PORT = process.env.PORT || 5000;
