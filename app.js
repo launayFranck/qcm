@@ -57,11 +57,5 @@ app.get('/admin', (req, res) => {
 	});
 });
 
-// Manager
-
-// Former
-
-// Intern
-
 // • Server Listening
 app.listen(PORT, () => console.log(`App started on http://localhost:${PORT}`));
