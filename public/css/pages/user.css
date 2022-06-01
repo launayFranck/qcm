@@ -8,11 +8,11 @@
     overflow: hidden;
 }
 .role-header {
-    background-color: rgb(55, 215, 55);
-    color: white;
+    background-color: var(--color-blue);
+    color: var(--color-white);
     padding: .8rem;
 }
 article {
-    color: #292929;
+    color: var(--color-black);
     padding: .8rem;
 }

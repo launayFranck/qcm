@@ -4,6 +4,9 @@
     --color-blue: #5745cb;
     --color-blue-hover: #6c59e7;
     --color-orange: #E09254;
+    
+    --color-white: #fefefe;
+    --color-black: #292929;
 }
 
 * {
