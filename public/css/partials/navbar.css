@@ -34,13 +34,16 @@
 	height: var(--navbar-size);
 	color: #fefefe;
 	border: none;
+	opacity: .5;
+	transition: padding-left .1s ease-out;
 }
 #navbar ul li a:hover,
 #navbar button:hover {
 	/* text-decoration: underline; */
+	padding-left: 2.4rem;
+	opacity: 1;
 	background-color: var(--color-blue-hover);
 }
-
 main {
 	display: flex;
 	flex-direction: column;

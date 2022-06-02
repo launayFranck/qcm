@@ -1,9 +1,15 @@
 :root {
     --navbar-size: 4.8rem;
 
-    --color-blue: #5745cb;
-    --color-blue-hover: #6c59e7;
-    --color-orange: #E09254;
+    --color-blue: #337ab7;
+    --color-blue-hover: #468bc7;
+    --color-horror-movie-blue: #0026FF;
+
+    --color-orange: #FD7000;
+    --color-orange-hover: #ff9e4e;
+
+    --color-green: #5cb85c;
+    --color-green-hover: #449D44;
     
     --color-white: #fefefe;
     --color-black: #292929;
