@@ -49,6 +49,10 @@ app.get('/users', (req, res) => {
 	res.render('pages/users.ejs');
 });
 
+app.get('/users/edit/:id', (req, res) => {
+	res.render('pages/users-edit.ejs');
+});
+
 app.get('/admin', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
 	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {

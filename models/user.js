@@ -16,6 +16,7 @@ const findAll = async () => {
 			"user.phone",
 			"user.role",
 			"role.name",
+			"user.activated",
 			"user.created_at",
 			"user.updated_at"
 		);
@@ -62,6 +63,7 @@ const findById = async (id) => {
 			"email",
 			"phone",
 			"role",
+			"activated",
 			"created_at",
 			"updated_at"
 		).where('id', '=', id).first();
@@ -82,7 +84,18 @@ const findByUsername = async (username) => {
 		if (username === "") {
 			throw new Error("Veuillez entrer un nom d'utilisateur valide.");
 		};
-		const result = await knex("user").select().whereRaw('LOWER(username) = ?', [username.trim()]).first();
+		const result = await knex("user").select(
+			"id",
+			"username",
+			"firstname",
+			"lastname",
+			"email",
+			"phone",
+			"role",
+			"activated",
+			"created_at",
+			"updated_at"
+		).whereRaw('LOWER(username) = ?', [username.trim()]).first();
         delete result.password;
         return result;
 	} catch (err) {
@@ -99,7 +112,18 @@ const findByUsername = async (username) => {
 const findByEmail = async (email, strict = true) => {
 	try {
 		if (strict) {
-			const result = await knex('user').select().whereRaw("LOWER(email) = LOWER(?)", [email]);
+			const result = await knex('user').select(
+				"id",
+				"username",
+				"firstname",
+				"lastname",
+				"email",
+				"phone",
+				"role",
+				"activated",
+				"created_at",
+				"updated_at"
+			).whereRaw("LOWER(email) = LOWER(?)", [email]);
 			console.log(result.length);
 			if (result.length < 1) throw new Error(`User not found with email ${email}`);
 
@@ -136,7 +160,18 @@ const create = async (payload) => {
 		const verif = await knex('user').select('id').whereRaw('username = ? OR email = ?', [payload.username.toLowerCase(), payload.email.toLowerCase()]);
 		if (verif.length > 0) throw new Error('Username or email already taken');
 
-		const result = await (await knex('user').insert(payload).returning('*')).toString();
+		const result = await (await knex('user').insert(payload).returning(
+			"id",
+			"username",
+			"firstname",
+			"lastname",
+			"email",
+			"phone",
+			"role",
+			"activated",
+			"created_at",
+			"updated_at"
+		));
 		return result[0];
 	} catch (err) {
 		throw err;
@@ -155,7 +190,7 @@ const update = async (id, payload) => {
 		if (verif.length <= 0) {
 			throw new Error(`id ${id} not found`);
 		};
-		return await knex('user').update(payload).where({id}).returning(
+		const response = await knex('user').update(payload).where({id}).returning(
 			"id",
 			"username",
 			"firstname",
@@ -163,9 +198,11 @@ const update = async (id, payload) => {
 			"email",
 			"phone",
 			"role",
+			"activated",
 			"created_at",
 			"updated_at"
-		).first();
+		);
+		return response[0];
 	} catch (err) {
 		throw err;
 	};
@@ -188,8 +225,19 @@ const destroy = async (id) => {
             throw new Error(`${id} not found`);
         };
 
-        const response = await knex('user').delete().where('id', '=', id).returning('*').first();
-        return response;
+        const response = await knex('user').delete().where('id', '=', id).returning(
+			"id",
+			"username",
+			"firstname",
+			"lastname",
+			"email",
+			"phone",
+			"role",
+			"activated",
+			"created_at",
+			"updated_at"
+		);
+        return response[0];
     } catch (err) {
         throw err;
     };

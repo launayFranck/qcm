@@ -25,6 +25,19 @@ const deleteUser = async (id) => {
 	return await res.json();
 };
 
+const updateUser = async (id, payload) => {
+	const res = await fetch(`${hostname}/api/users/${id}`, {
+		method: 'PUT',
+		credentials:'include',
+		cache:'no-cache',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(payload)
+	});
+	return await res.json();
+};
+
 // const deleteBtn = async (id, username) => {
 // 	const prompt = window.confirm(`Souhaitez-vous réellement supprimer ${username} ?`);
 // 	if (prompt) {
@@ -56,6 +69,7 @@ const deleteUser = async (id) => {
 		});
 		if (insertDetails.error) alert(insertDetails.error);
 		await setUsers();
+		document.querySelector('form').reset();
 	});
 
 	/**
@@ -220,16 +234,54 @@ const setUsers = async () => {
 							})()}</p>
 						</div>
 						<div class="btn-container">
+							<div class="toggle-switch">
+								<label class="switch">
+									<input type="checkbox" data-id=${user.id} ${user.activated ? "checked=''" : ""}>
+									<span class="slider round"></span>
+								</label>
+							</div>
 							<button class="edit" data-id="${user.id}"></button>
-							<button class="delete" data-id="${user.id}"></button>
+							<button class="destroy" data-id="${user.id}"></button>
 						</div>
 					</article>
 				`;
+				console.log(user.activated);
 			};
 			usersContainer.appendChild(newRoleBox)
 		});
+		document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+			console.log(checkbox);
+			checkbox.addEventListener('change', async (e) => {
+				const id = e.target.getAttribute('data-id');
+				const activated = e.target.checked ? true : false;
+
+				console.log(id);
+				console.log(activated);
+				const updateUserDetails = await updateUser(id, {activated})
+				console.log(updateUserDetails);
+			  });
+		});
+		document.querySelectorAll('.edit').forEach(edit => {
+			edit.addEventListener('click', async () => {
+				const id = edit.getAttribute('data-id');
+				window.location = `/users/edit/${id}`;
+			});
+		});
+
+		document.querySelectorAll('.destroy').forEach(destroy => {
+			destroy.addEventListener('click', async () => {
+				const id = destroy.getAttribute('data-id');
+				const username = (destroy.parentElement.parentElement.querySelector('h2')).textContent;
+				const answer = confirm(`Voulez-vous vraiment supprimer l'utilisateur ${username} ?`);
+				if (answer) {
+					const deleteDetails = await deleteUser(id);
+					console.log(deleteDetails);
+					await setUsers();
+				};
+			});
+		});
 	};
-	displayUsers();
+	displayUsers(); 
 
 	document.querySelectorAll('.order-select').forEach(select => {
 		select.addEventListener('change', displayUsers);
