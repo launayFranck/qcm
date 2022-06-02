@@ -136,7 +136,7 @@ const create = async (payload) => {
 		const verif = await knex('user').select('id').whereRaw('username = ? OR email = ?', [payload.username.toLowerCase(), payload.email.toLowerCase()]);
 		if (verif.length > 0) throw new Error('Username or email already taken');
 
-		const result = await knex('user').insert(payload).returning('*');
+		const result = await (await knex('user').insert(payload).returning('*')).toString();
 		return result[0];
 	} catch (err) {
 		throw err;
