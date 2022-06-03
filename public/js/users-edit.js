@@ -1,9 +1,7 @@
 const hostname = window.location.href.split(window.location.pathname)[0];
 
 const path = window.location.pathname.split('/');
-console.log(path)
-const id = path[path.length - 1]
-console.log(id);
+const id = path[path.length - 1];
 
 const getUser = async (id) => {
     const res = await fetch(`${hostname}/api/users/${id}`, {
@@ -40,7 +38,6 @@ const updateUser = async (id, payload) => {
     const role = document.getElementsByName('role')[0];
 
     const {users} = await getUser(id);
-    console.log(users);
 
     username.value = users.username;
     firstname.value = users.firstname;
@@ -63,21 +60,22 @@ const updateUser = async (id, payload) => {
         // console.log(values);
         let payload = {};
         Object.keys(values).forEach(property => {
-            console.log(values[property]);
             if (values[property] != users[property] && values[property] !== "") {
                 payload[property] = values[property];
             };
         });
-        console.log(payload);
 
         try {
             const updateUserDetails = await updateUser(id, payload);
-            console.log(updateUserDetails);
             window.location = "/users";
         } catch (err) {
             console.log(err.message);
         };
     });
 })();
+
+document.querySelector(".cancel-btn").addEventListener('click', () => {
+    window.location = "/users";
+});
 
 
