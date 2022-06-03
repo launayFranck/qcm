@@ -158,7 +158,6 @@ const setUsers = async () => {
 		console.error(err.message);
 	}
 	
-
 	// Fetching users
 	const {users} = await getAllUsers();
 	users.sort((a, b) => (a.role > b.role ? 1 : -1));
