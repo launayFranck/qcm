@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="96mm"
+   height="95.999969mm"
+   viewBox="0 0 96 95.99997"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="search.svg"
+   inkscape:export-filename="C:\Users\acer\Desktop\les-vacances-chez-gustave\public\documents\search.png"
+   inkscape:export-xdpi="42.333302"
+   inkscape:export-ydpi="42.333302"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.7233726"
+     inkscape:cx="51.149297"
+     inkscape:cy="188.69943"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-9.6014375,-115.08837)">
+    <g
+       id="g2026"
+       transform="matrix(0.80500595,0.80500595,-0.80500595,0.80500595,113.78342,34.017178)"
+       inkscape:export-filename="C:\Users\acer\search_black.png"
+       inkscape:export-xdpi="42.333302"
+       inkscape:export-ydpi="42.333302"
+       style="stroke:#000000">
+      <ellipse
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="path31"
+         cx="26.52301"
+         cy="115.06323"
+         rx="24.929846"
+         ry="24.929844" />
+      <g
+         id="g1918"
+         transform="translate(0,-3.9083476)"
+         style="stroke:#000000">
+        <path
+           style="fill:none;stroke:#000000;stroke-width:4.99999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 53.278583,118.97159 28.449724,-2e-5"
+           id="path1192" />
+        <path
+           style="fill:none;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 72.934749,118.9716 24.893518,-4e-5"
+           id="path1526" />
+      </g>
+    </g>
+  </g>
+</svg>

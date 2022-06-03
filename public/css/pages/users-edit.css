@@ -18,7 +18,7 @@ form {
 	display: flex;
 	flex-direction: column;
 	margin: 1.2rem;
-	border: solid .5px var(--color-green);
+	border: solid .5px var(--color-blue);
 	border-radius: .4rem;
 	box-shadow: .4rem .4rem .8rem #29292933;
 }
@@ -26,7 +26,7 @@ form h1 {
 	padding: .8rem;
 	text-align: center;
 	color: var(--color-white);
-	background-color: var(--color-green);
+	background-color: var(--color-blue);
 }
 .form-row {
 	display: flex;
@@ -39,7 +39,7 @@ form h1 {
 	padding: .8rem;
 }
 .input-box label {
-	color: var(--color-green);
+	color: var(--color-blue);
 	margin-bottom: .4rem;
 }
 .input-box input,
@@ -64,19 +64,19 @@ form h1 {
 	width: fit-content;
 }
 .update-btn{
-	background-color: var(--color-green);
+	background-color: var(--color-blue);
 	color: var(--color-white);
 	border: none;
 }
 .update-btn:hover {
-	background-color: var(--color-green-hover);
+	background-color: var(--color-blue-hover);
 }
 
 .cancel-btn {
-	border: solid 2px var(--color-green);
-	color: var(--color-green);
+	border: solid 2px var(--color-blue);
+	color: var(--color-blue);
 }
 .cancel-btn:hover {
-	border: solid 2px var(--color-green-hover);
-	color: var(--color-green-hover);
+	border: solid 2px var(--color-blue-hover);
+	color: var(--color-blue-hover);
 }

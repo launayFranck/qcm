@@ -1,3 +1,8 @@
+import { jwtDecode } from "./jwt-decode.js";
+
+const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
+console.log(jwtDecoded);
+
 const hostname = window.location.href.split(window.location.pathname)[0];
 
 const insertUser = async (data) => {
@@ -76,7 +81,9 @@ const updateUser = async (id, payload) => {
 	 * Generating a username in the username input based on the first and last names
 	 */
 	const generateUsername = () => {
-		username.value = firstname.value.charAt(0).toLowerCase() + lastname.value.toLowerCase();
+		const firstLetter = (firstname.value.trim()).charAt(0).toLowerCase();
+		const familyName = (lastname.value.trim()).toLowerCase().replaceAll(' ', '').replaceAll("'", '').replaceAll("-", '');
+		username.value = firstLetter + familyName ;
 	};
 
 	// Auto generating username based on firstname and lastname when any is written
@@ -213,18 +220,49 @@ const setUsers = async () => {
 			const orderProperty = document.getElementsByName('property')[0].value;
 			const orderAscending = JSON.parse(document.getElementsByName('ascending')[0].value);
 	
-			for (let user of sortByProperty(users.filter(user => user.role == roleId), orderProperty, orderAscending)) {
+			const search = document.querySelector('.search').value.toLowerCase();
+			console.log(search);
+			const filteredUsers = search ? users.filter(user => {
+					const res = [
+						user.username.toLowerCase(),
+						user.firstname.toLowerCase(),
+						user.lastname.toLowerCase(),
+						user.email.toLowerCase(),
+						user.phone.toLowerCase()
+					].map(element => element.includes(search));
+					console.log(res);
+					return res.includes(true);
+				})
+				:
+				users
+			;
+
+			for (let user of sortByProperty(filteredUsers.filter(user => user.role == roleId), orderProperty, orderAscending)) {
+				
 				newRoleBox.innerHTML += `
 					<article>
 						<div class="user-box">
 							<h2>${user.username}</h2>
 							<p>${user.firstname} ${user.lastname}</p>
 							<p>${user.email}</p>
+							<p>${user.phone}</p>
 							<p>Membre depuis le ${(() => {
-								const joined = new Date(user.created_at);
-								const year = joined.getFullYear();
-								const month = joined.getMonth() + 1;
-								const day = joined.getDate();
+								const date = new Date(user.created_at);
+								const year = date.getFullYear();
+								const month = date.getMonth() + 1;
+								const day = date.getDate();
+	
+								const formatNb = (nb) => {
+									return (nb.toString()).length < 2 ? `0${nb}` : nb;
+								};
+	
+								return `${formatNb(day)}/${formatNb(month)}/${year}`;
+							})()}</p>
+							<p>Dernière modification le ${(() => {
+								const date = new Date(user.updated_at);
+								const year = date.getFullYear();
+								const month = date.getMonth() + 1;
+								const day = date.getDate();
 	
 								const formatNb = (nb) => {
 									return (nb.toString()).length < 2 ? `0${nb}` : nb;
@@ -233,32 +271,42 @@ const setUsers = async () => {
 								return `${formatNb(day)}/${formatNb(month)}/${year}`;
 							})()}</p>
 						</div>
-						<div class="btn-container">
-							<div class="toggle-switch">
-								<label class="switch">
-									<input type="checkbox" data-id=${user.id} ${user.activated ? "checked=''" : ""}>
-									<span class="slider round"></span>
-								</label>
-							</div>
-							<button class="edit" data-id="${user.id}"></button>
-							<button class="destroy" data-id="${user.id}"></button>
-						</div>
+						${(() => {
+							if (jwtDecoded.id !== user.id) {
+								return `
+									<div class="btn-container">
+										<div class="toggle-switch">
+											<label class="switch">
+												<input type="checkbox" data-id=${user.id} ${user.activated ? "checked=''" : ""}>
+												<span class="slider round"></span>
+											</label>
+										</div>
+										<button class="edit" data-id="${user.id}"></button>
+										<button class="destroy" data-id="${user.id}"></button>
+									</div>
+								`;
+							};
+							return `
+								<div class="btn-container">
+									<button class="edit" data-id="${user.id}"></button>
+								</div>
+							`;
+						})()}
 					</article>
 				`;
-				console.log(user.activated);
 			};
-			usersContainer.appendChild(newRoleBox)
+			usersContainer.appendChild(newRoleBox);
 		});
-		document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-			console.log(checkbox);
+		document.querySelectorAll('.user-box input[type="checkbox"]').forEach(checkbox => {
+			// console.log(checkbox);
 			checkbox.addEventListener('change', async (e) => {
 				const id = e.target.getAttribute('data-id');
 				const activated = e.target.checked ? true : false;
 
-				console.log(id);
-				console.log(activated);
+				// console.log(id);
+				// console.log(activated);
 				const updateUserDetails = await updateUser(id, {activated})
-				console.log(updateUserDetails);
+				// console.log(updateUserDetails);
 			  });
 		});
 		document.querySelectorAll('.edit').forEach(edit => {
@@ -283,6 +331,7 @@ const setUsers = async () => {
 	};
 	displayUsers(); 
 
+	document.querySelector('.search').addEventListener('input', displayUsers);
 	document.querySelectorAll('.order-select').forEach(select => {
 		select.addEventListener('change', displayUsers);
 	});

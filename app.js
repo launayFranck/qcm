@@ -28,6 +28,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // • Routes Config
+// Api
 app.use('/api/users', usersRouter);
 app.use('/api/examinations', examinationsRouter);
 app.use('/api/auth', authRouter);
@@ -35,30 +36,66 @@ app.use('/api/themes', themeRouter);
 app.use('/api/chapters', chapterRouter);
 app.use('/api/questions', questionRouter);
 
-// • Redirect to the right pages
-
+// Pages
 app.get('/', (req, res) => {
-	res.render('pages/index.ejs');
-});
-
-app.get('/login', (req, res) => {
-	res.render('pages/login.ejs');
-});
-
-app.get('/users', (req, res) => {
-	res.render('pages/users.ejs');
-});
-
-app.get('/users/edit/:id', (req, res) => {
-	res.render('pages/users-edit.ejs');
-});
-
-app.get('/admin', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
 	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
 		if (err) {
 			console.log(err.message);
-			res.redirect('/');
+			res.redirect('/login');
+		};
+
+		res.render('pages/index.ejs');
+	});
+});
+
+app.get('/login', (req, res) => {
+	// const {access_token : accessToken} = req.cookies;
+	// jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+	// 	if (err) {
+	// 		console.log(err.message);
+	// 		res.render('pages/login.ejs');
+	// 	};
+	// 	if (user.role !== 1) res.redirect('/');
+
+	// 	res.redirect('/admin');
+	// });
+	res.render('pages/login.ejs');
+});
+
+app.get('/users', (req, res) => {
+	const {access_token : accessToken} = req.cookies;
+	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+		if (err) {
+			console.log(err.message);
+			res.redirect('/login');
+		};
+		if (user.role !== 1) res.redirect('/');
+
+		res.render('pages/users.ejs');
+	});
+});
+
+app.get('/users/edit/:id', (req, res) => {
+	const {access_token : accessToken} = req.cookies;
+	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+		if (err) {
+			console.log(err.message);
+			res.redirect('/login');
+		};
+		if (user.role !== 1) res.redirect('/');
+
+		res.render('pages/users-edit.ejs');
+	});
+});
+
+app.get('/admin', (req, res) => {
+	const {access_token : accessToken} = req.cookies;
+	// console.log(req.cookies);
+	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+		if (err) {
+			console.log(err.message);
+			res.redirect('/login');
 		};
 		if (user.role !== 1) res.redirect('/');
 

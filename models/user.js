@@ -153,14 +153,16 @@ const create = async (payload) => {
 		});
 
 		// Hashing password and setting role if undefined
+		payload.username = payload.username.toLowerCase();
+		payload.email = payload.email.toLowerCase();
 		payload.password = await bcrypt.hash(payload.password, 10);
 		payload.role = payload.role || 4;
 
 		// Verifying that no user is already registered with the same username or email
-		const verif = await knex('user').select('id').whereRaw('username = ? OR email = ?', [payload.username.toLowerCase(), payload.email.toLowerCase()]);
+		const verif = await knex('user').select('id').whereRaw('username = ? OR email = ?', [payload.username, payload.email]);
 		if (verif.length > 0) throw new Error('Username or email already taken');
 
-		const result = await (await knex('user').insert(payload).returning(
+		const result = await knex('user').insert(payload).returning(
 			"id",
 			"username",
 			"firstname",
@@ -171,7 +173,7 @@ const create = async (payload) => {
 			"activated",
 			"created_at",
 			"updated_at"
-		));
+		);
 		return result[0];
 	} catch (err) {
 		throw err;
@@ -190,6 +192,11 @@ const update = async (id, payload) => {
 		if (verif.length <= 0) {
 			throw new Error(`id ${id} not found`);
 		};
+		payload.updated_at = new Date();
+
+		// Hashage du password si password il y a
+		if (payload.password) payload.password = await bcrypt.hash(payload.password, 10);
+
 		const response = await knex('user').update(payload).where({id}).returning(
 			"id",
 			"username",
