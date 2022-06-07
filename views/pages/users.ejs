@@ -14,7 +14,7 @@
 	<main>
 		<section id="users-section">
 			<div class="users-panel">
-				<form>
+				<form id="add-user-form">
 					<div class="title-box">
 						<h1>Ajouter un utilisateur</h1>
 					</div>
@@ -86,7 +86,7 @@
 					<input type="search" class="search" name="search">
 					<img src="/img/search.svg" alt="">
 				</div>
-				<select class="order-select" name="property">
+				<select class="order-select order-property" name="property">
 					<option value="created_at" selected>Date de création</option>
 					<option value="updated_at">Date de modification</option>
 					<option value="username">Nom d'utilisateur</option>
@@ -94,12 +94,12 @@
 					<option value="lastname">Nom de famille</option>
 					<option value="email">Email</option>
 				</select>
-				<select class="order-select" name="ascending">
+				<select class="order-select order-ascending" name="ascending">
 					<option value="true">Croissant</option>
 					<option value="false" selected>Décroissant</option>
 				</select>
 				<div class="show-actives-box">
-					<input name="show-actives" type="checkbox">
+					<input class="show-actives" name="show-actives" type="checkbox">
 					<label for="show-actives">N'afficher que les comptes actifs</label>
 				</div>
 			</div>
