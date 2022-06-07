@@ -4,6 +4,40 @@ const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 
 const hostname = window.location.href.split(window.location.pathname)[0];
 
+// Overlay buttons
+const insertUserBtn = document.querySelector('#insert-user-btn');
+const detailsUserBtn = document.querySelector('#details-user-btn');
+
+// Overlay stuff
+const overlay = document.querySelector(".overlay");
+const overlayBg = document.querySelector(".overlay-bg");
+const insertUserBox = document.querySelector(".insert-user");
+const detailsUserBox = document.querySelector(".details-user");
+const editUserBox = document.querySelector(".edit-user");
+const deleteUserBox = document.querySelector(".delete-user");
+
+const displayOverlay = (bool = true, boxName) => {
+	if (boxName) {
+		document.querySelectorAll('.overlay-box').forEach(box => {
+			console.log(box == boxName)
+			box.style.setProperty('display', box == boxName ? "flex" : "none");
+		});
+	};
+	overlay.style.setProperty("display", bool ? "flex" : "none");
+};
+
+insertUserBtn.addEventListener('click', () => {
+	displayOverlay(true, insertUserBox);
+});
+
+detailsUserBtn.addEventListener('click', () => {
+	displayOverlay(true, detailsUserBox);
+});
+
+overlayBg.addEventListener('click', () => {
+	displayOverlay(false);
+});
+
 // Form infos
 const username = document.getElementsByName('username')[0];
 const firstname = document.getElementsByName('firstname')[0];
@@ -26,8 +60,6 @@ const search = document.querySelector('.search');
 const orderProperty = document.querySelector('.order-property');
 const orderAscending = document.querySelector('.order-ascending');
 const showActives = document.querySelector('.show-actives');
-
-console.log(orderProperty);
 
 /**
  * Get all users
@@ -100,9 +132,8 @@ const deleteUser = async (id) => {
 	return await res.json();
 };
 
-document.querySelector('#add-user-form').addEventListener('submit', async (e) => {
+document.querySelector('#insert-user-form').addEventListener('submit', async (e) => {
 	e.preventDefault();
-
 	const insertDetails = await insertUser({
 		username : username.value,
 		firstname : firstname.value,
@@ -116,7 +147,7 @@ document.querySelector('#add-user-form').addEventListener('submit', async (e) =>
 		alert(insertDetails.error);
 	} else {
 		await setUsers();
-		e.reset();
+		e.target.reset();
 	};	
 });
 
@@ -228,29 +259,32 @@ const fillUsersInfos = async () => {
 	};
 };
 
-const setUsers = async () => {
-
-	/**
+/**
 	 * Creates an array inside which all roles will be stored
 	 * @param {Array<object>} users 
 	 */
-	const filterRoles = async (users) => {
-
+ const filterRoles = async (users) => {
+	let roles = {};
+	users.forEach(user => {
+		roles[user.role] = user.name;
+	});
+	const rolesIds = Object.keys(roles);
+	return {
+		roles,
+		rolesIds
 	};
+};
 
+const setUsers = async () => {
 	await fillUsersInfos();
 	
 	// Fetching users
 	const {users} = await getAllUsers();
 	users.sort((a, b) => (a.role > b.role ? 1 : -1));
 
-	// Filtering distinct roles
-	let roles = {};
-	users.forEach(user => {
-		roles[user.role] = user.name;
-	});
-	const rolesIds = Object.keys(roles);
-	
+	const { roles, rolesIds } = await filterRoles(users);
+	console.log(roles);
+
 	// Showing up users sorted by role
 	const displayUsers = () => {
 		usersContainer.innerHTML = '';

@@ -12,9 +12,10 @@
 		<%- include("../partials/navbar") %>
 	</header>
 	<main>
-		<section id="users-section">
-			<div class="users-panel">
-				<form id="add-user-form">
+		<section class="overlay">
+			<div class="overlay-bg"></div>
+			<div class="insert-user overlay-box">
+				<form id="insert-user-form">
 					<div class="title-box">
 						<h1>Ajouter un utilisateur</h1>
 					</div>
@@ -66,6 +67,8 @@
 						</div>
 					</div>
 				</form>
+			</div>
+			<div class="details-user overlay-box">
 				<div class="users-infos">
 					<div class="title-box">
 						<h1>Infos utilisateurs</h1>
@@ -81,26 +84,37 @@
 					</div>
 				</div>
 			</div>
+			<div class="edit-user overlay-box"></div>
+			<div class="delete-user overlay-box"></div>
+
+		</section>
+		<section id="users-section">
+			<div class="users-panel">
+				<button id="details-user-btn"><img src="/img/sheet.svg" alt="sheet"></button>
+				<button id="insert-user-btn"><img src="/img/plus.svg" alt="+">Ajouter</button>
+			</div>
 			<div class="line-row">
-				<div class="search-box">
-					<input type="search" class="search" name="search">
-					<img src="/img/search.svg" alt="">
-				</div>
-				<select class="order-select order-property" name="property">
-					<option value="created_at" selected>Date de création</option>
-					<option value="updated_at">Date de modification</option>
-					<option value="username">Nom d'utilisateur</option>
-					<option value="firstname">Prénom</option>
-					<option value="lastname">Nom de famille</option>
-					<option value="email">Email</option>
-				</select>
-				<select class="order-select order-ascending" name="ascending">
-					<option value="true">Croissant</option>
-					<option value="false" selected>Décroissant</option>
-				</select>
-				<div class="show-actives-box">
-					<input class="show-actives" name="show-actives" type="checkbox">
-					<label for="show-actives">N'afficher que les comptes actifs</label>
+				<div class="filter-params">
+					<div class="search-box">
+						<input type="search" class="search" name="search" placeholder="Rechercher...">
+						<img src="/img/search.svg" alt="">
+					</div>
+					<select class="order-select order-property" name="property">
+						<option value="created_at" selected>Date de création</option>
+						<option value="updated_at">Date de modification</option>
+						<option value="username">Nom d'utilisateur</option>
+						<option value="firstname">Prénom</option>
+						<option value="lastname">Nom de famille</option>
+						<option value="email">Email</option>
+					</select>
+					<select class="order-select order-ascending" name="ascending">
+						<option value="true">Croissant</option>
+						<option value="false" selected>Décroissant</option>
+					</select>
+					<div class="show-actives-box">
+						<input class="show-actives" name="show-actives" type="checkbox">
+						<label for="show-actives">N'afficher que les comptes actifs</label>
+					</div>
 				</div>
 			</div>
 			<div class="line-row">
