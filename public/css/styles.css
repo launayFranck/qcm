@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
 :root {
     --navbar-size: 4.8rem;
 
@@ -25,7 +27,9 @@
     color: inherit;
     background-color: inherit;
     font-size: 1.6rem;
-    font-family: 'Helvetica', sans-serif;
+    font-weight: normal;
+    line-height: 1.5;
+    font-family: 'Poppins', 'Helvetica', sans-serif;
 }
 
 html {

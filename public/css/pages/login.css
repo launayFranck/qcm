@@ -13,16 +13,17 @@ form {
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
-    border: solid .5px #c4c4c4;
+    /* border: solid .5px #c4c4c4; */
     border-radius: .4rem;
     padding: .8rem;
-    box-shadow: #29292933 .4rem .4rem .8rem;
+    /* box-shadow: #29292933 .4rem .4rem .8rem; */
 }
 .form-box {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 34rem;
 }
 form h1 {
     display: flex;
@@ -63,6 +64,7 @@ form .msg {
     border: none;
     background-color: var(--color-blue);
     color: #fefefe;
+    margin-top: 3.2rem;
     transition: background-color .3s ease-out;
 }
 .form-col input[type="submit"]:hover {

@@ -10,7 +10,10 @@ const router = express.Router();
 router.post('/login', async (req, res) => {
 	try {
 		const {email, password} = req.body;
+		// if (email === '' || password == '') return res.status(401).json({error: 'Email ou mot de passe incorrect'});
+
 		const user = await knex('user').select().where('email', '=', email).first();
+		console.log(user);
 		if (!user) return res.status(401).json({error: 'Email ou mot de passe incorrect'});
 		// PASSWORD CHECK
 		const validPassword = await bcrypt.compare(password, user.password);
