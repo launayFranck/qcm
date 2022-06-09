@@ -92,7 +92,7 @@ main {
 }
 
 /* Overlay boxes */
-.container-header{
+.container-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -108,7 +108,7 @@ main {
 	transform: rotate(45deg);
 }
 
-.insert-user {
+.insert-user, .edit-user {
 	display: flex;
 	flex-direction: column;
 	max-width: 48rem;
@@ -116,13 +116,34 @@ main {
 	box-shadow: .4rem .4rem .8rem #29292933;
 	overflow: hidden;
 }
-.insert-user .container-header{
+.overlay-box .container-header {
 	padding: .8rem 1.2rem;
-	background-color: var(--color-green);
 }
-.insert-user .container-header h1 {
+.overlay-box .container-header h1 {
 	text-align: center;
 	color: var(--color-white);
+}
+
+.insert-user .container-header,
+.insert-user input[type="submit"] {
+	background-color: var(--color-green);
+}
+.insert-user input[type="submit"]:hover {
+	background-color: var(--color-green-hover);
+}
+.insert-user .input-box label {
+	color: var(--color-green);
+}
+
+.edit-user .container-header,
+.edit-user input[type="submit"] {
+	background-color: var(--color-blue);
+}
+.edit-user input[type="submit"]:hover {
+	background-color: var(--color-blue-hover);
+}
+.edit-user .input-box label {
+	color: var(--color-blue);
 }
 
 .insert-user form {
@@ -147,7 +168,6 @@ main {
 	padding: .8rem;
 }
 .input-box label {
-	color: var(--color-green);
 	margin-bottom: .4rem;
 	width: max-content;
 }
@@ -177,12 +197,8 @@ main {
 	margin: auto;
 	width: fit-content;
 	border: none;
-	background-color: var(--color-green);
 	color: white;
 	transition: background-color .1s ease-out;
-}
-.input-box input[type="submit"]:hover {
-	background-color: var(--color-green-hover);
 }
 
 .users-infos{

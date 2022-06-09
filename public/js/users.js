@@ -301,6 +301,70 @@ const setInfosRowColor = () => {
 };
 setInfosRowColor();
 
+/**
+ * Sets the edit-user form so it depends on which user we're editing
+ * @param {object} user The user on which to base the edit form depending on who we're editing
+ */
+const setEditUserForm = async (user) => {
+	const properties = ["username", "firstname", "lastname", "email", "phone", "password", "role"];
+
+	const form = document.querySelector('.edit-user form');
+	const formClone = form.cloneNode(true);
+
+	form.parentNode.replaceChild(formClone, form);
+
+	formClone.addEventListener('submit', async (e) => {
+		e.preventDefault();
+
+		const username = document.querySelector('.edit-user .username');
+		const firstname = document.querySelector('.edit-user .firstname');
+		const lastname = document.querySelector('.edit-user .lastname');
+		const email = document.querySelector('.edit-user .email');
+		const phone = document.querySelector('.edit-user .phone');
+		const password = document.querySelector('.edit-user .password');
+		const role = document.querySelector('.edit-user .role');
+
+		const values = {
+			username : username.value.toString(),
+			firstname : firstname.value.toString(),
+			lastname : lastname.value.toString(),
+			email : email.value.toString(),
+			phone : phone.value.toString(),
+			password : password.value.toString(),
+			role : role.value.toString()
+		};
+
+		console.log(values);
+		
+		let payload = {};
+		Object.keys(values).forEach(property => {
+			if (values[property] != user[property] && values[property] != "") {
+				payload[property] = values[property];
+			};
+		});
+
+		try {
+			// Not updating if nothing to change
+			if (Object.keys(payload).length < 1) throw new Error("L'utilisateur n'a pas été modifié");
+
+			const updateUserDetails = await updateUser(user.id, payload);
+			console.log(updateUserDetails);
+
+			displayOverlay(false);
+			setUsers();
+		} catch (err) {
+			alert(err.message);
+		};
+	});
+
+	properties.forEach(prop => {
+		const input = document.querySelector(`.edit-user .${prop}`);
+		input.value = user[prop] ? user[prop] : "";
+	});
+
+	displayOverlay(true, editUserBox);
+};
+
 const setUsers = async () => {
 	await fillUsersInfos();
 	
@@ -343,7 +407,7 @@ const setUsers = async () => {
 			/**
 			 * Filtering by search query
 			 * @param {Array<object>} users 
-			 * @returns filter
+			 * @returns {Array<object>} filtered users
 			 */
 			const filterUsers = (users) => {
 				let tmp = users.filter(user => user.role == roleId);
@@ -466,7 +530,9 @@ const setUsers = async () => {
 					// Edit button
 					const editBtn = document.createElement('button');
 					editBtn.classList.add('edit');
-					editBtn.addEventListener('click', () => window.location = `/users/edit/${user.id}`);
+					editBtn.addEventListener('click', async () => {
+						await setEditUserForm(user);
+					});
 
 					// Delete button
 					const deleteBtn = document.createElement('button');
@@ -486,7 +552,9 @@ const setUsers = async () => {
 					// Edit button
 					const editBtn = document.createElement('button');
 					editBtn.classList.add('edit');
-					editBtn.addEventListener('click', () => window.location = `/users/edit/${user.id}`);
+					editBtn.addEventListener('click', async () => {
+						await setEditUserForm(user);
+					});
 
 					btnContainer.appendChild(editBtn);
 				};
