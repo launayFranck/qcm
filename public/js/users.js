@@ -145,21 +145,24 @@ const deleteUser = async (id) => {
 
 document.querySelector('.insert-user form').addEventListener('submit', async (e) => {
 	e.preventDefault();
-	const insertDetails = await insertUser({
-		username : username.value,
-		firstname : firstname.value,
-		lastname : lastname.value,
-		email : email.value,
-		phone : phone.value,
-		password : password.value,
-		role : role.value
-	});
-	if (insertDetails.error) {
-		alert(insertDetails.error);
-	} else {
+	try {
+		const insertDetails = await insertUser({
+			username : username.value,
+			firstname : firstname.value,
+			lastname : lastname.value,
+			email : email.value,
+			phone : phone.value,
+			password : password.value,
+			role : role.value
+		});
+		if (insertDetails.error) throw insertDetails;
+
 		await setUsers();
+		displayOverlay(false);
 		e.target.reset();
-	};	
+	} catch (err) {
+		alert(err.message);
+	};
 });
 
 /**
@@ -376,7 +379,7 @@ const setUsers = async () => {
 			const cardsBox = document.createElement('div');
 			cardsBox.classList.add('cards-box');
 
-			for (let user of sortByProperty(filterUsers(users), orderProperty.value, orderAscending.value)) {
+			for (let user of sortByProperty(filterUsers(users), orderProperty.value, JSON.parse(orderAscending.value))) {
 				const cardContainer = document.createElement('div');
 				cardContainer.classList.add('card-container');
 				
