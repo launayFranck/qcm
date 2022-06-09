@@ -208,6 +208,9 @@
 	border-radius: .4rem;
 	cursor: pointer;
 }
+.show-actives:checked:after {
+	background-color:green;
+}
 
 /* Quick bar */
 .quick-nav {
