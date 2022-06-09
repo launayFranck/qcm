@@ -15,71 +15,97 @@
 		<section class="overlay">
 			<div class="overlay-bg"></div>
 			<div class="insert-user overlay-box">
-				<form id="insert-user-form">
-					<div class="title-box">
-						<h1>Ajouter un utilisateur</h1>
-					</div>
-					<div class="form-row">
-						<div class="input-box">
-							<label for="username">Nom d'utilisateur</label>
-							<input name="username" type="text">
+				<div class="container-header">
+					<h1>Ajouter un utilisateur</h1>
+					<button class="overlay-closer"></button>
+				</div>
+				<form>
+					<div class="container-body">
+						<div class="form-row">
+							<div class="input-box">
+								<label for="username">Nom d'utilisateur</label>
+								<input name="username" type="text" required>
+							</div>
 						</div>
-						<div class="input-box">
-							<label for="role">Role</label>
-							<select name="role">
-								<option value="1">Admin</option>
-								<option value="2">Gestionnaire</option>
-								<option value="3">Formateur</option>
-								<option value="4" selected>Stagiaire</option>
-							</select>
+						<div class="form-row">
+							<div class="input-box">
+								<label for="role">Role</label>
+								<select name="role">
+									<option value="1">Admin</option>
+									<option value="2">Gestionnaire</option>
+									<option value="3">Formateur</option>
+									<option value="4" selected>Stagiaire</option>
+								</select>
+							</div>
 						</div>
-					</div>
-					
-					<div class="form-row">
-						<div class="input-box">
-							<label for="firstname">Prénom</label>
-							<input name="firstname" type="text">
+						
+						<div class="form-row">
+							<div class="input-box">
+								<label for="firstname">Prénom</label>
+								<input name="firstname" type="text" required>
+							</div>
+							<div class="input-box">
+								<label for="lastname">Nom de famille</label>
+								<input name="lastname" type="text" required>
+							</div>
 						</div>
-						<div class="input-box">
-							<label for="lastname">Nom de famille</label>
-							<input name="lastname" type="text">
+						
+						<div class="form-row">
+							<div class="input-box">
+								<label for="email">Email</label>
+								<input name="email" type="email" required>
+							</div>
+							<div class="input-box">
+								<label for="phone">Téléphone</label>
+								<input name="phone" type="tel" required>
+							</div>
 						</div>
-					</div>
-					
-					<div class="form-row">
-						<div class="input-box">
-							<label for="email">Email</label>
-							<input name="email" type="email">
+						<div class="form-row">
+							<div class="input-box">
+								<label for="password">Mot de passe</label>
+								<input name="password" type="password" required>
+							</div>
 						</div>
-						<div class="input-box">
-							<label for="phone">Téléphone</label>
-							<input name="phone" type="tel">
-						</div>
-						<div class="input-box">
-							<label for="password">Mot de passe</label>
-							<input name="password" type="password">
-						</div>
-					</div>
-					
-					<div class="form-row">
-						<div class="input-box">
-							<input type="submit" value="Ajouter">
+						
+						<div class="form-row">
+							<div class="input-box">
+								<input type="submit" value="Ajouter">
+							</div>
 						</div>
 					</div>
 				</form>
 			</div>
 			<div class="details-user overlay-box">
 				<div class="users-infos">
-					<div class="title-box">
+					<div class="container-header">
 						<h1>Infos utilisateurs</h1>
+						<button class="overlay-closer"></button>
 					</div>
-					<div class="users-infos-row">
-						<div>
-							<p>Nombre d'utilisateurs: <span class="users-number">0</span></p>
-							<p>Nombre d'administrateurs: <span class="admins-number">0</span></p>
-							<p>Nombre de gestionnaires: <span class="managers-number">0</span></p>
-							<p>Nombre de formateurs: <span class="formers-number">0</span></p>
-							<p>Nombre de stagiaires: <span class="interns-number">0</span></p>
+					<div class="info-container">
+						<div class="infos-row">
+							<p>Nombre d'administrateurs</p>
+							<hr>
+							<span class="admins-number">0</span>
+						</div>
+						<div class="infos-row">
+							<p>Nombre de gestionnaires</p>
+							<hr>
+							<span class="managers-number">0</span>
+						</div>
+						<div class="infos-row">
+							<p>Nombre de formateurs</p>
+							<hr>
+							<span class="formers-number">0</span>
+						</div>
+						<div class="infos-row">
+							<p>Nombre de stagiaires</p>
+							<hr>
+							<span class="interns-number">0</span>
+						</div>
+						<div class="infos-row">
+							<p>Total d'utilisateurs</p>
+							<hr>
+							<span class="users-number">0</span>
 						</div>
 					</div>
 				</div>
@@ -90,7 +116,7 @@
 		</section>
 		<section id="users-section">
 			<div class="users-panel">
-				<button id="details-user-btn"><img src="/img/sheet.svg" alt="sheet"></button>
+				<button id="details-user-btn"></button>
 				<button id="insert-user-btn"><img src="/img/plus.svg" alt="+">Ajouter</button>
 			</div>
 			<div class="line-row">
@@ -113,7 +139,7 @@
 					</select>
 					<div class="show-actives-box">
 						<input class="show-actives" name="show-actives" type="checkbox">
-						<label for="show-actives">N'afficher que les comptes actifs</label>
+						<label for="show-actives">Masquer comptes inactifs</label>
 					</div>
 				</div>
 			</div>

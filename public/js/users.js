@@ -16,14 +16,19 @@ const detailsUserBox = document.querySelector(".details-user");
 const editUserBox = document.querySelector(".edit-user");
 const deleteUserBox = document.querySelector(".delete-user");
 
-const displayOverlay = (bool = true, boxName) => {
+/**
+ * Function displaying or hiding the overlay and its black blurred transparent background
+ * @param {boolean} visible Specifies if the overlay must be visible or not
+ * @param {*} boxName The name of the box we wish to display with the overlay
+ */
+const displayOverlay = (visible = true, boxName) => {
+	// Checking if required overlay box is the one we requested
 	if (boxName) {
 		document.querySelectorAll('.overlay-box').forEach(box => {
-			console.log(box == boxName)
 			box.style.setProperty('display', box == boxName ? "flex" : "none");
 		});
 	};
-	overlay.style.setProperty("display", bool ? "flex" : "none");
+	overlay.style.setProperty("display", visible ? "flex" : "none");
 };
 
 insertUserBtn.addEventListener('click', () => {
@@ -36,6 +41,12 @@ detailsUserBtn.addEventListener('click', () => {
 
 overlayBg.addEventListener('click', () => {
 	displayOverlay(false);
+});
+
+document.querySelectorAll('.overlay-closer').forEach(overlayCloser => {
+	overlayCloser.addEventListener('click', () => {
+		displayOverlay(false);
+	});
 });
 
 // Form infos
@@ -132,7 +143,7 @@ const deleteUser = async (id) => {
 	return await res.json();
 };
 
-document.querySelector('#insert-user-form').addEventListener('submit', async (e) => {
+document.querySelector('.insert-user form').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	const insertDetails = await insertUser({
 		username : username.value,
@@ -275,6 +286,18 @@ const fillUsersInfos = async () => {
 	};
 };
 
+/**
+ * Turns 1/2 rows in the infos panel to light gray
+ */
+const setInfosRowColor = () => {
+	document.querySelectorAll('.infos-row').forEach((row, i) => {
+		if ((i % 2)) {
+			row.style.backgroundColor = "#ececec";
+		}
+	});
+};
+setInfosRowColor();
+
 const setUsers = async () => {
 	await fillUsersInfos();
 	
@@ -283,10 +306,12 @@ const setUsers = async () => {
 	users.sort((a, b) => (a.role > b.role ? 1 : -1));
 
 	const { roles, rolesIds } = await filterRoles(users);
-	console.log(roles);
 
-	// Showing up users sorted by role
+	/**
+	 * Shows up users sorted by role
+	 */
 	const displayUsers = () => {
+		// Resetting usersContainer's content
 		usersContainer.innerHTML = '';
 		rolesIds.forEach(roleId => {
 			const newRoleBox = document.createElement('section');
@@ -295,6 +320,7 @@ const setUsers = async () => {
 			newRoleBox.innerHTML = `
 				<div class="role-header">
 					<h1>${capitalize((() => {
+						// Traduction des roles anglais en français
 						switch (roles[roleId]) {
 							case "admin" :
 								return "administrateurs";
@@ -311,59 +337,89 @@ const setUsers = async () => {
 				</div>
 			`;
 
-			// Filtering by search query
-			let filteredUsers = search.value ? users.filter(user => {
-					// Checking if the search query contains any of the following values
-					const res = [
-						user.username.toLowerCase(),
-						user.firstname.toLowerCase(),
-						user.lastname.toLowerCase(),
-						user.email.toLowerCase(),
-						user.phone.toLowerCase()
-					].map(element => element.includes(search.value.toLowerCase()));
-					return res.includes(true);
-				})
-				:
-				users
-			;
+			/**
+			 * Filtering by search query
+			 * @param {Array<object>} users 
+			 * @returns filter
+			 */
+			const filterUsers = (users) => {
+				let tmp = users.filter(user => user.role == roleId);
+
+				// If search input is set
+				tmp = search.value ?
+					tmp.filter(user => {
+						// Checking if the search query contains any of the following values
+						const res = [
+							user.username.toLowerCase(),
+							user.firstname.toLowerCase(),
+							user.lastname.toLowerCase(),
+							user.email.toLowerCase(),
+							user.phone.toLowerCase()
+						].map(element => element.includes(search.value.toLowerCase()));
+						return res.includes(true);
+					})
+					:
+					tmp
+				;
+
+				// If show actives checkbox is set
+				tmp = showActives.checked ?
+					tmp.filter(user => user.activated)
+					:
+					tmp
+				;
+
+				return tmp;
+			};
 
 			// Filtering by "show actives accounts" only query
-			const checked = showActives.checked;
-			filteredUsers = checked ? filteredUsers.filter(user => user.activated) : filteredUsers;
+			const cardsBox = document.createElement('div');
+			cardsBox.classList.add('cards-box');
 
-			for (let user of sortByProperty(filteredUsers.filter(user => user.role == roleId), orderProperty.value, orderAscending.value)) {
-				const article = document.createElement('article');
+			for (let user of sortByProperty(filterUsers(users), orderProperty.value, orderAscending.value)) {
+				const cardContainer = document.createElement('div');
+				cardContainer.classList.add('card-container');
+				
+				const card = document.createElement('article');
+				card.classList.add('user-card');
+				
 				const userBox = document.createElement('div');
 				userBox.classList.add('user-box');
 				userBox.innerHTML = `
-					<h2>${user.username}</h2>
-					<p>${user.firstname} ${user.lastname}</p>
-					<p>${user.email}</p>
-					<p>${user.phone}</p>
-					<p>Membre depuis le ${(() => {
-						const date = new Date(user.created_at);
-						const year = date.getFullYear();
-						const month = date.getMonth() + 1;
-						const day = date.getDate();
+					<div class="user-personal">
+						<h2>${user.firstname} ${user.lastname}</h2>
+						<p class="username">${user.username}</p>
+					</div>
+					<div class="user-contact">
+						<a href="mailto:${user.email}" class="email">${user.email}</a>
+						<a href="tel:${user.phone}" class="phone">${user.phone}</a>
+					</div>
+					<div class="user-stats">
+						<p class="createdAt">Inscrit le ${(() => {
+							const date = new Date(user.created_at);
+							const year = date.getFullYear();
+							const month = date.getMonth() + 1;
+							const day = date.getDate();
 
-						const formatNb = (nb) => {
-							return (nb.toString()).length < 2 ? `0${nb}` : nb;
-						};
+							const formatNb = (nb) => {
+								return (nb.toString()).length < 2 ? `0${nb}` : nb;
+							};
 
-						return `${formatNb(day)}/${formatNb(month)}/${year}`;
-					})()}</p>
-					<p>Dernière modification le ${(() => {
-						const date = new Date(user.updated_at);
-						const year = date.getFullYear();
-						const month = date.getMonth() + 1;
-						const day = date.getDate();
+							return `${formatNb(day)}/${formatNb(month)}/${year}`;
+						})()}</p>
+						<p class="updatedAt">Modifié le ${(() => {
+							const date = new Date(user.updated_at);
+							const year = date.getFullYear();
+							const month = date.getMonth() + 1;
+							const day = date.getDate();
 
-						const formatNb = (nb) => {
-							return (nb.toString()).length < 2 ? `0${nb}` : nb;
-						};
+							const formatNb = (nb) => {
+								return (nb.toString()).length < 2 ? `0${nb}` : nb;
+							};
 
-						return `${formatNb(day)}/${formatNb(month)}/${year}`;
-					})()}</p>
+							return `${formatNb(day)}/${formatNb(month)}/${year}`;
+						})()}</p>
+					</div>
 				`;
 
 				const btnContainer = document.createElement('div');
@@ -431,11 +487,14 @@ const setUsers = async () => {
 
 					btnContainer.appendChild(editBtn);
 				};
-				article.appendChild(userBox);
-				article.appendChild(btnContainer);
+				card.appendChild(userBox);
+				card.appendChild(btnContainer);
 
-				newRoleBox.appendChild(article);
+				cardContainer.appendChild(card);
+				cardsBox.appendChild(cardContainer);
 			};
+			newRoleBox.appendChild(cardsBox);
+
 			usersContainer.appendChild(newRoleBox);
 		});
 	};
