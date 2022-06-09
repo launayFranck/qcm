@@ -358,6 +358,7 @@ main {
 .user-card {
 	display: flex;
 	flex-direction: column;
+	justify-content: space-between;
 	align-items: center;
 	color: var(--color-black);
 	width: 100%;
