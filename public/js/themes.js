@@ -1,3 +1,4 @@
+import user from "../../models/user.js";
 import { jwtDecode } from "./jwt-decode.js";
 
 const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
@@ -15,6 +16,73 @@ const insertThemeBox = document.querySelector(".insert-theme");
 const detailsThemeBox = document.querySelector(".details-theme");
 const editThemeBox = document.querySelector(".edit-theme");
 const deleteThemeBox = document.querySelector(".delete-theme");
+
+const addChargedBtn = document.querySelector('.add-charged');
+
+const getUsersWithThemeRights = async () => {
+	const res = await fetch(`${hostname}/api/users/theme-rights`, {
+		method: 'GET',
+		credentials:'include',
+		cache:'no-cache',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
+	return await res.json();
+};
+
+const addChargedField = async () => {
+	try {
+		// Fetching users who have the rights to add or update roles
+		const getUsersDetails = await getUsersWithThemeRights();
+		if (getUsersDetails.error) throw new Error(getUsersDetails.error);
+
+		const { users } = getUsersDetails; // Extracting users from getUsersDetails
+		// console.log(users);
+
+		// Adding a new field for a new charged user
+		const parent = document.querySelector('.charged-list');
+
+		const chargeRow = document.createElement('div');
+		chargeRow.classList.add('charge-row');
+
+		const select = document.createElement('select');
+		select.classList.add('charge');
+
+		const roles = {};
+		users.forEach(user => {
+			roles[user.role] = 1;
+		});
+		console.log(Object.keys(roles));
+		
+		// Adding all users as option for the previously created select
+		for (let user of users) {
+			const option = document.createElement('option');
+			option.setAttribute('value', user.id);
+			option.innerText = `${user.username} (${user.firstname} ${user.lastname})`;
+			select.appendChild(option);
+		};
+	
+		const removeCharged = document.createElement('div');
+		removeCharged.classList.add('remove-charged');
+		removeCharged.innerText = '-';
+		removeCharged.addEventListener('click', (e) => {
+			console.log(e.target.parentElement);
+			parent.removeChild(chargeRow);
+		});
+	
+		chargeRow.appendChild(select);
+		chargeRow.appendChild(removeCharged);
+	
+		parent.insertBefore(chargeRow, addChargedBtn);
+	} catch (err) {
+		console.log(err.message);
+	};
+};
+
+addChargedField();
+
+addChargedBtn.addEventListener('click', addChargedField);
 
 /**
  * Function displaying or hiding the overlay and its black blurred transparent background
@@ -81,7 +149,7 @@ const orderAscending = document.querySelector('.order-ascending');
 
 /**
  * Insert a new theme in the DB
- * @param {object} data 
+ * @param {object} data
  * @returns {object} The new theme
  */
 const insertTheme = async (data) => {
@@ -214,7 +282,7 @@ const setEditThemesForm = async (theme) => {
 			description : description.value.toString()
 		};
 
-		console.log(values);
+		// console.log(values);
 		
 		let payload = {};
 		Object.keys(values).forEach(property => {
@@ -228,7 +296,7 @@ const setEditThemesForm = async (theme) => {
 			if (Object.keys(payload).length < 1) throw new Error("Le thème n'a pas été modifié");
 
 			const updateThemeDetails = await updateTheme(theme.id, payload);
-			console.log(updateThemeDetails);
+			// console.log(updateThemeDetails);
 
 			displayOverlay(false);
 			setThemes();
@@ -237,26 +305,6 @@ const setEditThemesForm = async (theme) => {
 		};
 	});
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
 	properties.forEach(prop => {
 		const input = document.querySelector(`.edit-user .${prop}`);
 		input.value = user[prop] ? user[prop] : "";
@@ -276,7 +324,7 @@ const setDeleteThemeForm = async (user) => {
 
 		try {
 			const deleteDetails = await deleteUser(user.id);
-			console.log(deleteDetails);
+			// console.log(deleteDetails);
 
 			await setUsers();
 			displayOverlay(false);
@@ -298,7 +346,7 @@ const displayThemes = async () => {
 	cardsBox.classList.add('cards-box');
 
 	res.themes.forEach(theme => {
-		console.log(theme);
+		// console.log(theme);
 		const title = theme.title;
 		const description = theme.description;
 		const createdAt = formatDate(theme.created_at);
@@ -331,14 +379,14 @@ const displayThemes = async () => {
 };
 
 const formatDate = (rawDate) => {
-	console.log(rawDate);
+	// console.log(rawDate);
 	const formatted = new Date(rawDate);
 
 	const year = formatted.getFullYear();
 	const month = ((formatted.getMonth()).toString()).length < 2 ? `0${formatted.getMonth()}` : formatted.getMonth();
 	const date = ((formatted.getDate()).toString()).length < 2 ? `0${formatted.getDate()}` : formatted.getDate();
 
-	console.log((month.toString()).length)
+	// console.log((month.toString()).length);
 	
 
 	return `${year}/${month}/${date}`;

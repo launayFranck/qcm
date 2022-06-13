@@ -48,6 +48,32 @@ const countAllByRole = async () => {
 	};
 };
 
+const findAllWithThemeRights = async () => {
+	try {
+		const result = await knex.raw(`
+			SELECT
+				"user".id,
+				"user".username,
+				"user".firstname,
+				"user".lastname,
+				"user".email,
+				"user".phone,
+				"user".role,
+				"role".name AS "role_name",
+				"user".activated,
+				"user".created_at,
+				"user".updated_at
+			FROM "user"
+			JOIN "role" ON "user".role = "role".id
+			WHERE "user".role = 1 OR "user".role = 2
+			ORDER BY username;
+		`);
+		return result.rows;
+	} catch (err) {
+		throw err;
+	}
+}
+
 /**
  * Find a user by its id
  * @param {number} id An integer used to find a specific user in the DB
@@ -253,6 +279,7 @@ const destroy = async (id) => {
 export default {
 	findAll,
 	countAllByRole,
+	findAllWithThemeRights,
 	findById,
 	findByUsername,
 	findByEmail,

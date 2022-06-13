@@ -1,7 +1,7 @@
 import knex from './knexClient.js';
 
 /**
- * Getting all themes in a array
+ * Getting all themes in an array
  * @async
  * @returns {Array<themes>} all themes
  */

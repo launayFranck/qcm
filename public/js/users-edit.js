@@ -1,22 +1,3 @@
-import {jwtDecode} from './jwt-decode.js';
-
-const hostname = window.location.href.split(window.location.pathname)[0];
-
-const path = window.location.pathname.split('/');
-const id = path[path.length - 1];
-
-const getUser = async (id) => {
-	const res = await fetch(`${hostname}/api/users/${id}`, {
-		method: 'GET',
-		credentials:'include',
-		cache:'no-cache',
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
-	return await res.json();
-};
-
 const updateUser = async (id, payload) => {
 	const res = await fetch(`${hostname}/api/users/${id}`, {
 		method: 'PUT',
@@ -80,9 +61,3 @@ const updateUser = async (id, payload) => {
 		window.location = "/users";
 	});
 })();
-
-document.querySelector(".cancel-btn").addEventListener('click', () => {
-	window.location = "/users";
-});
-
-
