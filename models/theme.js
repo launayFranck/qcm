@@ -7,8 +7,20 @@ import knex from './knexClient.js';
  */
 const findAll = async () => {
 	try {
-		const result = await knex('theme').select().orderBy('id');
-		return result;
+		const result = await knex.raw(`
+			SELECT
+				theme.id,
+				theme.title,
+				theme.description,
+				theme.created_at,
+				theme.updated_at,
+				"creator".username AS created_by,
+				"updator".username AS updated_by
+			FROM "theme"
+			JOIN "user" AS "creator" ON theme.created_by = "creator".id
+			JOIN "user" AS "updator" ON theme.updated_by = "updator".id;
+		`);
+		return result.rows;
 	} catch (err) {
 		throw err;
 	};

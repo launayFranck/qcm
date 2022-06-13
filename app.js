@@ -76,18 +76,19 @@ app.get('/users', (req, res) => {
 	});
 });
 
-app.get('/users/edit/:id', (req, res) => {
+app.get('/themes', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
-	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user, theme) => {
 		if (err) {
 			console.log(err.message);
 			res.redirect('/login');
 		};
 		if (user.role !== 1) res.redirect('/');
 
-		res.render('pages/users-edit.ejs');
+		res.render('pages/themes.ejs');
 	});
 });
+
 
 app.get('/admin', (req, res) => {
 	const {access_token : accessToken} = req.cookies;

@@ -155,12 +155,13 @@ document.querySelector('.insert-user form').addEventListener('submit', async (e)
 			password : password.value,
 			role : role.value
 		});
-		if (insertDetails.error) throw insertDetails;
+		if (insertDetails.error) throw new Error(insertDetails.error);
 
 		await setUsers();
 		displayOverlay(false);
 		e.target.reset();
 	} catch (err) {
+		console.log(err)
 		alert(err.message);
 	};
 });
@@ -553,8 +554,7 @@ const setUsers = async () => {
 					toggleSwitch.appendChild(label);
 
 					// Edit button
-					const edit
-					 = document.createElement('button');
+					const editBtn = document.createElement('button');
 					editBtn.classList.add('edit');
 					editBtn.addEventListener('click', async () => {
 						await setEditUserForm(user);
