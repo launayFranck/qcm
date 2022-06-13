@@ -365,6 +365,31 @@ const setEditUserForm = async (user) => {
 	displayOverlay(true, editUserBox);
 };
 
+const setDeleteUserForm = async (user) => {
+	document.querySelector('.delete-query').innerText = `Souhaitez-vous vraiment supprimer ${user.firstname} ${user.lastname} ?`;
+
+	const deleteUserBtn = document.querySelector('.delete-user .delete-btn');
+	const deleteUserBtnClone = deleteUserBtn.cloneNode(true);
+
+	deleteUserBtnClone.addEventListener('click', async (e) => {
+		e.preventDefault;
+
+		try {
+			const deleteDetails = await deleteUser(user.id);
+			console.log(deleteDetails);
+
+			await setUsers();
+			displayOverlay(false);
+		} catch (err) {
+			alert(err.message);
+		};
+	});
+
+	deleteUserBtn.parentElement.replaceChild(deleteUserBtnClone, deleteUserBtn);
+
+	displayOverlay(true, deleteUserBox);
+};
+
 const setUsers = async () => {
 	await fillUsersInfos();
 	
@@ -528,7 +553,8 @@ const setUsers = async () => {
 					toggleSwitch.appendChild(label);
 
 					// Edit button
-					const editBtn = document.createElement('button');
+					const edit
+					 = document.createElement('button');
 					editBtn.classList.add('edit');
 					editBtn.addEventListener('click', async () => {
 						await setEditUserForm(user);
@@ -538,11 +564,7 @@ const setUsers = async () => {
 					const deleteBtn = document.createElement('button');
 					deleteBtn.classList.add('destroy');
 					deleteBtn.addEventListener('click', async () => {
-						const answer = confirm(`Voulez-vous vraiment supprimer l'utilisateur ${user.username} ?`);
-						if (answer) {
-							const deleteDetails = await deleteUser(user.id);
-							await setUsers();
-						};
+						await setDeleteUserForm(user);
 					});
 
 					btnContainer.appendChild(toggleSwitch);

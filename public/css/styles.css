@@ -12,6 +12,9 @@
 
     --color-green: #5cb85c;
     --color-green-hover: #449D44;
+
+    --color-red: #f16060;
+    --color-red-hover: #dc3b3b;
     
     --color-white: #fefefe;
     --color-black: #292929;
@@ -22,6 +25,8 @@
     padding: 0;
     border-spacing: 0;
     box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     list-style: none;
     text-decoration: none;
     color: inherit;

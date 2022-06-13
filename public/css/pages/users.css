@@ -97,7 +97,7 @@ main {
 	align-items: center;
 	justify-content: space-between;
 }
-.overlay-closer {
+button.overlay-closer {
 	width: 2.4rem;
 	height: 2.4rem;
 	border: none;
@@ -108,7 +108,9 @@ main {
 	transform: rotate(45deg);
 }
 
-.insert-user, .edit-user {
+.insert-user,
+.edit-user,
+.delete-user {
 	display: flex;
 	flex-direction: column;
 	max-width: 48rem;
@@ -124,6 +126,7 @@ main {
 	color: var(--color-white);
 }
 
+/* Specific design for insert-user */
 .insert-user .container-header,
 .insert-user input[type="submit"] {
 	background-color: var(--color-green);
@@ -135,6 +138,7 @@ main {
 	color: var(--color-green);
 }
 
+/* Specific design for edit-user */
 .edit-user .container-header,
 .edit-user input[type="submit"] {
 	background-color: var(--color-blue);
@@ -144,6 +148,37 @@ main {
 }
 .edit-user .input-box label {
 	color: var(--color-blue);
+}
+
+/* Specific design for delete-user */
+.delete-user .delete-btn-box {
+	justify-content: flex-end;
+}
+.delete-user .delete-btn-box .input-box {
+	flex-grow: inherit;
+}
+.delete-user .cancel-delete-btn {
+	color: var(--color-red);
+	background-color: transparent;
+	border: none;
+}
+.delete-user .cancel-delete-btn:hover {
+	color: var(--color-white);
+	border: none;
+	background-color: var(--color-red-hover);
+}
+.delete-user .delete-query {
+	padding: .8rem 1.2rem;
+	color: var(--color-red);
+}
+.delete-user .container-header,
+.delete-user .delete-btn {
+	color: var(--color-white);
+	background-color: var(--color-red);
+	border: none;
+}
+.delete-user .delete-btn:hover {
+	background-color: var(--color-red-hover);
 }
 
 .insert-user form {
@@ -196,9 +231,12 @@ main {
 	padding: .8rem 1.6rem;
 	margin: auto;
 	width: fit-content;
+	transition: background-color .1s ease-out;
+}
+.insert-user input[type="submit"],
+.edit-user input[type="submit"] {
 	border: none;
 	color: white;
-	transition: background-color .1s ease-out;
 }
 
 .users-infos{
@@ -234,7 +272,7 @@ main {
 }
 
 .info-container .infos-row p,
-.info-container .infos-row span{
+.info-container .infos-row span {
 	color: var(--color-orange);
 	padding: .8rem;
 }
@@ -263,6 +301,12 @@ main {
 	box-shadow: .4rem .4rem .8rem #29292933;
 	color: var(--color-white);
 }
+@media screen and (max-width: 1140px) {
+	.filter-params {
+		flex-direction: column;
+	}
+}
+
 /* Search section */
 .search-box {
 	display: flex;
@@ -275,6 +319,8 @@ main {
 	overflow: hidden;
 }
 .search-box .search {
+	display: flex;
+	flex-grow: 1;
 	padding: .8rem 1.2rem;
 	border: none;
 	outline: none;
@@ -322,6 +368,13 @@ main {
 	justify-content: center;
 	padding: .4rem;
 }
+@media screen and (max-width: 800px) {
+	.quick-nav {
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-start;
+	}
+}
 .quick-nav a {
 	display: flex;
 	align-items: center;
@@ -353,7 +406,7 @@ main {
 }
 
 .role-box {
-	/* nothing */
+	width: 100%;
 }
 .role-header {
 	background-color: var(--color-blue);
@@ -374,6 +427,17 @@ main {
 	flex-basis: 33.333333%;
 	padding: .8rem;
 }
+@media screen and (max-width: 1200px) {
+	.card-container {
+		flex-basis: 50%;
+	}
+}
+@media screen and (max-width: 800px) {
+	.card-container {
+		flex-basis: 100%;
+	}
+}
+
 .user-card {
 	display: flex;
 	flex-direction: column;
