@@ -55,18 +55,19 @@ const countAllByRole = async () => {
  */
 const findById = async (id) => {
 	try {
-		const result = await knex('user').select(
-			"id",
-			"username",
-			"firstname",
-			"lastname",
-			"email",
-			"phone",
-			"role",
-			"activated",
-			"created_at",
-			"updated_at"
-		).where('id', '=', id).first();
+		const result = await knex('user').join('role', 'user.role', '=', 'role.id').select(
+			"user.id",
+			"user.username",
+			"user.firstname",
+			"user.lastname",
+			"user.email",
+			"user.phone",
+			"user.role",
+			"role.name",
+			"user.activated",
+			"user.created_at",
+			"user.updated_at"
+		).where('user.id', '=', id).first();
 		return result;
 	} catch (err) {
 		throw err;
