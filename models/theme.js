@@ -7,20 +7,35 @@ import knex from './knexClient.js';
  */
 const findAll = async () => {
 	try {
-		const result = await knex.raw(`
+		const tmp = await knex.raw(`
 			SELECT
-				theme.id,
-				theme.title,
-				theme.description,
-				theme.created_at,
-				theme.updated_at,
-				"creator".username AS created_by,
-				"updator".username AS updated_by
-			FROM "theme"
+				"theme".id AS "theme_id",
+				"theme".title AS "theme_title",
+				"theme".description AS "theme_description",
+				"user".username AS "theme_user",
+				"theme".created_at AS "theme_created_at",
+				"theme".updated_at AS "theme_updated_at",
+				"creator".username AS "theme_created_by",
+				"updator".username AS "theme_updated_by",
+				"link_creator".username AS link_created_by,
+				"link_updator".username AS link_updated_by
+			FROM "theme_user"
+			JOIN "theme" ON theme_user.theme_id = "theme".id
+			JOIN "user" ON theme_user.user_id = "user".id
 			JOIN "user" AS "creator" ON theme.created_by = "creator".id
-			JOIN "user" AS "updator" ON theme.updated_by = "updator".id;
+			JOIN "user" AS "updator" ON theme.updated_by = "updator".id
+			JOIN "user" AS "link_creator" ON theme_user.created_by = "link_creator".id
+			JOIN "user" AS "link_updator" ON theme_user.updated_by = "link_updator".id
 		`);
-		return result.rows;
+
+		function groupArrayOfObjects(list, key) {
+			return list.reduce(function(rv, x) {
+				(rv[x[key]] = rv[x[key]] || []).push(x);
+				return rv;
+			}, {});
+		};
+		const result = tmp.rows;
+		return groupArrayOfObjects(result, "theme_id");
 	} catch (err) {
 		throw err;
 	};
@@ -100,12 +115,51 @@ const findByName = async (name) => {
  * @async
  * @param {object} payload the payload containing the properties to insert
  */
-const create = async (payload) => {
+const create = async (payload, user) => {
+	payload.created_by = user.id;
+	payload.updated_by = user.id;
+
+	const { users } = payload;
+
+	// Delete empty string properties
+	Object.keys(payload).forEach(property => {
+		if (payload[property].length < 1) {
+			delete payload[property];
+		};
+	});
+
+	// Removing unallowed properties from payload
+	Object.keys(payload).forEach(property => {
+		if (!['title', 'description', 'created_by', 'updated_by'].includes(property)) {
+			delete payload[property];
+		};
+	});
+
 	try {
-		const result = await knex('theme').insert(payload).returning('*');
-		return result;
+		const verif = await knex('theme').select('title').where('title', '=', payload.title);
+		console.log(verif);
+		console.log(verif.length);
+		if (verif.length > 0) throw new Error(`Le thème ${payload.title} existe déjà`);
+
+		const themeResult = await knex('theme').insert(payload).returning('*');
+
+		const usersData = users.map(user => {
+			return {
+				user_id : user,
+				theme_id : themeResult[0].id,
+				created_by : themeResult[0].created_by,
+				updated_by : themeResult[0].updated_by
+			};
+		});
+		console.log(usersData);
+		
+		const userResult = await knex('theme_user').insert(usersData).returning('*');
+		return {
+			theme : themeResult[0],
+			users : userResult
+		};
 	} catch (err) {
-		throw err;
+		return err;
 	};
 };
 

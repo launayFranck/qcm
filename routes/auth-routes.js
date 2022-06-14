@@ -12,19 +12,19 @@ router.post('/login', async (req, res) => {
 		const {email, password} = req.body;
 		// if (email === '' || password == '') return res.status(401).json({error: 'Email ou mot de passe incorrect'});
 
+		// EMAIL CHECK
 		const user = await knex('user').select().where('email', '=', email).first();
-		console.log(user);
 		if (!user) return res.status(401).json({error: 'Email ou mot de passe incorrect'});
+
 		// PASSWORD CHECK
 		const validPassword = await bcrypt.compare(password, user.password);
-
 		if(!validPassword) return res.status(401).json({error: 'Email ou mot de passe incorrect'});
+		delete user.password;
 
 		if(!user.activated) return res.status(401).json({error: 'Ce compte a été désactivé'});
 
 		// JWT
-		delete user.password;
-		let tokens = jwtTokens(user);
+		const tokens = jwtTokens(user);
 		res.cookie('access_token', tokens.accessToken, {
 			httpOnly: true,
 			sameSite: 'none',

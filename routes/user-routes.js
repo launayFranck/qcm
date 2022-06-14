@@ -26,7 +26,7 @@ router.get('/count', async (req, res) => {
 });
 
 // • Fetching all users with theme rights
-router.get('/theme-rights', async (req, res) => {
+router.get('/theme_rights', async (req, res) => {
 	try {
 		const result = await user.findAllWithThemeRights();
 		res.status(200).json({users : result});

@@ -12,6 +12,11 @@
 		<%- include("../partials/navbar") %>
 	</header>
 	<main>
+		<section id="message-overlay">
+			<div class="message-panel">
+			</div>
+		</section>
+
 		<section class="overlay">
 			<div class="overlay-bg"></div>
 
@@ -26,13 +31,13 @@
 						<div class="form-row">
 							<div class="input-box">
 								<label for="title">Nom du thème</label>
-								<input name="title" type="text" required>
+								<input class="title" name="title" type="text" required>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="input-box">
 								<label for="description">Description</label>
-								<textarea name="description" class="description"></textarea>
+								<textarea class="description" name="description"></textarea>
 							</div>
 						</div>
 						<div class="form-row">

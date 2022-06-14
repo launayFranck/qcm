@@ -3,6 +3,10 @@ import {jwtDecode} from "./jwt-decode.js";
 const formLogin = document.querySelector("form");
 const msg = document.querySelector(".msg");
 
+if (localStorage.getItem('Authorization')) {
+	localStorage.removeItem('Authorization');
+}
+
 const hostname = window.location.href.split(window.location.pathname)[0];
 
 // • Sending form values to the login route
