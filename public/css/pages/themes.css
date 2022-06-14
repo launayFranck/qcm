@@ -1,5 +1,6 @@
 @import url('../styles.css');
 @import url('../partials/navbar.css');
+@import url('../partials/message-overlay.css');
 @import url('../partials/footer.css');
 
 main {
@@ -228,6 +229,65 @@ button.overlay-closer {
 	width: fit-content;
 	transition: background-color .1s ease-out;
 }
+
+.insert-theme textarea {
+	padding: .8rem;
+	border: solid 1px #c4c4c4;
+	border-radius: .4rem;
+	resize: none;
+	min-height: 2.4rem;
+}
+
+.insert-theme .charge-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: .8rem;
+}
+.insert-theme .charge-row select {
+	display: flex;
+	flex-grow: 1;
+	color: var(--color-green);
+}
+.insert-theme .charge-row select option {
+	color: var(--color-green);
+}
+
+.insert-theme .charge-row .remove-charged {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 3.2rem;
+	height: 3.2rem;
+	padding: .8rem;
+	border: none;
+	border-radius: .4rem;
+	margin-left: .8rem;
+	background-color: var(--color-red);
+	color: var(--color-white);
+	font-weight: bolder;
+	cursor: pointer;
+	transition: background-color .1s ease-out;
+}
+.insert-theme .charge-row .remove-charged:hover {
+	background-color: var(--color-red-hover)
+}
+
+.insert-theme .add-charged {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: .8rem;
+	border: dotted 2px var(--color-green);
+	color: var(--color-green);
+	font-weight: bolder;
+	cursor: pointer;
+	transition: background-color .1s ease-out;
+}
+.insert-theme .add-charged:hover {
+	background-color: #e4e4e4;
+}
+
 .insert-theme input[type="submit"],
 .edit-theme input[type="submit"] {
 	border: none;

@@ -1,6 +1,8 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/authorization.js';
 
+import jwt from 'jsonwebtoken';
+
 import theme from '../models/theme.js';
 
 const router = express.Router();
@@ -47,12 +49,17 @@ router.get('/name/:name', async (req, res) => {
 
 // • Creating new theme
 router.post("/", async (req, res) => {
-    try {
-        const response = await theme.create(req.body);
-        res.status(201).json(response);
-    } catch (err) {
-        res.status(400).send(err.message);
-    };
+	try {
+		const {access_token : accessToken} = req.cookies;
+		jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+			if (err) throw err;
+
+			const response = await theme.create(req.body, user);
+			res.status(201).json(response);
+		});
+	} catch (err) {
+		res.status(400).json({ error: err.message });
+	};
 });
 
 // • Updating a user

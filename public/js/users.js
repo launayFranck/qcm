@@ -77,7 +77,7 @@ const showActives = document.querySelector('.show-actives');
  * @async
  * @returns users
  */
- const getAllUsers = async () => {
+const getAllUsers = async () => {
 	const res = await fetch(`${hostname}/api/users`, {
 		method: 'GET',
 		credentials:'include',

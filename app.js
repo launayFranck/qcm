@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
 	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
 		if (err) {
-			console.log(err.message);
+			console.error(err.message);
 			res.redirect('/login');
 		};
 
@@ -50,24 +50,32 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-	// const {access_token : accessToken} = req.cookies;
-	// jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-	// 	if (err) {
-	// 		console.log(err.message);
-	// 		res.render('pages/login.ejs');
-	// 	};
-	// 	if (user.role !== 1) res.redirect('/');
+	const {access_token : accessToken} = req.cookies;
+	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+		if (err) {
+			console.error(err.message);
+			res.render('pages/login.ejs');
+		};
+		if (user.role !== 1) res.redirect('/');
 
-	// 	res.redirect('/admin');
-	// });
+		res.redirect('/admin');
+	});
 	res.render('pages/login.ejs');
 });
+
+app.get('/logout', (req, res) => {
+	Object.keys(req.cookies).forEach(cookie => {
+		req.clearCookie(cookie);
+	});
+
+	res.redirect('/login');
+})
 
 app.get('/users', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
 	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
 		if (err) {
-			console.log(err.message);
+			console.error(err.message);
 			res.redirect('/login');
 		};
 		if (user.role !== 1) res.redirect('/');
@@ -80,7 +88,7 @@ app.get('/themes', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
 	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user, theme) => {
 		if (err) {
-			console.log(err.message);
+			console.error(err.message);
 			res.redirect('/login');
 		};
 		if (user.role !== 1) res.redirect('/');
@@ -92,10 +100,9 @@ app.get('/themes', (req, res) => {
 
 app.get('/admin', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
-	// console.log(req.cookies);
 	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
 		if (err) {
-			console.log(err.message);
+			console.error(err.message);
 			res.redirect('/login');
 		};
 		if (user.role !== 1) res.redirect('/');
