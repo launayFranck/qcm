@@ -230,7 +230,7 @@ button.overlay-closer {
 	transition: background-color .1s ease-out;
 }
 
-.insert-theme textarea {
+.overlay-box textarea {
 	padding: .8rem;
 	border: solid 1px #c4c4c4;
 	border-radius: .4rem;
@@ -238,22 +238,22 @@ button.overlay-closer {
 	min-height: 2.4rem;
 }
 
-.insert-theme .charge-row {
+.overlay-box .charge-row {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: .8rem;
 }
-.insert-theme .charge-row select {
+.overlay-box .charge-row select {
 	display: flex;
 	flex-grow: 1;
-	color: var(--color-green);
 }
+.insert-theme .charge-row select,
 .insert-theme .charge-row select option {
 	color: var(--color-green);
 }
 
-.insert-theme .charge-row .remove-charged {
+.overlay-box .charge-row .remove-charged {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -269,23 +269,28 @@ button.overlay-closer {
 	cursor: pointer;
 	transition: background-color .1s ease-out;
 }
-.insert-theme .charge-row .remove-charged:hover {
+.overlay-box .charge-row .remove-charged:hover {
 	background-color: var(--color-red-hover)
 }
 
-.insert-theme .add-charged {
+.overlay-box .add-charged {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	padding: .8rem;
-	border: dotted 2px var(--color-green);
 	color: var(--color-green);
 	font-weight: bolder;
 	cursor: pointer;
 	transition: background-color .1s ease-out;
 }
-.insert-theme .add-charged:hover {
+.overlay-box .add-charged:hover {
 	background-color: #e4e4e4;
+}
+.insert-theme .add-charged {
+	border: dotted 2px var(--color-green);
+}
+.edit-theme .add-charged {
+	border: dotted 2px var(--color-blue);
 }
 
 .insert-theme input[type="submit"],
@@ -441,7 +446,7 @@ button.overlay-closer {
 .theme-card {
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
+	justify-content: flex-start;
 	align-items: center;
 	color: var(--color-black);
 	width: 100%;
@@ -458,11 +463,36 @@ button.overlay-closer {
 
 .theme-stats {
     color: #848484;
+	margin: .8rem 0;
+}
+.theme-description {
+	margin: .8rem 0;
+}
+
+.theme-users {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	margin: .8rem 0;
+}
+.theme-users li {
+	display: flex;
+	align-items: center;
+}
+.theme-users img {
+	width: 1.6rem;
+	height: 1.6rem;
+	margin-right: .8rem;
+	opacity: .3;
+}
+.theme-users p {
+	color: #848484;
 }
 
 .theme-card .btn-container {
 	display: flex;
-	justify-content: space-between;
+	flex-direction: row;
+	justify-content: center;
 	align-items: center;
 	margin-top: .8rem;
 	padding: .8rem 0;
@@ -476,6 +506,7 @@ button.overlay-closer {
 	align-items: center;
 	height: 2.4rem;
 	width: 2.4rem;
+	margin: 0 1.6rem;
 	background-position: center;
 	background-size: contain;
 	background-repeat: no-repeat;

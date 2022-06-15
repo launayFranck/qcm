@@ -28,14 +28,36 @@ const findAll = async () => {
 			JOIN "user" AS "link_updator" ON theme_user.updated_by = "link_updator".id
 		`);
 
+		// Regrouper par propriété
 		function groupArrayOfObjects(list, key) {
 			return list.reduce(function(rv, x) {
 				(rv[x[key]] = rv[x[key]] || []).push(x);
 				return rv;
 			}, {});
 		};
-		const result = tmp.rows;
-		return groupArrayOfObjects(result, "theme_id");
+		const grouped = groupArrayOfObjects(tmp.rows, "theme_id"); // Regrouper par thème
+		const result = Object.keys(grouped).map(group => {
+			const theme = {
+				id : grouped[group][0].theme_id,
+				title : grouped[group][0].theme_title,
+				description : grouped[group][0].theme_description,
+				created_at : grouped[group][0].theme_created_at,
+				updated_at : grouped[group][0].theme_updated_at,
+				created_by : grouped[group][0].theme_created_by,
+				updated_by : grouped[group][0].theme_updated_by,
+				users : grouped[group].map(theme => {
+					return {
+						name : theme.theme_user,
+						link_created_by : theme.link_created_by,
+						link_updated_by : theme.link_updated_by
+					};
+				})
+			};
+
+			return theme;
+		});
+
+		return result;
 	} catch (err) {
 		throw err;
 	};
@@ -197,9 +219,12 @@ const destroy = async (id) => {
 		if (exists.length <= 0) {
 			throw new Error(`${id} not found`);
 		};
-
+		const linkResponse = await knex('theme_user').delete().where('theme_id', '=', id).returning('*');
 		const response = await knex('theme').delete().where({id}).returning('*');
-		return response[0];
+		return {
+			theme_user : linkResponse[0],
+			theme: response[0]
+		};
 	} catch (err) {
 		throw err;
 	};

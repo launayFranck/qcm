@@ -463,11 +463,10 @@ button.overlay-closer {
 }
 .user-card .btn-container {
 	display: flex;
-	justify-content: space-between;
+	justify-content: center;
 	align-items: center;
 	margin-top: .8rem;
 	padding: .8rem 0;
-	max-width: 16rem;
 	width: 100%;
 }
 
@@ -475,6 +474,7 @@ button.overlay-closer {
 .toggle-switch .switch {
     position: relative;
     display: inline-block;
+	margin: 0 1.6rem;
     width: 4rem;
     height: 2.4rem;
 }
@@ -534,6 +534,7 @@ button.overlay-closer {
 	align-items: center;
 	height: 2.4rem;
 	width: 2.4rem;
+	margin: 0 1.6rem;
 	background-position: center;
 	background-size: contain;
 	background-repeat: no-repeat;

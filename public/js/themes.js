@@ -16,7 +16,8 @@ const detailsThemeBox = document.querySelector(".details-theme");
 const editThemeBox = document.querySelector(".edit-theme");
 const deleteThemeBox = document.querySelector(".delete-theme");
 
-const addChargedBtn = document.querySelector('.add-charged');
+const insertAddChargedBtn = document.querySelector('.insert-theme .add-charged');
+const editAddChargedBtn = document.querySelector('.edit-theme .add-charged');
 
 const getUsersWithThemeRights = async () => {
 	const res = await fetch(`${hostname}/api/users/theme_rights`, {
@@ -30,7 +31,11 @@ const getUsersWithThemeRights = async () => {
 	return await res.json();
 };
 
-const addChargedField = async () => {
+/**
+ * Adding charged fields to a charged list
+ * @param {htmlnode} node The html node in which adding the charged user's field
+ */
+const addChargedField = async (node) => {
 	try {
 		// Fetching users who have the rights to add or update roles
 		const getUsersDetails = await getUsersWithThemeRights();
@@ -39,7 +44,7 @@ const addChargedField = async () => {
 		const { users } = getUsersDetails; // Extracting users from getUsersDetails
 
 		// Adding a new field for a new charged user
-		const parent = document.querySelector('.charged-list');
+		const parent = node.querySelector('.charged-list');
 
 		const chargeRow = document.createElement('div');
 		chargeRow.classList.add('charge-row');
@@ -80,15 +85,17 @@ const addChargedField = async () => {
 		chargeRow.appendChild(select);
 		chargeRow.appendChild(removeCharged);
 	
-		parent.insertBefore(chargeRow, addChargedBtn);
+		parent.insertBefore(chargeRow, node.querySelector('.add-charged'));
 	} catch (err) {
 		console.error(err.message);
 	};
 };
 
-addChargedField();
+addChargedField(insertThemeBox);
 
-addChargedBtn.addEventListener('click', addChargedField);
+insertAddChargedBtn.addEventListener('click', () => {
+	addChargedField(insertThemeBox);
+});
 
 /**
  * Function displaying or hiding the overlay and its black blurred transparent background
@@ -224,9 +231,14 @@ const removeDuplicates = (array) => {
 	return Object.keys(tmp);
 };
 
+/**
+ * Function used to display a message in the top-left corner of the page (navbar not included)
+ * @param {string} msg The message to send to the message panel
+ * @param {string} color The color in which the message box will be painted
+ */
 const sendMessageToPanel = async (msg, color) => {
 	const messageBox = document.createElement('div');
-	messageBox.style.setProperty('background-color', `var(--color-${color})`);
+	messageBox.style.setProperty('background-color', color);
 	messageBox.classList.add('message-box');
 
 	const message = document.createElement('p');
@@ -255,12 +267,12 @@ document.querySelector('.insert-theme form').addEventListener('submit', async (e
 
 		console.log(insertDetails);
 
-		sendMessageToPanel(`Le thème "${insertDetails.theme.title}" a été créé`, 'green');
+		sendMessageToPanel(`Le thème "${insertDetails.theme.title}" a été créé`, 'var(--color-green)');
 		await setThemes();
 		displayOverlay(false);
 		e.target.reset();
 	} catch (err) {
-		sendMessageToPanel(err.message, 'red');
+		sendMessageToPanel(err.message, 'var(--color-red)');
 	};
 });
 
@@ -316,12 +328,22 @@ setInfosRowColor();
  * Sets the edit-theme form so it depends on which user we're editing
  * @param {object} user The theme on which to base the edit form depending on who we're editing
  */
-const setEditThemesForm = async (theme) => {
+const setEditThemeForm = async (theme) => {
 	const properties = ["title", "description"];
 
+	// Getting form and emptying charged users list
 	const form = document.querySelector('.edit-theme form');
-	const formClone = form.cloneNode(true);
+	form.querySelectorAll('.charge-row').forEach(chargeRow => {
+		chargeRow.parentElement.removeChild(chargeRow);
+	});
 
+	// Cloning the form to remove all the event listeners
+	const formClone = form.cloneNode(true);
+	formClone.querySelector('.add-charged').addEventListener('click', () => {
+		addChargedField(editThemeBox);
+	});
+
+	// Replacing the previous form with the freshly created clone
 	form.parentNode.replaceChild(formClone, form);
 
 	formClone.addEventListener('submit', async (e) => {
@@ -332,59 +354,69 @@ const setEditThemesForm = async (theme) => {
 
 		const values = {
 			title : title.value.toString(),
-			description : description.value.toString()
+			description : description.value.toString(),
 		};
+
+		console.log(values);
 		
 		let payload = {};
 		Object.keys(values).forEach(property => {
-			if (values[property] != user[property] && values[property] != "") {
+			if (values[property] != theme[property] && values[property] != "") {
 				payload[property] = values[property];
 			};
 		});
 
 		try {
 			// Not updating if nothing to change
-			if (Object.keys(payload).length < 1) throw new Error("Le thème n'a pas été modifié");
+			if (Object.keys(payload).length < 1) throw new Error(`Le thème "${theme.title}" n'a pas été modifié`);
 
 			const updateThemeDetails = await updateTheme(theme.id, payload);
+			console.log(updateThemeDetails);
 
+			await setThemes();
+			sendMessageToPanel(`Le thème "${theme.title}" a été modifié`, 'var(--color-green)');
 			displayOverlay(false);
-			setThemes();
+			
 		} catch (err) {
-			alert(err.message);
+			sendMessageToPanel(err.message, 'var(--color-red)');
 		};
 	});
 
 	properties.forEach(prop => {
-		const input = document.querySelector(`.edit-user .${prop}`);
-		input.value = user[prop] ? user[prop] : "";
+		const input = document.querySelector(`.edit-theme .${prop}`);
+		input.value = theme[prop] ? theme[prop] : "";
 	});
 
-	displayOverlay(true, editUserBox);
+	displayOverlay(true, editThemeBox);
 };
 
-const setDeleteThemeForm = async (user) => {
-	document.querySelector('.delete-query').innerText = `Souhaitez-vous vraiment supprimer ${user.firstname} ${user.lastname} ?`;
 
-	const deleteUserBtn = document.querySelector('.delete-user .delete-btn');
-	const deleteUserBtnClone = deleteUserBtn.cloneNode(true);
+const setDeleteThemeForm = async (theme) => {
+	document.querySelector('.delete-query').innerText = `Souhaitez-vous vraiment supprimer ${theme.title} ?`;
 
-	deleteUserBtnClone.addEventListener('click', async (e) => {
+	const deleteThemeBtn = document.querySelector('.delete-theme .delete-btn');
+	const deleteThemeBtnClone = deleteThemeBtn.cloneNode(true);
+
+	deleteThemeBtnClone.addEventListener('click', async (e) => {
 		e.preventDefault;
 
 		try {
-			const deleteDetails = await deleteUser(user.id);
+			const deleteDetails = await deleteTheme(theme.id);
+			if (deleteDetails.error) {
+				throw new Error(deleteDetails.error);
+			};
 
-			await setUsers();
+			await setThemes();
+			sendMessageToPanel(`Le thème "${theme.title}" a été supprimé`, 'var(--color-green)');
 			displayOverlay(false);
 		} catch (err) {
-			alert(err.message);
+			sendMessageToPanel(err.message, 'var(--color-red)');
 		};
 	});
 
-	deleteUserBtn.parentElement.replaceChild(deleteUserBtnClone, deleteUserBtn);
+	deleteThemeBtn.parentElement.replaceChild(deleteThemeBtnClone, deleteThemeBtn);
 
-	displayOverlay(true, deleteUserBox);
+	displayOverlay(true, deleteThemeBox);
 };
 
 const setThemes = async () => {
@@ -410,14 +442,15 @@ const displayThemes = async (themes) => {
 		const updatedAt = formatDate(theme.updated_at);
 		const createdBy = theme.created_by;
 		const updatedBy = theme.updated_by;
+		const users = theme.users;
 
 		const cardContainer = document.createElement('div');
 		cardContainer.classList.add('card-container');
 
-		const themeCard = document.createElement('article');
-		themeCard.classList.add('theme-card');
+		const card = document.createElement('article');
+		card.classList.add('theme-card');
 
-		themeCard.innerHTML += `
+		card.innerHTML = `
 			<div class="theme-title">
 				<h2>${title}</h2>
 			</div>
@@ -428,8 +461,43 @@ const displayThemes = async (themes) => {
 			<div class="theme-description">
 				<p>${description}</p>
 			</div>
+			<ul class="theme-users">
+				${(() => {
+					return users.map(user => {
+						return `
+							<li>
+								<img src="/img/user.webp" alt="•">
+								<p>${user.name}</p>
+							</li>
+						`;
+					}).join('');
+				})()}
+			</ul>
 		`;
-		cardContainer.appendChild(themeCard);
+
+		const btnContainer = document.createElement('div');
+		btnContainer.classList.add('btn-container');
+
+		card.appendChild(btnContainer);
+
+		// Edit button
+		const editBtn = document.createElement('button');
+		editBtn.classList.add('edit');
+		editBtn.addEventListener('click', async () => {
+			await setEditThemeForm(theme);
+		});
+
+		// Delete button
+		const deleteBtn = document.createElement('button');
+		deleteBtn.classList.add('destroy');
+		deleteBtn.addEventListener('click', async () => {
+			await setDeleteThemeForm(theme);
+		});
+
+		btnContainer.appendChild(editBtn);
+		btnContainer.appendChild(deleteBtn);
+
+		cardContainer.appendChild(card);
 		cardsBox.appendChild(cardContainer);
 	});
 
