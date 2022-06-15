@@ -34,8 +34,9 @@ const getUsersWithThemeRights = async () => {
 /**
  * Adding charged fields to a charged list
  * @param {htmlnode} node The html node in which adding the charged user's field
+ * @param {number} userId The id of the user we want to select by default (optional)
  */
-const addChargedField = async (node) => {
+const addChargedField = async (node, userId) => {
 	try {
 		// Fetching users who have the rights to add or update roles
 		const getUsersDetails = await getUsersWithThemeRights();
@@ -69,7 +70,12 @@ const addChargedField = async (node) => {
 				const option = document.createElement('option');
 				option.setAttribute('value', user.id);
 				option.innerText = `${user.username} (${user.firstname} ${user.lastname})`;
+
 				optGroup.appendChild(option);
+			};
+			if (userId) {
+				console.log(userId);
+				select.value = userId;
 			};
 			select.appendChild(optGroup);
 		});
@@ -317,16 +323,14 @@ const setInfos = (themes) => {
  */
 const setInfosRowColor = () => {
 	document.querySelectorAll('.infos-row').forEach((row, i) => {
-		if ((i % 2)) {
-			row.style.backgroundColor = "#ececec";
-		};
+		row.style.backgroundColor = i % 2 ? "#ececec" : "transparent"
 	});
 };
 setInfosRowColor();
 
 /**
  * Sets the edit-theme form so it depends on which user we're editing
- * @param {object} user The theme on which to base the edit form depending on who we're editing
+ * @param {object} theme The theme on which to base the edit form depending on what we're editing
  */
 const setEditThemeForm = async (theme) => {
 	const properties = ["title", "description"];
@@ -339,6 +343,10 @@ const setEditThemeForm = async (theme) => {
 
 	// Cloning the form to remove all the event listeners
 	const formClone = form.cloneNode(true);
+	console.log(theme.users)
+	theme.users.forEach(user => {
+		addChargedField(editThemeBox, user.id);
+	});
 	formClone.querySelector('.add-charged').addEventListener('click', () => {
 		addChargedField(editThemeBox);
 	});
@@ -484,7 +492,7 @@ const displayThemes = async (themes) => {
 		const editBtn = document.createElement('button');
 		editBtn.classList.add('edit');
 		editBtn.addEventListener('click', async () => {
-			await setEditThemeForm(theme);
+			await setEditThemeForm(theme, users);
 		});
 
 		// Delete button

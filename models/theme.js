@@ -17,6 +17,7 @@ const findAll = async () => {
 				"theme".updated_at AS "theme_updated_at",
 				"creator".username AS "theme_created_by",
 				"updator".username AS "theme_updated_by",
+				"user".id AS "user_id",
 				"link_creator".username AS link_created_by,
 				"link_updator".username AS link_updated_by
 			FROM "theme_user"
@@ -35,18 +36,19 @@ const findAll = async () => {
 				return rv;
 			}, {});
 		};
-		const grouped = groupArrayOfObjects(tmp.rows, "theme_id"); // Regrouper par thème
-		const result = Object.keys(grouped).map(group => {
+		const groupedThemes = groupArrayOfObjects(tmp.rows, "theme_id"); // Regrouper par thème
+		const result = Object.keys(groupedThemes).map(group => {
 			const theme = {
-				id : grouped[group][0].theme_id,
-				title : grouped[group][0].theme_title,
-				description : grouped[group][0].theme_description,
-				created_at : grouped[group][0].theme_created_at,
-				updated_at : grouped[group][0].theme_updated_at,
-				created_by : grouped[group][0].theme_created_by,
-				updated_by : grouped[group][0].theme_updated_by,
-				users : grouped[group].map(theme => {
+				id : groupedThemes[group][0].theme_id,
+				title : groupedThemes[group][0].theme_title,
+				description : groupedThemes[group][0].theme_description,
+				created_at : groupedThemes[group][0].theme_created_at,
+				updated_at : groupedThemes[group][0].theme_updated_at,
+				created_by : groupedThemes[group][0].theme_created_by,
+				updated_by : groupedThemes[group][0].theme_updated_by,
+				users : groupedThemes[group].map(theme => {
 					return {
+						id : theme.user_id,
 						name : theme.theme_user,
 						link_created_by : theme.link_created_by,
 						link_updated_by : theme.link_updated_by
