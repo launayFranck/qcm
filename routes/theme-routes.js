@@ -62,11 +62,17 @@ router.post("/", async (req, res) => {
 	};
 });
 
-// • Updating a user
+// • Updating a theme
 router.put('/:id', async (req, res) => {
 	try {
-		const response = await theme.update(req.params.id, req.body);
-		res.status(200).json(response);
+		const { access_token : accessToken } = req.cookies;
+		jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+			if (err) throw err;
+	
+			const response = await theme.update(req.params.id, req.body, user);
+			res.status(200).json(response);
+		});
+		
 	} catch (err) {
 		res.status(400).json({error : err.message});
 	};

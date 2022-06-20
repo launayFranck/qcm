@@ -1,4 +1,5 @@
 import knex from './knexClient.js';
+import user from './user.js';
 
 /**
  * Getting all themes in an array
@@ -46,14 +47,14 @@ const findAll = async () => {
 				updated_at : groupedThemes[group][0].theme_updated_at,
 				created_by : groupedThemes[group][0].theme_created_by,
 				updated_by : groupedThemes[group][0].theme_updated_by,
-				users : groupedThemes[group].map(theme => {
+				users : (groupedThemes[group].map(theme => {
 					return {
 						id : theme.user_id,
 						name : theme.theme_user,
 						link_created_by : theme.link_created_by,
 						link_updated_by : theme.link_updated_by
 					};
-				})
+				})).sort((a, b) => a.link_created_at < b.link_created_at ? 1 : -1)
 			};
 
 			return theme;
@@ -139,9 +140,9 @@ const findByName = async (name) => {
  * @async
  * @param {object} payload the payload containing the properties to insert
  */
-const create = async (payload, user) => {
-	payload.created_by = user.id;
-	payload.updated_by = user.id;
+const create = async (payload, token) => {
+	payload.created_by = token.id;
+	payload.updated_by = token.id;
 
 	const { users } = payload;
 
@@ -193,14 +194,98 @@ const create = async (payload, user) => {
  * @param {number} id of a theme
  * @param {object} payload with the new informations
  */
-const update = async (id, payload) => {
-	try {
-		const verif = await knex('theme').select().where({id});
-		if (verif.length <= 0) {
-			throw new Error(`id ${id} not found`);
+const update = async (id, payload, token) => {
+	let charges = payload.charges.map(charge => parseInt(charge));
+
+	// Suppression des propriétés non autorisées
+	Object.keys(payload).forEach(property => {
+		if (!['title', 'description'].includes(property)) {
+			delete payload[property];
 		};
-		const result = await knex('theme').update(payload).where({id}).returning('*');
-		return result[0];
+	});
+	const themePayload = Object.keys(payload).length > 0 ? payload : undefined;
+
+	try {
+		// Vérification de l'existence du thème à modifier
+		const verif = await knex('theme').select().where({id});
+		if (verif.length < 1) throw new Error(`Le thème avec l'ID ${id} n'existe pas`);
+
+		// Getting all users in charge for the specified theme
+		const themeUsers = (await knex('theme_user').select().where({theme_id : id})).map(themeUser => themeUser.user_id);
+		console.log("charges : ", charges);
+		console.log("themeUsers : ", themeUsers);
+
+		// Filtering charged users depending on what action to do with them
+		const toUpdate = themeUsers.filter(x => charges.indexOf(x) === themeUsers.indexOf(x));
+		const toInsert = charges.filter(x => themeUsers.indexOf(x) === -1);
+		const toDestroy = themeUsers.filter(x => charges.indexOf(x) === -1);
+
+		console.log("toUpdate : ", toUpdate);
+		console.log("toInsert : ", toInsert);
+		console.log("toDestroy : ", toDestroy);
+
+		// --- Requests
+		const result = {};
+
+		// console.log("To update : ", toUpdate);
+		if (toUpdate.length > 0) {
+			result.update = [];
+			try {
+				for (const update of toUpdate) {
+					const linkQuery = await knex('theme_user').update({
+						updated_at : new Date(),
+						updated_by : token.id
+					}).where({id : update}).returning('*');
+					result.update.push(linkQuery[0]);
+				};
+			} catch (err) {
+				result.update = err;
+			};
+		};
+
+		if (toInsert.length > 0) {
+			result.insert = [];
+			try {
+				for (const insert of toInsert) {
+					const linkQuery = await knex('theme_user').insert({
+						user_id : insert,
+						theme_id : id,
+						created_by : token.id,
+						updated_by : token.id
+					}).returning('*');
+					result.insert.push(linkQuery[0]);
+				};
+			} catch (err) {
+				result.insert = err;
+			};
+		};
+
+		if (toDestroy.length > 0) {
+			result.destroy = [];
+			try {
+				for (const destroy of toDestroy) {
+					const linkQuery = await knex('theme_user').delete().where({
+						user_id : destroy,
+						theme_id : id
+					}).returning('*');
+					result.destroy.push(linkQuery[0]);
+				};
+			} catch (err) {
+				result.insert = err;
+			};
+		};
+
+		// Si le thème a été modifié (title, description)
+		if (themePayload) {
+			try {
+				const themeQuery = await knex('theme').update(themePayload).where({id}).returning('*');
+				result.theme = themeQuery[0];
+			} catch (err) {
+				result.theme = err;
+			};
+		};
+
+		return result;
 	} catch (err) {
 		throw err;
 	};

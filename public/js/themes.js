@@ -58,7 +58,7 @@ const addChargedField = async (node, userId) => {
 		users.forEach(user => {
 			roles[user.role_name] = 1;
 		});
-		
+
 		Object.keys(roles).forEach(role => {
 			const filteredUsers = users.filter(user => user.role_name == role);
 
@@ -73,10 +73,8 @@ const addChargedField = async (node, userId) => {
 
 				optGroup.appendChild(option);
 			};
-			if (userId) {
-				console.log(userId);
-				select.value = userId;
-			};
+			if (userId) select.value = userId;
+
 			select.appendChild(optGroup);
 		});
 	
@@ -90,7 +88,7 @@ const addChargedField = async (node, userId) => {
 
 		chargeRow.appendChild(select);
 		chargeRow.appendChild(removeCharged);
-	
+
 		parent.insertBefore(chargeRow, node.querySelector('.add-charged'));
 	} catch (err) {
 		console.error(err.message);
@@ -148,6 +146,7 @@ const themesNb = document.querySelector('.themes-number');
 const search = document.querySelector('.search');
 const orderProperty = document.querySelector('.order-property');
 const orderAscending = document.querySelector('.order-ascending');
+const orderUser = document.querySelector('.order-user');
 
 /**
  * Get all themes
@@ -229,9 +228,9 @@ const deleteTheme = async (id) => {
  * Remove duplicated values from an array
  * @param {array} array The array to filter
  */
-const removeDuplicates = (array) => {
+const removeDuplicates = async (array) => {
 	let tmp = {};
-	array.forEach(value => {
+	array.forEach(async (value) => {
 		tmp[value] = 1;
 	});
 	return Object.keys(tmp);
@@ -266,12 +265,10 @@ document.querySelector('.insert-theme form').addEventListener('submit', async (e
 		const title = document.querySelector('.insert-theme .title').value;
 		const description = document.querySelector('.insert-theme .description').value;
 
-		const users = removeDuplicates(Array.from(document.querySelectorAll('.insert-theme .charge')).map(user => user.value));
+		const users = await removeDuplicates(Array.from(document.querySelectorAll('.insert-theme .charge')).map(user => user.value));
 
 		const insertDetails = await insertTheme({title, description, users});
 		if (insertDetails.error) throw insertDetails.error;
-
-		console.log(insertDetails);
 
 		sendMessageToPanel(`Le thème "${insertDetails.theme.title}" a été créé`, 'var(--color-green)');
 		await setThemes();
@@ -343,7 +340,6 @@ const setEditThemeForm = async (theme) => {
 
 	// Cloning the form to remove all the event listeners
 	const formClone = form.cloneNode(true);
-	console.log(theme.users)
 	theme.users.forEach(user => {
 		addChargedField(editThemeBox, user.id);
 	});
@@ -360,12 +356,15 @@ const setEditThemeForm = async (theme) => {
 		const title = document.querySelector('.edit-theme .title');
 		const description = document.querySelector('.edit-theme .description');
 
+		const charges = await removeDuplicates(Array.from(document.querySelectorAll('.edit-theme .charge')).map(charge => {
+			return charge.value;
+		}));
+
 		const values = {
 			title : title.value.toString(),
 			description : description.value.toString(),
+			charges
 		};
-
-		console.log(values);
 		
 		let payload = {};
 		Object.keys(values).forEach(property => {
@@ -379,12 +378,14 @@ const setEditThemeForm = async (theme) => {
 			if (Object.keys(payload).length < 1) throw new Error(`Le thème "${theme.title}" n'a pas été modifié`);
 
 			const updateThemeDetails = await updateTheme(theme.id, payload);
-			console.log(updateThemeDetails);
+			if (updateThemeDetails.error) throw new Error(updateThemeDetails.error);
 
+			console.log(updateThemeDetails);
+			
 			await setThemes();
 			sendMessageToPanel(`Le thème "${theme.title}" a été modifié`, 'var(--color-green)');
 			displayOverlay(false);
-			
+
 		} catch (err) {
 			sendMessageToPanel(err.message, 'var(--color-red)');
 		};
@@ -398,7 +399,10 @@ const setEditThemeForm = async (theme) => {
 	displayOverlay(true, editThemeBox);
 };
 
-
+/**
+ * Creates a form on which we'd base a theme to set up the deletion depending on it
+ * @param {object} theme The theme on which we'll base the delete theme form
+ */
 const setDeleteThemeForm = async (theme) => {
 	document.querySelector('.delete-query').innerText = `Souhaitez-vous vraiment supprimer ${theme.title} ?`;
 
@@ -427,11 +431,100 @@ const setDeleteThemeForm = async (theme) => {
 	displayOverlay(true, deleteThemeBox);
 };
 
+/**
+ * Fetches all themes and display them
+ */
 const setThemes = async () => {
 	const { themes } = await getAllThemes();
-	displayThemes(themes);
-}
 
+	search.addEventListener('input', async () => {
+		await displayThemes(await filterThemes(themes));
+	});
+	orderProperty.addEventListener('change', async () => {
+		await displayThemes(await filterThemes(themes));
+	});
+	orderAscending.addEventListener('change', async () => {
+		await displayThemes(await filterThemes(themes));
+	});
+	orderUser.addEventListener('change', async () => {
+		await displayThemes(await filterThemes(themes));
+	});
+
+	await displayThemes(await filterThemes(themes));
+};
+
+const filterThemes = async (themes) => {
+	// If search input is set
+	let tmp = search.value ?
+		themes.filter(theme => {
+			// Checking if the search query contains any of the following values
+			console.log(search.value.toLowerCase());
+			console.log(theme.title.toLowerCase());
+			console.log([
+				theme.title.toLowerCase(),
+				theme.description.toLowerCase(),
+				formatDate(theme.created_at),
+				formatDate(theme.updated_at),
+				theme.created_by.toLowerCase(),
+				theme.updated_by.toLowerCase()
+			]);
+			const res = [
+				theme.title.toLowerCase(),
+				theme.description.toLowerCase(),
+				formatDate(theme.created_at),
+				formatDate(theme.updated_at),
+				theme.created_by.toLowerCase(),
+				theme.updated_by.toLowerCase()
+			].map(element => element.includes(search.value.toLowerCase()));
+			// console.log(res);
+			return res.includes(true);
+		})
+		:
+		themes
+	;
+	if (tmp.length < 1) return {message : "Aucun thème ne correspond à ces critères"};
+
+	tmp = orderUser.value ? tmp.filter(theme => {
+		console.log(theme.users);
+		return true;
+	}) : tmp;
+	if (tmp.length < 1) return {message : "Aucun thème ne correspond à ces critères"};
+
+	/**
+	 * Sorts an array of objects by one of the objects' property
+	 * @param {array} array The array containing objects to sort
+	 * @param {string} property The name of the property to use as a filter
+	 * @param {boolean} ascending Specifies the order of the required informations
+	 * @returns {Array<object>} The sorted array
+	 */
+	const sortByProperty = (array, property, ascending = true) => {
+		try {
+			const res = array.sort((a, b) => (a[property].toLowerCase() > b[property].toLowerCase() ?
+				(ascending ? 1 : -1)
+				:
+				(ascending ? -1 : 1)
+			));
+			return res;
+		} catch (err) {
+			console.error(err.message);
+			return array;
+		};
+	};
+
+	tmp = sortByProperty(tmp, orderProperty.value, JSON.parse(orderAscending.value));
+
+	console.log(search.value);
+	console.log(orderProperty.value);
+	console.log(orderAscending.value);
+	console.log(orderUser.value);
+
+	return tmp;
+};
+
+/**
+ * Displays all themes passed as arguments
+ * @param {Array<object>} themes 
+ */
 const displayThemes = async (themes) => {
 	const container = document.querySelector('#themes-container');
 	const cardsBox = document.createElement('div');
@@ -442,6 +535,15 @@ const displayThemes = async (themes) => {
 	// Emptying themes container
 	container.innerHTML = '';
 
+	if (themes.message) {
+		container.innerHTML = `
+			<div class="themes-message">
+				<h1>:(</h1>
+				<p>${themes.message}</p>
+			</div>
+		`;
+		return;
+	};
 	// Looping on all themes to add theme one by one
 	themes.forEach(theme => {
 		const title = theme.title;
@@ -512,14 +614,19 @@ const displayThemes = async (themes) => {
 	container.appendChild(cardsBox);
 };
 
-const formatDate = (rawDate) => {
-	const formatted = new Date(rawDate);
+/**
+ * Turns a timestamp into a formatted date string
+ * @param {date} timestamp The timestamp we wish to convert
+ * @returns {string} A date with the following format : DD/MM/YYYY
+ */
+const formatDate = (timestamp) => {
+	const formatted = new Date(timestamp);
 
 	const year = formatted.getFullYear();
 	const month = ((formatted.getMonth()).toString()).length < 2 ? `0${formatted.getMonth()}` : formatted.getMonth();
 	const date = ((formatted.getDate()).toString()).length < 2 ? `0${formatted.getDate()}` : formatted.getDate();
 
-	return `${year}/${month}/${date}`;
+	return `${date}/${month}/${year}`;
 };
 
 setThemes();
