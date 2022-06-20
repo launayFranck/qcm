@@ -165,11 +165,6 @@ const orderUser = document.querySelector('.order-user');
 	return await res.json();
 };
 
-(async () => {
-	const res = await getAllThemes();
-	console.log(res);
-})
-
 /**
  * Insert a new theme in the DB
  * @param {object} data
@@ -257,8 +252,9 @@ const sendMessageToPanel = async (msg, color) => {
 	setTimeout(() => {
 		messagePanel.removeChild(messageBox);
 	}, 5000);
-}
+};
 
+// The event listener for the insert theme form's submit event
 document.querySelector('.insert-theme form').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	try {
@@ -312,7 +308,81 @@ const sortByProperty = (array, property, ascending = true) => {
  * @param {array} themes 
  */
 const setInfos = (themes) => {
-	document.querySelector('.themes-number').innerText = themes.length;
+
+	const stats = [
+		{
+			name : 'Nombre de thèmes',
+			value : themes.length
+		},
+		{
+			name : "Nombre min d'utilisateur",
+			value : themes.sort((a, b) => a.users.length > b.users.length ? 1 : -1)[0].users.length
+		},
+		{
+			name : "Nombre max d'utilisateur",
+			value : themes.sort((a, b) => a.users.length < b.users.length ? 1 : -1)[0].users.length
+		},
+		{
+			name : "Utilisateur gérant le moins de thèmes",
+			value : (() => {
+				const usersNb = {};
+				themes.forEach(theme => {
+					theme.users.forEach(user => {
+						if (usersNb[user.name]) {
+							usersNb[user.name] += 1;
+						} else {
+							usersNb[user.name] =1;
+						};
+					});
+				});
+
+				const users = Object.keys(usersNb).map(user => {
+					return {
+						name : user,
+						number : usersNb[user]
+					}
+				});
+				console.log(users)
+				return users.sort((a, b) => a.number > b.number ? 1 : -1)[0].name
+			})()
+		},
+		{
+			name : "Utilisateur gérant le plus de thèmes",
+			value : (() => {
+				const usersNb = {};
+				themes.forEach(theme => {
+					theme.users.forEach(user => {
+						if (usersNb[user.name]) {
+							usersNb[user.name] += 1;
+						} else {
+							usersNb[user.name] =1;
+						};
+					});
+				});
+
+				const users = Object.keys(usersNb).map(user => {
+					return {
+						name : user,
+						number : usersNb[user]
+					}
+				});
+				console.log(users)
+				return users.sort((a, b) => a.number < b.number ? 1 : -1)[0].name
+			})()
+		}
+	];
+
+	const infoContainer = document.querySelector('.info-container');
+	infoContainer.innerHTML = "";
+	stats.forEach(stat => {
+		infoContainer.innerHTML += `
+			<div class="infos-row">
+				<p>${stat.name}</p>
+				<hr>
+				<span>${stat.value}</span>
+			</div>
+		`;
+	});
 };
 
 /**
@@ -432,6 +502,44 @@ const setDeleteThemeForm = async (theme) => {
 };
 
 /**
+ * @async
+ * @param {htmlnode} select The select tag inside which we want to add the users
+ */
+const displayUsersInSelect = async (select) => {
+	try {
+		const { users } = await getUsersWithThemeRights();
+
+		let roles = {};
+		users.forEach(user => {
+			roles[user.role_name] = 1; // Define a property with the role_name value
+		});
+		// Object.keys(roles) : Array with role properties
+		Object.keys(roles).forEach(role => {
+			const optgroup = document.createElement('optgroup');
+			optgroup.setAttribute('label', role);
+
+			const filteredUsers = users.filter(user => user.role_name == role);
+
+			if (filteredUsers.length > 0) {
+				filteredUsers.forEach(user => {
+					const option = document.createElement('option');
+					option.setAttribute('value', user.username);
+					option.innerText = user.username;
+	
+					optgroup.appendChild(option);
+				});
+			};
+			
+			select.appendChild(optgroup);
+		});
+
+	} catch (err) {
+		console.error(err.message);
+	};
+};
+displayUsersInSelect(document.querySelector('.order-user'));
+
+/**
  * Fetches all themes and display them
  */
 const setThemes = async () => {
@@ -453,21 +561,16 @@ const setThemes = async () => {
 	await displayThemes(await filterThemes(themes));
 };
 
+/**
+ * @async
+ * @param {array<Object>} themes 
+ * @returns {array<Object>} themes
+ */
 const filterThemes = async (themes) => {
 	// If search input is set
 	let tmp = search.value ?
 		themes.filter(theme => {
 			// Checking if the search query contains any of the following values
-			console.log(search.value.toLowerCase());
-			console.log(theme.title.toLowerCase());
-			console.log([
-				theme.title.toLowerCase(),
-				theme.description.toLowerCase(),
-				formatDate(theme.created_at),
-				formatDate(theme.updated_at),
-				theme.created_by.toLowerCase(),
-				theme.updated_by.toLowerCase()
-			]);
 			const res = [
 				theme.title.toLowerCase(),
 				theme.description.toLowerCase(),
@@ -476,7 +579,6 @@ const filterThemes = async (themes) => {
 				theme.created_by.toLowerCase(),
 				theme.updated_by.toLowerCase()
 			].map(element => element.includes(search.value.toLowerCase()));
-			// console.log(res);
 			return res.includes(true);
 		})
 		:
@@ -484,10 +586,12 @@ const filterThemes = async (themes) => {
 	;
 	if (tmp.length < 1) return {message : "Aucun thème ne correspond à ces critères"};
 
-	tmp = orderUser.value ? tmp.filter(theme => {
-		console.log(theme.users);
-		return true;
-	}) : tmp;
+	tmp = orderUser.value ?
+		tmp.filter(theme => theme.users.map(user => user.name).includes(orderUser.value))
+		:
+		tmp
+	;
+
 	if (tmp.length < 1) return {message : "Aucun thème ne correspond à ces critères"};
 
 	/**
@@ -512,11 +616,6 @@ const filterThemes = async (themes) => {
 	};
 
 	tmp = sortByProperty(tmp, orderProperty.value, JSON.parse(orderAscending.value));
-
-	console.log(search.value);
-	console.log(orderProperty.value);
-	console.log(orderAscending.value);
-	console.log(orderUser.value);
 
 	return tmp;
 };

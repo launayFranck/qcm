@@ -348,6 +348,7 @@ main {
 	/* border-radius: 99rem; */
 	display: flex;
 	flex-grow: 1;
+	min-width: 10rem;
 }
 
 .line-row {
