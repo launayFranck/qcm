@@ -1,9 +1,9 @@
 import { jwtDecode } from "./jwt-decode.js";
 const hostname = window.location.href.split(window.location.pathname)[0];
 
-if (!localStorage.getItem('Authorization') || jwtDecode(localStorage.getItem('Authorization')).role !== 1) {
-	window.location = "/";
-};
+// if (!localStorage.getItem('Authorization') || jwtDecode(localStorage.getItem('Authorization')).role !== 1) {
+// 	window.location = "/";
+// };
 
 const getUserById = async (id) => {
 	const res = await fetch(`${hostname}/api/users/${id}`, {

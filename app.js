@@ -64,12 +64,13 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
+	console.log(req.cookies);
 	Object.keys(req.cookies).forEach(cookie => {
-		req.clearCookie(cookie);
+		res.clearCookie(cookie);
 	});
 
 	res.redirect('/login');
-})
+});
 
 app.get('/users', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
@@ -96,7 +97,6 @@ app.get('/themes', (req, res) => {
 		res.render('pages/themes.ejs');
 	});
 });
-
 
 app.get('/admin', (req, res) => {
 	const {access_token : accessToken} = req.cookies;

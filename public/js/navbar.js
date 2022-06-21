@@ -17,7 +17,7 @@ async function deleteToken() {
  * Log out
  */
 const logout = async () => {
-	console.log('Logout');
+	// console.log('Logout');
 	try {
 		const deleteDetails = await deleteToken();
 		console.log(deleteDetails);
