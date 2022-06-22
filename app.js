@@ -51,25 +51,28 @@ app.get('/', (req, res) => {
 
 app.get('/login', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
-	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-		if (err) {
-			console.error(err.message);
-			res.render('pages/login.ejs');
-		};
-		if (user.role !== 1) res.redirect('/');
+	if (accessToken) {
+		jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+			if (err) console.error(err.message);
 
-		res.redirect('/admin');
-	});
+			if (user.role === 1) res.redirect('/admin');
+			else res.redirect('/');
+		});
+		return;
+	};
+	
 	res.render('pages/login.ejs');
 });
 
 app.get('/logout', (req, res) => {
-	Object.keys(req.cookies).forEach(cookie => {
-		req.clearCookie(cookie);
-	});
-
+	res.cookie('access_token', '', {maxAge: 0});
+	res.cookie('refresh_token', '', {maxAge: 0});
+	// Object.keys(req.cookies).forEach(cookie => {
+	// 	res.clearCookie(cookie);
+		
+	// });
 	res.redirect('/login');
-})
+});
 
 app.get('/users', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
@@ -96,7 +99,6 @@ app.get('/themes', (req, res) => {
 		res.render('pages/themes.ejs');
 	});
 });
-
 
 app.get('/admin', (req, res) => {
 	const {access_token : accessToken} = req.cookies;

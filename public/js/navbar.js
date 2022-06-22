@@ -17,15 +17,21 @@ async function deleteToken() {
  * Log out
  */
 const logout = async () => {
-	console.log('Logout');
 	try {
-		const deleteDetails = await deleteToken();
-		console.log(deleteDetails);
+		console.log(path);
+		// const deleteDetails = await deleteToken();
+		// console.log(deleteDetails);
+
+		localStorage.removeItem('Authorization');
+
+		// const res = await fetch(`${hostname}/logout`, {
+		// 	method: "GET",
+		// });
+		// console.log(res);
+		// window.location = res.url;
 	} catch (err) {
 		console.log(err);
 	};
-	localStorage.removeItem('Authorization');
-	window.location = '/login';
 };
 
 document.querySelector('.logoutBtn').addEventListener('click', logout);

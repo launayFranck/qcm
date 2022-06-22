@@ -278,6 +278,8 @@ const update = async (id, payload, token) => {
 		// Si le thème a été modifié (title, description)
 		if (themePayload) {
 			themePayload.updated_at = new Date();
+			themePayload.updated_by = token.id;
+			console.log(themePayload);
 			try {
 				const themeQuery = await knex('theme').update(themePayload).where({id}).returning('*');
 				result.theme = themeQuery[0];
