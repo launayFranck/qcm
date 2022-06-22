@@ -309,10 +309,12 @@ const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 const sortByProperty = (array, property, ascending = true) => {
 	try {
 		const res = array.sort((a, b) => {
-			if (Array.isArray(a));
 			console.log(a.property)
 			const aX = Array.isArray(a[property]) ? a[property].length : a[property].toLowerCase();
 			const bX = Array.isArray(b[property]) ? b[property].length : b[property].toLowerCase();
+			console.log(Array.isArray(a[property]));
+			console.log(Array.isArray(b[property]));
+			console.log(aX, bX)
 			return aX > bX ? (ascending ? 1 : -1) : (ascending ? -1 : 1);
 		});
 		return res;
