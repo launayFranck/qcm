@@ -5,7 +5,7 @@ const msg = document.querySelector(".msg");
 
 if (localStorage.getItem('Authorization')) {
 	localStorage.removeItem('Authorization');
-}
+};
 
 const hostname = window.location.href.split(window.location.pathname)[0];
 
@@ -102,6 +102,3 @@ async function fetchRefreshToken() {
 // 	pStatus.innerText = deleteDetails.message;
 // 	showLoginPanel(true);
 // };
-
-
- 

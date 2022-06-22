@@ -55,6 +55,7 @@ app.get('/login', (req, res) => {
 		if (err) {
 			console.error(err.message);
 			res.render('pages/login.ejs');
+			res.end();
 		};
 		if (user.role !== 1) res.redirect('/');
 
@@ -64,11 +65,12 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-	console.log(req.cookies);
-	Object.keys(req.cookies).forEach(cookie => {
-		res.clearCookie(cookie);
-	});
-
+	res.cookie('access_token', '', {maxAge: 0});
+	res.cookie('refresh_token', '', {maxAge: 0});
+	// Object.keys(req.cookies).forEach(cookie => {
+	// 	res.clearCookie(cookie);
+		
+	// });
 	res.redirect('/login');
 });
 
