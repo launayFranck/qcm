@@ -51,16 +51,16 @@ app.get('/', (req, res) => {
 
 app.get('/login', (req, res) => {
 	const {access_token : accessToken} = req.cookies;
-	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-		if (err) {
-			console.error(err.message);
-			res.render('pages/login.ejs');
-			res.end();
-		};
-		if (user.role !== 1) res.redirect('/');
+	if (accessToken) {
+		jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+			if (err) console.error(err.message);
 
-		res.redirect('/admin');
-	});
+			if (user.role === 1) res.redirect('/admin');
+			else res.redirect('/');
+		});
+		return;
+	};
+	
 	res.render('pages/login.ejs');
 });
 

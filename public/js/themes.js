@@ -63,6 +63,20 @@ const addChargedField = async (node, userId) => {
 			const filteredUsers = users.filter(user => user.role_name == role);
 
 			const optGroup = document.createElement('optgroup');
+			switch (role) {
+				case 'admin' :
+					role = "administrateur";
+					break;
+				case "manager" :
+					role = "gestionnaire";
+					break;
+				case "former" :
+					role = "formateur";
+					break;
+				case "intern" :
+					role = "stagiaire";
+					break;
+			};
 			optGroup.setAttribute('label', `-- ${capitalize(role)}`);
 			
 			// Adding all users as options inside the optgroup for the previously created select
@@ -71,9 +85,12 @@ const addChargedField = async (node, userId) => {
 				option.setAttribute('value', user.id);
 				option.innerText = `${user.username} (${user.firstname} ${user.lastname})`;
 
+				// Select a specific user by default if provided
+				if (user.id === userId) option.setAttribute('selected', 'true');
+
 				optGroup.appendChild(option);
 			};
-			if (userId) select.value = userId;
+			// if (userId) select.value = userId;
 
 			select.appendChild(optGroup);
 		});
@@ -295,11 +312,13 @@ const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
  */
 const sortByProperty = (array, property, ascending = true) => {
 	try {
-		const res = array.sort((a, b) => (a[property].toLowerCase() > b[property].toLowerCase() ?
-			(ascending ? 1 : -1)
-			:
-			(ascending ? -1 : 1)
-		));
+		const res = array.sort((a, b) => {
+			if (Array.isArray(a));
+			console.log(a.property)
+			const aX = Array.isArray(a[property]) ? a[property].length : a[property].toLowerCase();
+			const bX = Array.isArray(b[property]) ? b[property].length : b[property].toLowerCase();
+			return aX > bX ? (ascending ? 1 : -1) : (ascending ? -1 : 1);
+		});
 		return res;
 	} catch (err) {
 		console.error(err.message);
@@ -490,27 +509,6 @@ const filterThemes = async (themes) => {
 	}) : tmp;
 	if (tmp.length < 1) return {message : "Aucun thème ne correspond à ces critères"};
 
-	/**
-	 * Sorts an array of objects by one of the objects' property
-	 * @param {array} array The array containing objects to sort
-	 * @param {string} property The name of the property to use as a filter
-	 * @param {boolean} ascending Specifies the order of the required informations
-	 * @returns {Array<object>} The sorted array
-	 */
-	const sortByProperty = (array, property, ascending = true) => {
-		try {
-			const res = array.sort((a, b) => (a[property].toLowerCase() > b[property].toLowerCase() ?
-				(ascending ? 1 : -1)
-				:
-				(ascending ? -1 : 1)
-			));
-			return res;
-		} catch (err) {
-			console.error(err.message);
-			return array;
-		};
-	};
-
 	tmp = sortByProperty(tmp, orderProperty.value, JSON.parse(orderAscending.value));
 
 	console.log(search.value);
@@ -623,7 +621,7 @@ const formatDate = (timestamp) => {
 	const formatted = new Date(timestamp);
 
 	const year = formatted.getFullYear();
-	const month = ((formatted.getMonth()).toString()).length < 2 ? `0${formatted.getMonth()}` : formatted.getMonth();
+	const month = ((formatted.getMonth()).toString()).length < 2 ? `0${formatted.getMonth() + 1}` : formatted.getMonth() + 1;
 	const date = ((formatted.getDate()).toString()).length < 2 ? `0${formatted.getDate()}` : formatted.getDate();
 
 	return `${date}/${month}/${year}`;
