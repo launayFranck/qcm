@@ -8,15 +8,16 @@ main {
 	flex-direction: column;
 	align-items: center;
 }
-#themes-section {
+#examinations-section {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
 	margin: .8rem;
 	max-width: 120rem;
 }
+
 /* Insert button */
-#insert-theme-btn {
+#insert-examination-btn {
 	display: flex;
 	align-items: center;
 	margin: .8rem 1.2rem;
@@ -26,10 +27,10 @@ main {
 	border-radius: .4rem;
 	background-color: var(--color-green);
 }
-#insert-theme-btn:hover {
+#insert-examination-btn:hover {
 	background-color : var(--color-green-hover);
 }
-#insert-theme-btn img {
+#insert-examination-btn img {
 	width: 1.6rem;
 	height: 1.6rem;
 	margin-right: .8rem;
@@ -37,7 +38,7 @@ main {
 }
 
 /* details button */
-#details-theme-btn {
+#details-examination-btn {
 	display: flex;
 	align-items: center;
 	border: none;
@@ -51,7 +52,7 @@ main {
 	filter: brightness(.6);
 	transition: filter .1s ease-out;
 }
-#details-theme-btn:hover {
+#details-examination-btn:hover {
 	filter: brightness(.75);
 }
 /* Overlay */
@@ -77,13 +78,14 @@ main {
 	position: absolute;
 	display: flex;
 }
+
 /* Page content */
-#themes-section {
+#examinations-section {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 }
-.themes-panel {
+.examinations-panel {
 	display: flex;
 	justify-content: flex-end;
 	width: 100%;
@@ -108,9 +110,9 @@ main {
 	transform: rotate(45deg);
 }
 
-.insert-theme,
-.edit-theme,
-.delete-theme {
+.insert-examination,
+.edit-examination,
+.delete-examination {
 	display: flex;
 	flex-direction: column;
 	max-width: 48rem;
@@ -126,62 +128,62 @@ main {
 	color: var(--color-white);
 }
 
-/* Specific design for insert-theme */
-.insert-theme .container-header,
-.insert-theme input[type="submit"] {
+/* Specific design for insert-examination */
+.insert-examination .container-header,
+.insert-examination input[type="submit"] {
 	background-color: var(--color-green);
 }
-.insert-theme input[type="submit"]:hover {
+.insert-examination input[type="submit"]:hover {
 	background-color: var(--color-green-hover);
 }
-.insert-theme .input-box label {
+.insert-examination .input-box label {
 	color: var(--color-green);
 }
 
-/* Specific design for edit-theme */
-.edit-theme .container-header,
-.edit-theme input[type="submit"] {
+/* Specific design for edit-examination */
+.edit-examination .container-header,
+.edit-examination input[type="submit"] {
 	background-color: var(--color-blue);
 }
-.edit-theme input[type="submit"]:hover {
+.edit-examination input[type="submit"]:hover {
 	background-color: var(--color-blue-hover);
 }
-.edit-theme .input-box label {
+.edit-examination .input-box label {
 	color: var(--color-blue);
 }
 
-/* Specific design for delete-theme */
-.delete-theme .delete-btn-box {
+/* Specific design for delete-examination */
+.delete-examination .delete-btn-box {
 	justify-content: flex-end;
 }
-.delete-theme .delete-btn-box .input-box {
+.delete-examination .delete-btn-box .input-box {
 	flex-grow: inherit;
 }
-.delete-theme .cancel-delete-btn {
+.delete-examination .cancel-delete-btn {
 	color: var(--color-red);
 	background-color: transparent;
 	border: none;
 }
-.delete-theme .cancel-delete-btn:hover {
+.delete-examination .cancel-delete-btn:hover {
 	color: var(--color-white);
 	border: none;
 	background-color: var(--color-red-hover);
 }
-.delete-theme .delete-query {
+.delete-examination .delete-query {
 	padding: .8rem 1.2rem;
 	color: var(--color-red);
 }
-.delete-theme .container-header,
-.delete-theme .delete-btn {
+.delete-examination .container-header,
+.delete-examination .delete-btn {
 	color: var(--color-white);
 	background-color: var(--color-red);
 	border: none;
 }
-.delete-theme .delete-btn:hover {
+.delete-examination .delete-btn:hover {
 	background-color: var(--color-red-hover);
 }
 
-.insert-theme form {
+.insert-examination form {
 	display: flex;
 	flex-direction: column;
 }
@@ -252,8 +254,8 @@ main {
 	display: flex;
 	flex-grow: 1;
 }
-.insert-theme .charge-row select,
-.insert-theme .charge-row select option {
+.insert-examination .charge-row select,
+.insert-examination .charge-row select option {
 	color: var(--color-green);
 }
 
@@ -290,20 +292,20 @@ main {
 .overlay-box .add-charged:hover {
 	background-color: #e4e4e4;
 }
-.insert-theme .add-charged {
+.insert-examination .add-charged {
 	border: dotted 2px var(--color-green);
 }
-.edit-theme .add-charged {
+.edit-examination .add-charged {
 	border: dotted 2px var(--color-blue);
 }
 
-.insert-theme input[type="submit"],
-.edit-theme input[type="submit"] {
+.insert-examination input[type="submit"],
+.edit-examination input[type="submit"] {
 	border: none;
 	color: white;
 }
 
-.themes-infos{
+.examinations-infos{
 	display: flex;
 	flex-direction: column;
 	background-color: var(--color-white);
@@ -312,13 +314,13 @@ main {
 	box-shadow: .4rem .4rem .8rem #29292933;
 	overflow: hidden;
 }
-.themes-infos .container-header{
+.examinations-infos .container-header{
 	display: flex;
 	justify-content: space-between;
 	padding: .8rem 1.2rem;
 	background-color: var(--color-orange);
 }
-.themes-infos h1{
+.examinations-infos h1{
 	text-align: center;
 	color: var(--color-white);
 	margin-right: 2.4rem;
@@ -408,32 +410,15 @@ main {
 	background-color: var(--color-white);
 	color: var(--color-blue);
 }
-.show-actives-box {
-	display: flex;
-	align-items: center;
-	padding: .8rem;
-}
-.show-actives {
-	width: 2.4rem;
-	height: 2.4rem;
-	margin-right: .8rem;
-	/* appearance: none; */
-	border: 0;
-	border-radius: .4rem;
-	cursor: pointer;
-}
-.show-actives:checked:after {
-	background-color:green;
-}
 
-#themes-container {
+#examinations-container {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
 	width: 100%;
 	margin-top: 1.6rem;
 }
-.themes-message {
+.examinations-message {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
@@ -443,11 +428,11 @@ main {
 	color: var(--color-black);
 	opacity: .75;
 }
-.themes-message h1 {
+.examinations-message h1 {
 	font-size: 4.8rem;
 	margin-bottom: .8rem;
 }
-.themes-message p {
+.examinations-message p {
 	font-size: 2.4rem;
 }
 
@@ -484,7 +469,7 @@ main {
 	}
 }
 
-.theme-card {
+.examination-card {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -496,42 +481,42 @@ main {
 	border-radius: .8rem;
 	box-shadow: .4rem .4rem .8rem #29292933;
 }
-.theme-card div {
+.examination-card div {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
-.theme-stats {
+.examination-stats {
     color: #848484;
 	margin: .8rem 0;
 }
-.theme-description {
+.examination-description {
 	margin: .8rem 0;
 }
 
-.theme-users {
+.examination-users {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
 	width: 100%;
 	margin: .8rem 0;
 }
-.theme-users li {
+.examination-users li {
 	display: flex;
 	align-items: center;
 }
-.theme-users img {
+.examination-users img {
 	width: 1.6rem;
 	height: 1.6rem;
 	margin-right: .8rem;
 	opacity: .3;
 }
-.theme-users p {
+.examination-users p {
 	color: #848484;
 }
 
-.theme-card .btn-container {
+.examination-card .btn-container {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
@@ -542,7 +527,7 @@ main {
 	width: 100%;
 }
 
-.theme-card .btn-container button {
+.examination-card .btn-container button {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -556,11 +541,11 @@ main {
 	border: none;
 	transition: all .1s ease-out;
 }
-.theme-card .btn-container button:hover {
+.examination-card .btn-container button:hover {
 	opacity: .5;
 }
 
-.theme-card .btn-container button:active {
+.examination-card .btn-container button:active {
 	animation: buttonClicked .1s ease-out;
 }
 @keyframes buttonClicked {
@@ -575,9 +560,9 @@ main {
 	}
 }
 
-.theme-card .btn-container .edit {
+.examination-card .btn-container .edit {
 	background-image: url('/img/pen.svg');
 }
-.theme-card .btn-container .destroy {
+.examination-card .btn-container .destroy {
 	background-image: url('/img/trash.svg');
 }
