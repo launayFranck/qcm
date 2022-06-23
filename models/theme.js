@@ -14,6 +14,7 @@ const findAll = async () => {
 				"theme".title AS "theme_title",
 				"theme".description AS "theme_description",
 				"user".username AS "theme_user",
+				"user".role AS "theme_user_role_id",
 				"theme".created_at AS "theme_created_at",
 				"theme".updated_at AS "theme_updated_at",
 				"creator".username AS "theme_created_by",
@@ -54,7 +55,7 @@ const findAll = async () => {
 						link_created_by : theme.link_created_by,
 						link_updated_by : theme.link_updated_by
 					};
-				})).sort((a, b) => a.link_created_at < b.link_created_at ? 1 : -1)
+				})).sort((a, b) => a.name > b.name ? 1 : -1)
 			};
 
 			return theme;

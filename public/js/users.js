@@ -251,6 +251,7 @@ const sortByProperty = (array, property, ascending = true) => {
 			:
 			(ascending ? -1 : 1)
 		));
+		
 		return res;
 	} catch (err) {
 		console.error(err.message);

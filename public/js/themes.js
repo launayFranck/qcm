@@ -309,12 +309,16 @@ const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 const sortByProperty = (array, property, ascending = true) => {
 	try {
 		const res = array.sort((a, b) => {
-			if (Array.isArray(a));
-			console.log(a.property)
-			const aX = Array.isArray(a[property]) ? a[property].length : a[property].toLowerCase();
-			const bX = Array.isArray(b[property]) ? b[property].length : b[property].toLowerCase();
-			return aX > bX ? (ascending ? 1 : -1) : (ascending ? -1 : 1);
+			let aX = Array.isArray(a[property]) ? a[property].length : a[property].toLowerCase();
+
+			let bX = Array.isArray(b[property]) ? b[property].length : b[property].toLowerCase();
+
+			let result = aX > bX ? (ascending ? 1 : -1) : (ascending ? -1 : 1);
+			
+			console.log(result);
+			return result;
 		});
+		
 		return res;
 	} catch (err) {
 		console.error(err.message);
@@ -327,7 +331,6 @@ const sortByProperty = (array, property, ascending = true) => {
  * @param {array} themes 
  */
 const setInfos = (themes) => {
-
 	const stats = [
 		{
 			name : 'Nombre de thèmes',
@@ -361,7 +364,6 @@ const setInfos = (themes) => {
 						number : usersNb[user]
 					}
 				});
-				console.log(users)
 				return users.sort((a, b) => a.number > b.number ? 1 : -1)[0].name
 			})()
 		},
@@ -385,7 +387,6 @@ const setInfos = (themes) => {
 						number : usersNb[user]
 					}
 				});
-				console.log(users)
 				return users.sort((a, b) => a.number < b.number ? 1 : -1)[0].name
 			})()
 		}
@@ -393,9 +394,9 @@ const setInfos = (themes) => {
 
 	const infoContainer = document.querySelector('.info-container');
 	infoContainer.innerHTML = "";
-	stats.forEach(stat => {
+	stats.forEach((stat, i) => {
 		infoContainer.innerHTML += `
-			<div class="infos-row">
+			<div class="infos-row" style="background-color: ${i % 2 ? '#ececec' : 'transparent'}">
 				<p>${stat.name}</p>
 				<hr>
 				<span>${stat.value}</span>
@@ -403,16 +404,6 @@ const setInfos = (themes) => {
 		`;
 	});
 };
-
-/**
- * Turns 1/2 rows in the infos panel to light gray
- */
-const setInfosRowColor = () => {
-	document.querySelectorAll('.infos-row').forEach((row, i) => {
-		row.style.backgroundColor = i % 2 ? "#ececec" : "transparent"
-	});
-};
-setInfosRowColor();
 
 /**
  * Sets the edit-theme form so it depends on which user we're editing
@@ -613,6 +604,7 @@ const filterThemes = async (themes) => {
 
 	if (tmp.length < 1) return {message : "Aucun thème ne correspond à ces critères"};
 
+	console.log(orderProperty.value, orderAscending.value);
 	tmp = sortByProperty(tmp, orderProperty.value, JSON.parse(orderAscending.value));
 
 	return tmp;
@@ -623,7 +615,7 @@ const filterThemes = async (themes) => {
  * @param {Array<object>} themes 
  */
 const displayThemes = async (themes) => {
-	const container = document.querySelector('#themes-container');
+	const container = document.querySelector('#themes-container'); 
 	const cardsBox = document.createElement('div');
 	cardsBox.classList.add('cards-box');
 

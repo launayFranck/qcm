@@ -43,30 +43,48 @@ app.get('/', (req, res) => {
 			if (err) {
 				console.error(err.message);
 				res.redirect('/login');
+				return;
 			};
-	
+
+			if (!user) {
+				res.redirect('/login');
+				return;
+			}
+			
+			if (user.role === 1) {
+				res.redirect('/admin');
+				return;
+			};
+
 			res.render('pages/index.ejs');
 		});
+	} else {
+		res.redirect('/login');
 	};
-
-	res.redirect('/login');
 });
 
 app.get('/login', (req, res) => {
-	console.log(Object.keys(req.cookies));
-
 	if (req.cookies.access_token) {
 		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-			if (err) console.error(err.message);
+			if (err) {
+				console.error(err.message);
+			};
 
-			if (!user) return;
+			if (user) {
+				if (user.role === 1) {
+					res.redirect('/admin');
+					return;
+				} else {
+					res.redirect('/');
+					return;
+				};
+			};
 
-			if (user.role === 1) res.redirect('/admin');
-			else res.redirect('/');
+			res.render('pages/login.ejs');
 		});
+	} else {
+		res.render('pages/login.ejs');
 	};
-	
-	res.render('pages/login.ejs');
 });
 
 app.get('/logout', (req, res) => {
@@ -84,29 +102,40 @@ app.get('/users', (req, res) => {
 				console.error(err.message);
 				res.redirect('/login');
 			};
+
+			if (!user) res.redirect('/login');
 			if (user.role !== 1) res.redirect('/');
 
 			res.render('pages/users.ejs');
 		});
+	} else {
+		res.redirect('/login');
 	};
-
-	res.redirect('/login');
 });
 
 app.get('/themes', (req, res) => {
 	if (req.cookies.access_token) {
-		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user, theme) => {
+		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
 			if (err) {
-				console.error(err.message);
+				// console.error(err.message);
 				res.redirect('/login');
+				return;
 			};
-			if (user.role !== 1) res.redirect('/');
+
+			if (!user) {
+				res.redirect('/login');
+				return;
+			}
+			if (user.role !== 1) {
+				res.redirect('/');
+				return;
+			}
 	
 			res.render('pages/themes.ejs');
 		});
+	} else {
+		res.redirect('/login');
 	};
-
-	res.redirect('/login');
 });
 
 app.get('/admin', (req, res) => {
@@ -116,13 +145,15 @@ app.get('/admin', (req, res) => {
 				console.error(err.message);
 				res.redirect('/login');
 			};
+
+			if (!user) res.redirect('/login');
 			if (user.role !== 1) res.redirect('/');
 	
 			res.render('pages/admin.ejs');
 		});
+	} else {
+		res.redirect('/login');
 	};
-
-	res.redirect('/login');
 });
 
 // • Server Listening
