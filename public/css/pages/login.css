@@ -59,6 +59,30 @@ form .msg {
 .form-col input:focus {
     border: solid .1rem var(--color-blue);
 }
+.password-field {
+    display: flex;
+}
+.password-field input {
+    display: flex;
+    flex-grow: 1;
+    width: 1rem;
+}
+.password-field .view-password {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 4.3rem;
+    height: 4.3rem;
+    border: solid .1rem #c4c4c4;
+    cursor: pointer;
+    transition: all .1s ease-in-out;
+}
+.password-field .view-password img {
+    width: 55%;
+    height: 55%;
+    opacity: .5;
+    object-fit: contain;
+}
 
 .form-col input[type="submit"] {
     border: none;

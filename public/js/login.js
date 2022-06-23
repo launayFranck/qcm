@@ -92,6 +92,27 @@ async function fetchRefreshToken() {
 	return jsonResponse;
 };
 
+const passwordField = document.querySelector('.password');
+
+/**
+ * Function used to display or not the password field's content
+ * @param {boolean} bool
+ */
+const showPasswordField = (bool) => {
+	if (bool) {
+		passwordField.setAttribute('type', 'text');
+	} else {
+		passwordField.setAttribute('type', 'password');
+	};
+};
+
+document.querySelector('.view-password').addEventListener('mousedown', () => {
+	showPasswordField(true);
+});
+document.querySelector('.view-password').addEventListener('mouseup', () => {
+	showPasswordField(false);
+});
+
 // document.querySelector('#deleteTokenBtn').onclick = async (e) => {
 // 	const deleteDetails = await deleteToken();
 // 	if (deleteDetails.error) {
