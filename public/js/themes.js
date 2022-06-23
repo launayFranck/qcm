@@ -283,32 +283,10 @@ document.querySelector('.insert-theme form').addEventListener('submit', async (e
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 /**
- * Sorts an array of objects by one of the objects' property
- * @param {array} array The array containing objects to sort
- * @param {string} property The name of the property to use as a filter
- * @param {boolean} ascending Specifies the order of the required informations
- * @returns {Array<object>} The sorted array
- */
-const sortByProperty = (array, property, ascending = true) => {
-	try {
-		const res = array.sort((a, b) => (a[property].toLowerCase() > b[property].toLowerCase() ?
-			(ascending ? 1 : -1)
-			:
-			(ascending ? -1 : 1)
-		));
-		return res;
-	} catch (err) {
-		console.error(err.message);
-		return array;
-	};
-};
-
-/**
  * Set infos about the themes
  * @param {array} themes 
  */
 const setInfos = (themes) => {
-
 	const stats = [
 		{
 			name : 'Nombre de thèmes',
@@ -342,7 +320,6 @@ const setInfos = (themes) => {
 						number : usersNb[user]
 					}
 				});
-				console.log(users)
 				return users.sort((a, b) => a.number > b.number ? 1 : -1)[0].name
 			})()
 		},
@@ -366,7 +343,6 @@ const setInfos = (themes) => {
 						number : usersNb[user]
 					}
 				});
-				console.log(users)
 				return users.sort((a, b) => a.number < b.number ? 1 : -1)[0].name
 			})()
 		}
@@ -374,9 +350,9 @@ const setInfos = (themes) => {
 
 	const infoContainer = document.querySelector('.info-container');
 	infoContainer.innerHTML = "";
-	stats.forEach(stat => {
+	stats.forEach((stat, i) => {
 		infoContainer.innerHTML += `
-			<div class="infos-row">
+			<div class="infos-row" style="background-color: ${i % 2 ? '#ececec' : 'transparent'}">
 				<p>${stat.name}</p>
 				<hr>
 				<span>${stat.value}</span>
@@ -384,16 +360,6 @@ const setInfos = (themes) => {
 		`;
 	});
 };
-
-/**
- * Turns 1/2 rows in the infos panel to light gray
- */
-const setInfosRowColor = () => {
-	document.querySelectorAll('.infos-row').forEach((row, i) => {
-		row.style.backgroundColor = i % 2 ? "#ececec" : "transparent"
-	});
-};
-setInfosRowColor();
 
 /**
  * Sets the edit-theme form so it depends on which user we're editing
@@ -594,30 +560,36 @@ const filterThemes = async (themes) => {
 
 	if (tmp.length < 1) return {message : "Aucun thème ne correspond à ces critères"};
 
-	/**
-	 * Sorts an array of objects by one of the objects' property
-	 * @param {array} array The array containing objects to sort
-	 * @param {string} property The name of the property to use as a filter
-	 * @param {boolean} ascending Specifies the order of the required informations
-	 * @returns {Array<object>} The sorted array
-	 */
-	const sortByProperty = (array, property, ascending = true) => {
-		try {
-			const res = array.sort((a, b) => (a[property].toLowerCase() > b[property].toLowerCase() ?
-				(ascending ? 1 : -1)
-				:
-				(ascending ? -1 : 1)
-			));
-			return res;
-		} catch (err) {
-			console.error(err.message);
-			return array;
-		};
-	};
-
 	tmp = sortByProperty(tmp, orderProperty.value, JSON.parse(orderAscending.value));
 
 	return tmp;
+};
+
+/**
+ * Sorts an array of objects by one of the objects' property
+ * @param {array} array The array containing objects to sort
+ * @param {string} property The name of the property to use as a filter
+ * @param {boolean} ascending Specifies the order of the required informations
+ * @returns {Array<object>} The sorted array
+ */
+ const sortByProperty = (array, property, ascending = true) => {
+	try {
+		const res = array.sort((a, b) => {
+			let aX = Array.isArray(a[property]) ? a[property].length : a[property].toLowerCase();
+
+			let bX = Array.isArray(b[property]) ? b[property].length : b[property].toLowerCase();
+
+			let result = aX > bX ? (ascending ? 1 : -1) : (ascending ? -1 : 1);
+			
+			console.log(result);
+			return result;
+		});
+
+		return res;
+	} catch (err) {
+		console.error(err.message);
+		return array;
+	};
 };
 
 /**
@@ -625,7 +597,7 @@ const filterThemes = async (themes) => {
  * @param {Array<object>} themes 
  */
 const displayThemes = async (themes) => {
-	const container = document.querySelector('#themes-container');
+	const container = document.querySelector('#themes-container'); 
 	const cardsBox = document.createElement('div');
 	cardsBox.classList.add('cards-box');
 

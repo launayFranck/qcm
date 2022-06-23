@@ -51,13 +51,45 @@ form .msg {
 }
 .form-col input {
     padding: .8rem;
+    border: none;
     border-radius: .2rem;
-    border: solid .1rem #c4c4c4;
     outline: none;
+}
+.form-col input.email {
+    border: solid .1rem #c4c4c4;
 }
 .form-col input:active,
 .form-col input:focus {
     border: solid .1rem var(--color-blue);
+}
+.password-field {
+    display: flex;
+    border: solid .1rem #c4c4c4;
+    border-radius: .2rem;
+    overflow: hidden;
+}
+.password-field input {
+    display: flex;
+    flex-grow: 1;
+    width: 1rem;
+}
+.password-field .view-password {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 4.3rem;
+    height: 4.3rem;
+    cursor: pointer;
+}
+.password-field .view-password:active {
+    transform: scale(0.75);
+}
+.password-field .view-password img {
+    text-align: center;
+    width: 55%;
+    height: 55%;
+    opacity: .5;
+    object-fit: contain;
 }
 
 .form-col input[type="submit"] {

@@ -38,79 +38,122 @@ app.use('/api/questions', questionRouter);
 
 // Pages
 app.get('/', (req, res) => {
-	const {access_token : accessToken} = req.cookies;
-	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-		if (err) {
-			console.error(err.message);
-			res.redirect('/login');
-		};
+	if (req.cookies.access_token) {
+		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+			if (err) {
+				console.error(err.message);
+				res.redirect('/login');
+				return;
+			};
 
-		res.render('pages/index.ejs');
-	});
+			if (!user) {
+				res.redirect('/login');
+				return;
+			}
+			
+			if (user.role === 1) {
+				res.redirect('/admin');
+				return;
+			};
+
+			res.render('pages/index.ejs');
+		});
+	} else {
+		res.redirect('/login');
+	};
 });
 
 app.get('/login', (req, res) => {
-	const {access_token : accessToken} = req.cookies;
-	if (accessToken) {
-		jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-			if (err) console.error(err.message);
+	if (req.cookies.access_token) {
+		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+			if (err) {
+				console.error(err.message);
+			};
 
-			if (user.role === 1) res.redirect('/admin');
-			else res.redirect('/');
+			if (user) {
+				if (user.role === 1) {
+					res.redirect('/admin');
+					return;
+				} else {
+					res.redirect('/');
+					return;
+				};
+			};
+
+			res.render('pages/login.ejs');
 		});
-		return;
+	} else {
+		res.render('pages/login.ejs');
 	};
-	
-	res.render('pages/login.ejs');
 });
 
 app.get('/logout', (req, res) => {
-	res.cookie('access_token', '', {maxAge: 0});
-	res.cookie('refresh_token', '', {maxAge: 0});
-	// Object.keys(req.cookies).forEach(cookie => {
-	// 	res.clearCookie(cookie);
-		
-	// });
+	for (const cookie of Object.keys(req.cookies)) {
+		res.cookie(cookie, '', {maxAge: 0});
+	};
+	
 	res.redirect('/login');
 });
 
 app.get('/users', (req, res) => {
-	const {access_token : accessToken} = req.cookies;
-	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-		if (err) {
-			console.error(err.message);
-			res.redirect('/login');
-		};
-		if (user.role !== 1) res.redirect('/');
+	if (req.cookies.access_token) {
+		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+			if (err) {
+				console.error(err.message);
+				res.redirect('/login');
+			};
 
-		res.render('pages/users.ejs');
-	});
+			if (!user) res.redirect('/login');
+			if (user.role !== 1) res.redirect('/');
+
+			res.render('pages/users.ejs');
+		});
+	} else {
+		res.redirect('/login');
+	};
 });
 
 app.get('/themes', (req, res) => {
-	const {access_token : accessToken} = req.cookies;
-	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user, theme) => {
-		if (err) {
-			console.error(err.message);
-			res.redirect('/login');
-		};
-		if (user.role !== 1) res.redirect('/');
+	if (req.cookies.access_token) {
+		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+			if (err) {
+				// console.error(err.message);
+				res.redirect('/login');
+				return;
+			};
 
-		res.render('pages/themes.ejs');
-	});
+			if (!user) {
+				res.redirect('/login');
+				return;
+			}
+			if (user.role !== 1) {
+				res.redirect('/');
+				return;
+			}
+	
+			res.render('pages/themes.ejs');
+		});
+	} else {
+		res.redirect('/login');
+	};
 });
 
 app.get('/admin', (req, res) => {
-	const {access_token : accessToken} = req.cookies;
-	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-		if (err) {
-			console.error(err.message);
-			res.redirect('/login');
-		};
-		if (user.role !== 1) res.redirect('/');
+	if (req.cookies.access_token) {
+		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+			if (err) {
+				console.error(err.message);
+				res.redirect('/login');
+			};
 
-		res.render('pages/admin.ejs');
-	});
+			if (!user) res.redirect('/login');
+			if (user.role !== 1) res.redirect('/');
+	
+			res.render('pages/admin.ejs');
+		});
+	} else {
+		res.redirect('/login');
+	};
 });
 
 // • Server Listening
