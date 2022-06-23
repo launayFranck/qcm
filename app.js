@@ -38,22 +38,25 @@ app.use('/api/questions', questionRouter);
 
 // Pages
 app.get('/', (req, res) => {
-	const {access_token : accessToken} = req.cookies;
-	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-		if (err) {
-			console.error(err.message);
-			res.redirect('/login');
-		};
+	if (req.cookies.access_token) {
+		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+			if (err) {
+				console.error(err.message);
+				res.redirect('/login');
+			};
+	
+			res.render('pages/index.ejs');
+		});
+	};
 
-		res.render('pages/index.ejs');
-	});
+	res.redirect('/login');
 });
 
 app.get('/login', (req, res) => {
-	const {access_token : accessToken} = req.cookies;
-	console.log(accessToken);
-	if (accessToken) {
-		jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+	console.log(Object.keys(req.cookies));
+
+	if (req.cookies.access_token) {
+		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
 			if (err) console.error(err.message);
 
 			if (!user) return;
@@ -67,52 +70,59 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-	res.cookie('access_token', '', {maxAge: 0});
-	res.cookie('refresh_token', '', {maxAge: 0});
-	// Object.keys(req.cookies).forEach(cookie => {
-	// 	res.clearCookie(cookie);
-		
-	// });
+	for (const cookie of Object.keys(req.cookies)) {
+		res.cookie(cookie, '', {maxAge: 0});
+	};
+	
 	res.redirect('/login');
 });
 
 app.get('/users', (req, res) => {
-	const {access_token : accessToken} = req.cookies;
-	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-		if (err) {
-			console.error(err.message);
-			res.redirect('/login');
-		};
-		if (user.role !== 1) res.redirect('/');
+	if (req.cookies.access_token) {
+		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+			if (err) {
+				console.error(err.message);
+				res.redirect('/login');
+			};
+			if (user.role !== 1) res.redirect('/');
 
-		res.render('pages/users.ejs');
-	});
+			res.render('pages/users.ejs');
+		});
+	};
+
+	res.redirect('/login');
 });
 
 app.get('/themes', (req, res) => {
-	const {access_token : accessToken} = req.cookies;
-	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user, theme) => {
-		if (err) {
-			console.error(err.message);
-			res.redirect('/login');
-		};
-		if (user.role !== 1) res.redirect('/');
+	if (req.cookies.access_token) {
+		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user, theme) => {
+			if (err) {
+				console.error(err.message);
+				res.redirect('/login');
+			};
+			if (user.role !== 1) res.redirect('/');
+	
+			res.render('pages/themes.ejs');
+		});
+	};
 
-		res.render('pages/themes.ejs');
-	});
+	res.redirect('/login');
 });
 
 app.get('/admin', (req, res) => {
-	const {access_token : accessToken} = req.cookies;
-	jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-		if (err) {
-			console.error(err.message);
-			res.redirect('/login');
-		};
-		if (user.role !== 1) res.redirect('/');
+	if (req.cookies.access_token) {
+		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+			if (err) {
+				console.error(err.message);
+				res.redirect('/login');
+			};
+			if (user.role !== 1) res.redirect('/');
+	
+			res.render('pages/admin.ejs');
+		});
+	};
 
-		res.render('pages/admin.ejs');
-	});
+	res.redirect('/login');
 });
 
 // • Server Listening
