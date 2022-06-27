@@ -17,7 +17,7 @@ const capitalize = (str, capitalizeAllWords = false) => {
  * @param {string} format The string to use as a template for the formatted date. Can include $Y (year), $M (month), $D (date), $d (day), $H (hours), $m (minutes), $s (seconds). E.g. : "$Y/$M/$D at $H/$m".
  * @returns {string} A date with the following format : "DD/MM/YYYY"
  */
-const formatDate = (timestamp, format = '$d $D/$M/$Y à $H:$m') => {
+const formatDate = (timestamp, format = '$D/$M/$Y à $H:$m') => {
 	const formatted = new Date(timestamp);
 
 	const year = formatted.getFullYear();
