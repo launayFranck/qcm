@@ -1,5 +1,7 @@
 @import url('../styles.css');
 @import url('../partials/navbar.css');
+@import url('../partials/overlay.css');
+@import url('../partials/message-overlay.css');
 @import url('../partials/footer.css');
 
 main {
@@ -8,282 +10,13 @@ main {
 	align-items: center;
 }
 
-#users-section {
-	margin: .8rem;
-	max-width: 120rem;
-}
-
-/* Insert button */
-#insert-user-btn {
-	display: flex;
-	align-items: center;
-	margin: .8rem 1.2rem;
-	padding: .8rem 1.2rem;
-	color: var(--color-white);
-	border: none;
-	border-radius: .4rem;
-	background-color: var(--color-green);
-}
-#insert-user-btn:hover {
-	background-color : var(--color-green-hover);
-}
-#insert-user-btn img {
-	width: 1.6rem;
-	height: 1.6rem;
-	margin-right: .8rem;
-	object-fit: contain;
-}
-
-/* details button */
-#details-user-btn {
-	display: flex;
-	align-items: center;
-	border: none;
-	border-radius: .4rem;
-	margin: .8rem;
-	min-width: 3.2rem;
-	background-image: url('/img/sheet.svg');
-	background-position: center;
-	background-size: 2.4rem;
-	background-repeat: no-repeat;
-	filter: brightness(.6);
-	transition: filter .1s ease-out;
-}
-#details-user-btn:hover {
-	filter: brightness(.75);
-}
-
-/* Overlay */
-.overlay {
-	display: none;
-	justify-content: center;
-	align-items: center;
-	position: fixed;
-	top: 0;
-	right: 0;
-	left: calc(var(--navbar-size) * 4);
-	bottom: 0;
-	z-index: 99;
-}
-.overlay-bg{
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	background-color: #29292988;
-	backdrop-filter: blur(8px);
-}
-.overlay-box{
-	position: absolute;
-	display: flex;
-}
-
 /* Page content */
 #users-section {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-}
-
-.users-panel {
-	display: flex;
-	justify-content: flex-end;
-	width: 100%;
-	margin-bottom: 10rem;
-}
-
-/* Overlay boxes */
-.container-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-button.overlay-closer {
-	width: 2.4rem;
-	height: 2.4rem;
-	border: none;
-	background-image: url('/img/plus.svg');
-	background-position: center;
-	background-size: contain;
-	background-repeat: no-repeat;
-	transform: rotate(45deg);
-}
-
-.insert-user,
-.edit-user,
-.delete-user {
-	display: flex;
-	flex-direction: column;
-	max-width: 48rem;
-	border-radius: .8rem;
-	box-shadow: .4rem .4rem .8rem #29292933;
-	overflow: hidden;
-}
-.overlay-box .container-header {
-	padding: .8rem 1.2rem;
-}
-.overlay-box .container-header h1 {
-	text-align: center;
-	color: var(--color-white);
-}
-
-/* Specific design for insert-user */
-.insert-user .container-header,
-.insert-user input[type="submit"] {
-	background-color: var(--color-green);
-}
-.insert-user input[type="submit"]:hover {
-	background-color: var(--color-green-hover);
-}
-.insert-user .input-box label {
-	color: var(--color-green);
-}
-
-/* Specific design for edit-user */
-.edit-user .container-header,
-.edit-user input[type="submit"] {
-	background-color: var(--color-blue);
-}
-.edit-user input[type="submit"]:hover {
-	background-color: var(--color-blue-hover);
-}
-.edit-user .input-box label {
-	color: var(--color-blue);
-}
-
-/* Specific design for delete-user */
-.delete-user .delete-btn-box {
-	justify-content: flex-end;
-}
-.delete-user .delete-btn-box .input-box {
-	flex-grow: inherit;
-}
-.delete-user .cancel-delete-btn {
-	color: var(--color-red);
-	background-color: transparent;
-	border: none;
-}
-.delete-user .cancel-delete-btn:hover {
-	color: var(--color-white);
-	border: none;
-	background-color: var(--color-red-hover);
-}
-.delete-user .delete-query {
-	padding: .8rem 1.2rem;
-	color: var(--color-red);
-}
-.delete-user .container-header,
-.delete-user .delete-btn {
-	color: var(--color-white);
-	background-color: var(--color-red);
-	border: none;
-}
-.delete-user .delete-btn:hover {
-	background-color: var(--color-red-hover);
-}
-
-.insert-user form {
-	display: flex;
-	flex-direction: column;
-}
-.container-body {
-	display: flex;
-	flex-direction: column;
-	background-color: var(--color-white);
-	padding: .8rem;
-}
-
-.form-row {
-	display: flex;
-	width: 100%;
-}
-.input-box {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	padding: .8rem;
-}
-.input-box label {
-	margin-bottom: .4rem;
-	width: max-content;
-}
-.input-box input,
-.input-box select {
-	display: flex;
-	color: var(--color-black);
-	background-color: var(--color-white);
-	border: solid .5px #c4c4c4;
-	border-radius: .4rem;
-	padding: .8rem;
-}
-.input-box input {
-	width: 100%;
-}
-.input-box select {
-	transition: background-color .1s ease-out;
-	cursor: pointer;
-}
-.input-box select:hover {
-	background-color: #ededed;
-}
-
-.input-box input[type="submit"] {
-	margin-top: 1.6rem;
-	padding: .8rem 1.6rem;
-	margin: auto;
-	width: fit-content;
-	transition: background-color .1s ease-out;
-}
-.insert-user input[type="submit"],
-.edit-user input[type="submit"] {
-	border: none;
-	color: white;
-}
-
-.users-infos{
-	display: flex;
-	flex-direction: column;
-	background-color: var(--color-white);
-	margin: 1.2rem;
-	border-radius: .8rem;
-	box-shadow: .4rem .4rem .8rem #29292933;
-	overflow: hidden;
-}
-.users-infos .container-header{
-	display: flex;
-	justify-content: space-between;
-	padding: .8rem 1.2rem;
-	background-color: var(--color-orange);
-}
-.users-infos h1{
-	text-align: center;
-	color: var(--color-white);
-	margin-right: 2.4rem;
-}
-.info-container {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-}
-.info-container .infos-row {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: .8rem .4rem;
-}
-
-.info-container .infos-row p,
-.info-container .infos-row span {
-	color: var(--color-orange);
-	padding: .8rem;
-}
-.info-container .infos-row hr {
-	background-color: none;
-	border: solid .8rem none dotted;
-	border-style: none none dotted;
-	color: var(--color-orange);
-	/* border-radius: 99rem; */
-	display: flex;
-	flex-grow: 1;
+	margin: .8rem;
+	max-width: 120rem;
 }
 
 .line-row {
@@ -455,6 +188,9 @@ button.overlay-closer {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
+}
+.user-card .user-box .user-personal h2 {
+	color: var(--color-blue);
 }
 .user-card .user-box .user-contact {
 	display: flex;

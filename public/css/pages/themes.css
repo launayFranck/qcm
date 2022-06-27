@@ -1,5 +1,6 @@
 @import url('../styles.css');
 @import url('../partials/navbar.css');
+@import url('../partials/overlay.css');
 @import url('../partials/message-overlay.css');
 @import url('../partials/footer.css');
 
@@ -483,6 +484,9 @@ main {
     display: flex;
     flex-direction: column;
     width: 100%;
+}
+.theme-card .theme-title h2 {
+	color: var(--color-blue);
 }
 
 .theme-stats {
