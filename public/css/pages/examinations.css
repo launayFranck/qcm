@@ -411,6 +411,24 @@ main {
 	color: var(--color-blue);
 }
 
+.show-actives-box {
+	display: flex;
+	align-items: center;
+	padding: .8rem;
+}
+.show-actives {
+	width: 2.4rem;
+	height: 2.4rem;
+	margin-right: .8rem;
+	/* appearance: none; */
+	border: 0;
+	border-radius: .4rem;
+	cursor: pointer;
+}
+.show-actives:checked:after {
+	background-color:green;
+}
+
 #examinations-container {
 	display: flex;
 	flex-direction: column;
