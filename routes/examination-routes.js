@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
 	try {
 		const result = await examination.findAll();
-		res.status(200).json({examination : result});
+		res.status(200).json({examinations : result});
 	} catch (err) {
 		res.status(500).json({error : err.message});
 	};

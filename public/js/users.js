@@ -1,4 +1,5 @@
 import { jwtDecode } from "./jwt-decode.js";
+import { capitalize, formatDate, sendMessageToPanel } from './utils.js';
 
 const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 
@@ -229,13 +230,6 @@ const countAllUsers = async () => {
 	});
 	return await res.json();
 };
-
-/**
- * Capitalizes a string
- * @param {string} str The string to capitalize
- * @returns {string} The capitalized string
- */
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 /**
  * Sorts an array of objects by one of the objects' property
