@@ -1,5 +1,5 @@
 import { jwtDecode } from "./jwt-decode.js";
-import { capitalize, formatDate, sendMessageToPanel } from './utils.js';
+import { capitalize, formatDate, sendMessageToPanel, sortByProperty } from './utils.js';
 
 const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 
@@ -531,36 +531,7 @@ const filterThemes = async (themes) => {
 
 	if (tmp.length < 1) return {message : "Aucun thème ne correspond à ces critères"};
 
-	tmp = sortByProperty(tmp, orderProperty.value, JSON.parse(orderAscending.value));
-
-	return tmp;
-};
-
-/**
- * Sorts an array of objects by one of the objects' property
- * @param {array} array The array containing objects to sort
- * @param {string} property The name of the property to use as a filter
- * @param {boolean} ascending Specifies the order of the required informations
- * @returns {Array<object>} The sorted array
- */
- const sortByProperty = (array, property, ascending = true) => {
-	try {
-		const res = array.sort((a, b) => {
-			let aX = Array.isArray(a[property]) ? a[property].length : a[property].toLowerCase();
-
-			let bX = Array.isArray(b[property]) ? b[property].length : b[property].toLowerCase();
-
-			let result = aX > bX ? (ascending ? 1 : -1) : (ascending ? -1 : 1);
-			
-			console.log(result);
-			return result;
-		});
-
-		return res;
-	} catch (err) {
-		console.error(err.message);
-		return array;
-	};
+	return sortByProperty(tmp, orderProperty.value, JSON.parse(orderAscending.value));
 };
 
 /**

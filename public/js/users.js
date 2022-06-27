@@ -1,21 +1,21 @@
 import { jwtDecode } from "./jwt-decode.js";
-import { capitalize, formatDate, sendMessageToPanel } from './utils.js';
+import { capitalize, formatDate, sendMessageToPanel, sortByProperty } from './utils.js';
 
 const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 
 const hostname = window.location.href.split(window.location.pathname)[0];
 
 // Overlay buttons
-const insertUserBtn = document.querySelector('#insert-user-btn');
-const detailsUserBtn = document.querySelector('#details-user-btn');
+const insertUserBtn = document.querySelector('#insert-overlay-btn');
+const detailsUserBtn = document.querySelector('#details-overlay-btn');
 
 // Overlay stuff
 const overlay = document.querySelector(".overlay");
 const overlayBg = document.querySelector(".overlay-bg");
-const insertUserBox = document.querySelector(".insert-user");
-const detailsUserBox = document.querySelector(".details-user");
-const editUserBox = document.querySelector(".edit-user");
-const deleteUserBox = document.querySelector(".delete-user");
+const insertUserBox = document.querySelector(".insert-overlay");
+const detailsUserBox = document.querySelector(".details-overlay");
+const editUserBox = document.querySelector(".edit-overlay");
+const deleteUserBox = document.querySelector(".delete-overlay");
 
 /**
  * Function displaying or hiding the overlay and its black blurred transparent background
@@ -144,7 +144,7 @@ const deleteUser = async (id) => {
 	return await res.json();
 };
 
-document.querySelector('.insert-user form').addEventListener('submit', async (e) => {
+document.querySelector('.insert-overlay form').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	try {
 		const insertDetails = await insertUser({
@@ -162,8 +162,7 @@ document.querySelector('.insert-user form').addEventListener('submit', async (e)
 		displayOverlay(false);
 		e.target.reset();
 	} catch (err) {
-		console.log(err)
-		alert(err.message);
+		sendMessageToPanel(err.message, 'var(--color-red)');
 	};
 });
 
@@ -232,28 +231,6 @@ const countAllUsers = async () => {
 };
 
 /**
- * Sorts an array of objects by one of the objects' property
- * @param {array} array The array containing objects to sort
- * @param {string} property The name of the property to use as a filter
- * @param {boolean} ascending Specifies the order of the required informations
- * @returns {Array<object>} The sorted array
- */
-const sortByProperty = (array, property, ascending = true) => {
-	try {
-		const res = array.sort((a, b) => (a[property].toLowerCase() > b[property].toLowerCase() ?
-			(ascending ? 1 : -1)
-			:
-			(ascending ? -1 : 1)
-		));
-		
-		return res;
-	} catch (err) {
-		console.error(err.message);
-		return array;
-	};
-};
-
-/**
  * Shows informations about the users in the HTML
  */
 const fillUsersInfos = async () => {
@@ -298,13 +275,13 @@ const setInfosRowColor = () => {
 setInfosRowColor();
 
 /**
- * Sets the edit-user form so it depends on which user we're editing
+ * Sets the edit-overlay form so it depends on which user we're editing
  * @param {object} user The user on which to base the edit form depending on who we're editing
  */
 const setEditUserForm = async (user) => {
 	const properties = ["username", "firstname", "lastname", "email", "phone", "password", "role"];
 
-	const form = document.querySelector('.edit-user form');
+	const form = document.querySelector('.edit-overlay form');
 	const formClone = form.cloneNode(true);
 
 	form.parentNode.replaceChild(formClone, form);
@@ -312,13 +289,13 @@ const setEditUserForm = async (user) => {
 	formClone.addEventListener('submit', async (e) => {
 		e.preventDefault();
 
-		const username = document.querySelector('.edit-user .username');
-		const firstname = document.querySelector('.edit-user .firstname');
-		const lastname = document.querySelector('.edit-user .lastname');
-		const email = document.querySelector('.edit-user .email');
-		const phone = document.querySelector('.edit-user .phone');
-		const password = document.querySelector('.edit-user .password');
-		const role = document.querySelector('.edit-user .role');
+		const username = document.querySelector('.edit-overlay .username');
+		const firstname = document.querySelector('.edit-overlay .firstname');
+		const lastname = document.querySelector('.edit-overlay .lastname');
+		const email = document.querySelector('.edit-overlay .email');
+		const phone = document.querySelector('.edit-overlay .phone');
+		const password = document.querySelector('.edit-overlay .password');
+		const role = document.querySelector('.edit-overlay .role');
 
 		const values = {
 			username : username.value.toString(),
@@ -329,8 +306,6 @@ const setEditUserForm = async (user) => {
 			password : password.value.toString(),
 			role : role.value.toString()
 		};
-
-		console.log(values);
 		
 		let payload = {};
 		Object.keys(values).forEach(property => {
@@ -349,12 +324,12 @@ const setEditUserForm = async (user) => {
 			displayOverlay(false);
 			setUsers();
 		} catch (err) {
-			alert(err.message);
+			sendMessageToPanel(err.message);
 		};
 	});
 
 	properties.forEach(prop => {
-		const input = document.querySelector(`.edit-user .${prop}`);
+		const input = document.querySelector(`.edit-overlay .${prop}`);
 		input.value = user[prop] ? user[prop] : "";
 	});
 
@@ -364,7 +339,7 @@ const setEditUserForm = async (user) => {
 const setDeleteUserForm = async (user) => {
 	document.querySelector('.delete-query').innerText = `Souhaitez-vous vraiment supprimer ${user.firstname} ${user.lastname} ?`;
 
-	const deleteUserBtn = document.querySelector('.delete-user .delete-btn');
+	const deleteUserBtn = document.querySelector('.delete-overlay .delete-btn');
 	const deleteUserBtnClone = deleteUserBtn.cloneNode(true);
 
 	deleteUserBtnClone.addEventListener('click', async (e) => {
@@ -372,12 +347,12 @@ const setDeleteUserForm = async (user) => {
 
 		try {
 			const deleteDetails = await deleteUser(user.id);
-			console.log(deleteDetails);
 
 			await setUsers();
+			sendMessageToPanel(`L'utilisateur ${user.firstname} ${user.lastname} (${user.username}) a été supprimé`, 'var(--color-green)');
 			displayOverlay(false);
 		} catch (err) {
-			alert(err.message);
+			sendMessageToPanel(err.message, 'var(--color-red)');
 		};
 	});
 
@@ -483,30 +458,8 @@ const setUsers = async () => {
 						<a href="tel:${user.phone}" class="phone">${user.phone}</a>
 					</div>
 					<div class="user-stats">
-						<p class="createdAt">Inscrit le ${(() => {
-							const date = new Date(user.created_at);
-							const year = date.getFullYear();
-							const month = date.getMonth() + 1;
-							const day = date.getDate();
-
-							const formatNb = (nb) => {
-								return (nb.toString()).length < 2 ? `0${nb}` : nb;
-							};
-
-							return `${formatNb(day)}/${formatNb(month)}/${year}`;
-						})()}</p>
-						<p class="updatedAt">Modifié le ${(() => {
-							const date = new Date(user.updated_at);
-							const year = date.getFullYear();
-							const month = date.getMonth() + 1;
-							const day = date.getDate();
-
-							const formatNb = (nb) => {
-								return (nb.toString()).length < 2 ? `0${nb}` : nb;
-							};
-
-							return `${formatNb(day)}/${formatNb(month)}/${year}`;
-						})()}</p>
+						<p class="createdAt">Inscrit le ${formatDate(user.created_at)}</p>
+						<p class="updatedAt">Modifié le ${formatDate(user.updated_at)}</p>
 					</div>
 				`;
 
