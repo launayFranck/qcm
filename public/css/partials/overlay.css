@@ -1,0 +1,271 @@
+/* - - - Overlay togglers - - - */
+
+.overlay-toggle-panel {
+	display: flex;
+	justify-content: flex-end;
+	width: 100%;
+	margin-bottom: 10rem;
+}
+
+/* Insert button */
+#insert-overlay-btn {
+	display: flex;
+	align-items: center;
+	margin: .8rem 1.2rem;
+	padding: .8rem 1.2rem;
+	color: var(--color-white);
+	border: none;
+	border-radius: .4rem;
+	background-color: var(--color-green);
+}
+#insert-overlay-btn:hover {
+	background-color : var(--color-green-hover);
+}
+#insert-overlay-btn img {
+	width: 1.6rem;
+	height: 1.6rem;
+	margin-right: .8rem;
+	object-fit: contain;
+}
+
+/* details button */
+#details-overlay-btn {
+	display: flex;
+	align-items: center;
+	border: none;
+	border-radius: .4rem;
+	margin: .8rem;
+	min-width: 3.2rem;
+	background-image: url('/img/sheet.svg');
+	background-position: center;
+	background-size: 2.4rem;
+	background-repeat: no-repeat;
+	filter: brightness(.6);
+	transition: filter .1s ease-out;
+}
+#details-overlay-btn:hover {
+	filter: brightness(.75);
+}
+
+/* - - - Overlay parts - - - */
+.overlay {
+	display: none;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: calc(var(--navbar-size) * 4);
+	bottom: 0;
+	z-index: 99;
+}
+.overlay-bg{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: #29292988;
+	backdrop-filter: blur(8px);
+}
+
+.overlay-box{
+	position: absolute;
+	display: flex;
+}
+
+.insert-overlay form {
+	display: flex;
+	flex-direction: column;
+}
+
+/* Overlay boxes */
+.overlay-box .container-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+button.overlay-closer {
+	width: 2.4rem;
+	height: 2.4rem;
+	border: none;
+	background-image: url('/img/plus.svg');
+	background-position: center;
+	background-size: contain;
+	background-repeat: no-repeat;
+	transform: rotate(45deg);
+}
+
+.insert-overlay,
+.edit-overlay,
+.delete-overlay {
+	display: flex;
+	flex-direction: column;
+	max-width: 48rem;
+	border-radius: .8rem;
+	box-shadow: .4rem .4rem .8rem #29292933;
+	overflow: hidden;
+}
+.overlay-box .container-header {
+	padding: .8rem 1.2rem;
+}
+.overlay-box .container-header h1 {
+	text-align: center;
+	color: var(--color-white);
+}
+
+/* Specific design for insert-overlay */
+.insert-overlay .container-header,
+.insert-overlay input[type="submit"] {
+	background-color: var(--color-green);
+}
+.insert-overlay input[type="submit"]:hover {
+	background-color: var(--color-green-hover);
+}
+.insert-overlay .input-box label {
+	color: var(--color-green);
+}
+
+/* Specific design for details overlay */
+.details-box {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--color-white);
+	margin: 1.2rem;
+	border-radius: .8rem;
+	box-shadow: .4rem .4rem .8rem #29292933;
+	overflow: hidden;
+}
+.details-box .container-header {
+	display: flex;
+	justify-content: space-between;
+	padding: .8rem 1.2rem;
+	background-color: var(--color-orange);
+}
+.details-box h1 {
+	text-align: center;
+	color: var(--color-white);
+	margin-right: 2.4rem;
+}
+.details-container {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+}
+.details-container .details-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: .8rem .4rem;
+}
+
+.details-container .details-row p,
+.details-container .details-row span {
+	color: var(--color-orange);
+	padding: .8rem;
+}
+.details-container .details-row hr {
+	background-color: none;
+	border: solid .8rem none dotted;
+	border-style: none none dotted;
+	color: var(--color-orange);
+	display: flex;
+	flex-grow: 1;
+}
+
+/* Specific design for edit-overlay */
+.edit-overlay .container-header,
+.edit-overlay input[type="submit"] {
+	background-color: var(--color-blue);
+}
+.edit-overlay input[type="submit"]:hover {
+	background-color: var(--color-blue-hover);
+}
+.edit-overlay .input-box label {
+	color: var(--color-blue);
+}
+
+/* Specific design for delete-overlay */
+.delete-overlay .delete-btn-box {
+	justify-content: flex-end;
+}
+.delete-overlay .delete-btn-box .input-box {
+	flex-grow: inherit;
+}
+.delete-overlay .cancel-delete-btn {
+	color: var(--color-red);
+	background-color: transparent;
+	border: none;
+}
+.delete-overlay .cancel-delete-btn:hover {
+	color: var(--color-white);
+	border: none;
+	background-color: var(--color-red-hover);
+}
+.delete-overlay .delete-query {
+	padding: .8rem 1.2rem;
+	color: var(--color-red);
+}
+.delete-overlay .container-header,
+.delete-overlay .delete-btn {
+	color: var(--color-white);
+	background-color: var(--color-red);
+	border: none;
+}
+.delete-overlay .delete-btn:hover {
+	background-color: var(--color-red-hover);
+}
+
+.container-body {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--color-white);
+	padding: .8rem;
+}
+
+/* - - - Form content styling - - - */
+
+.form-row {
+	display: flex;
+	width: 100%;
+}
+.input-box {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	padding: .8rem;
+}
+.input-box label {
+	margin-bottom: .4rem;
+	width: max-content;
+}
+.input-box input,
+.input-box select {
+	display: flex;
+	color: var(--color-black);
+	background-color: var(--color-white);
+	border: solid .5px #c4c4c4;
+	border-radius: .4rem;
+	padding: .8rem;
+}
+.input-box input {
+	width: 100%;
+}
+.input-box select {
+	transition: background-color .1s ease-out;
+	cursor: pointer;
+}
+.input-box select:hover {
+	background-color: #ededed;
+}
+
+.input-box input[type="submit"] {
+	margin-top: 1.6rem;
+	padding: .8rem 1.6rem;
+	margin: auto;
+	width: fit-content;
+	transition: background-color .1s ease-out;
+}
+.insert-overlay input[type="submit"],
+.edit-overlay input[type="submit"] {
+	border: none;
+	color: white;
+}
