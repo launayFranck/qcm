@@ -8,7 +8,7 @@
 	justify-content: space-between;
 	align-items: center;
 	width: calc(var(--navbar-size) * 4);
-	background-color: var(--color-blue);
+	background-color: var(--color-main);
 	z-index: 999;
 }
 #navbar ul {
@@ -42,7 +42,7 @@
 	/* text-decoration: underline; */
 	padding-left: 2.4rem;
 	opacity: 1;
-	background-color: var(--color-blue-hover);
+	background-color: var(--color-main-hover);
 }
 main {
 	display: flex;

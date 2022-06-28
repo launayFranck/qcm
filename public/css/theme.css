@@ -1,0 +1,89 @@
+.theme-classic {
+    --color-main: #337ab7;
+    --color-main-hover: #468bc7;
+
+    --color-details: #FD7000;
+    --color-details-hover: #ff9e4e;
+
+    --color-insert: #5cb85c;
+    --color-insert-hover: #449D44;
+
+    --color-edit: var(--color-main);
+    --color-edit-hover: var(--color-main-hover);
+
+    --color-delete: #f16060;
+    --color-delete-hover: #dc3b3b;
+
+    --color-good-message: #5cb85c;
+    --color-bad-message: #f16060;
+
+    --color-bg: #fefefe;
+    --color-bg-alt: #f3f3f3;
+    --color-bg-alt2: #c4c4c4;
+    --color-bg-alt3: #848484;
+
+    --color-input-border: #c4c4c4;
+
+    --color-text: #292929;
+    --color-box-border: #c4c4c433;
+    --color-box-shadow: #29292933;
+
+    --color-slider-off: #ccc;
+
+    --sheet-brightness: .6;
+    --sheet-brightness-hover: .75;
+}
+
+.theme-original {
+    --color-main: #0026FF;
+    --color-main-hover: #3452ff;
+
+    --color-details: #FD7000;
+    --color-details-hover: #ff9e4e;
+
+    --color-insert: #5cb85c;
+    --color-insert-hover: #449D44;
+
+    --color-delete: #f16060;
+    --color-delete-hover: #dc3b3b;
+
+    --color-bg: #fefefe;
+    --color-bg-alt: #f3f3f3;
+    --color-bg-alt2: #c4c4c4;
+    --color-bg-alt3: #848484;
+
+    --color-input-border: #c4c4c4;
+
+    --color-text: #292929;
+    --color-box-border: #c4c4c433;
+    --color-box-shadow: #29292933;
+
+    --color-slider-off: #ccc;
+}
+
+.theme-cranberry {
+    --color-main: #c83b50;
+    --color-main-hover: #dc5065;
+
+    --color-details: #c83b50;
+    --color-details-hover: #dc5065;
+
+    --color-insert: #c83b50;
+    --color-insert-hover: #dc5065;
+
+    --color-delete: #c83b50;
+    --color-delete-hover: #dc5065;
+
+    --color-bg: #2F263C;
+    --color-bg-alt: #312345;
+    --color-bg-alt2: #281E36;
+    --color-bg-alt3: #1d1627;
+
+    --color-input-border: #281E36;
+
+    --color-text: #F4E0F1;
+    --color-box-border: #c4c4c433;
+    --color-box-shadow: #29292933;
+
+    --color-slider-off: #281E36;
+}

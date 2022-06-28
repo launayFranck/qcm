@@ -1,4 +1,5 @@
 @import url('../styles.css');
+@import url('../theme.css');
 @import url('../partials/navbar.css');
 @import url('../partials/message-overlay.css');
 @import url('../partials/footer.css');
@@ -22,13 +23,13 @@ main {
 	align-items: center;
 	margin: .8rem 1.2rem;
 	padding: .8rem 1.2rem;
-	color: var(--color-white);
+	color: var(--color-bg);
 	border: none;
 	border-radius: .4rem;
-	background-color: var(--color-green);
+	background-color: var(--color-insert);
 }
 #insert-examination-btn:hover {
-	background-color : var(--color-green-hover);
+	background-color : var(--color-insert-hover);
 }
 #insert-examination-btn img {
 	width: 1.6rem;
@@ -117,7 +118,7 @@ main {
 	flex-direction: column;
 	max-width: 48rem;
 	border-radius: .8rem;
-	box-shadow: .4rem .4rem .8rem #29292933;
+	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
 	overflow: hidden;
 }
 .overlay-box .container-header {
@@ -125,31 +126,31 @@ main {
 }
 .overlay-box .container-header h1 {
 	text-align: center;
-	color: var(--color-white);
+	color: var(--color-bg);
 }
 
 /* Specific design for insert-examination */
 .insert-examination .container-header,
 .insert-examination input[type="submit"] {
-	background-color: var(--color-green);
+	background-color: var(--color-insert);
 }
 .insert-examination input[type="submit"]:hover {
-	background-color: var(--color-green-hover);
+	background-color: var(--color-insert-hover);
 }
 .insert-examination .input-box label {
-	color: var(--color-green);
+	color: var(--color-insert);
 }
 
 /* Specific design for edit-examination */
 .edit-examination .container-header,
 .edit-examination input[type="submit"] {
-	background-color: var(--color-blue);
+	background-color: var(--color-main);
 }
 .edit-examination input[type="submit"]:hover {
-	background-color: var(--color-blue-hover);
+	background-color: var(--color-main-hover);
 }
 .edit-examination .input-box label {
-	color: var(--color-blue);
+	color: var(--color-main);
 }
 
 /* Specific design for delete-examination */
@@ -160,27 +161,27 @@ main {
 	flex-grow: inherit;
 }
 .delete-examination .cancel-delete-btn {
-	color: var(--color-red);
+	color: var(--color-delete);
 	background-color: transparent;
 	border: none;
 }
 .delete-examination .cancel-delete-btn:hover {
-	color: var(--color-white);
+	color: var(--color-bg);
 	border: none;
-	background-color: var(--color-red-hover);
+	background-color: var(--color-delete-hover);
 }
 .delete-examination .delete-query {
 	padding: .8rem 1.2rem;
-	color: var(--color-red);
+	color: var(--color-delete);
 }
 .delete-examination .container-header,
 .delete-examination .delete-btn {
-	color: var(--color-white);
-	background-color: var(--color-red);
+	color: var(--color-bg);
+	background-color: var(--color-delete);
 	border: none;
 }
 .delete-examination .delete-btn:hover {
-	background-color: var(--color-red-hover);
+	background-color: var(--color-delete-hover);
 }
 
 .insert-examination form {
@@ -190,7 +191,7 @@ main {
 .container-body {
 	display: flex;
 	flex-direction: column;
-	background-color: var(--color-white);
+	background-color: var(--color-bg);
 	padding: .8rem;
 }
 
@@ -211,9 +212,9 @@ main {
 .input-box input,
 .input-box select {
 	display: flex;
-	color: var(--color-black);
-	background-color: var(--color-white);
-	border: solid .5px #c4c4c4;
+	color: var(--color-text);
+	background-color: var(--color-bg);
+	border: solid .5px var(--color-bg-alt2);
 	border-radius: .4rem;
 	padding: .8rem;
 }
@@ -225,7 +226,7 @@ main {
 	cursor: pointer;
 }
 .input-box select:hover {
-	background-color: #ededed;
+	background-color: var(--color-bg-alt);
 }
 
 .input-box input[type="submit"] {
@@ -238,7 +239,7 @@ main {
 
 .overlay-box textarea {
 	padding: .8rem;
-	border: solid 1px #c4c4c4;
+	border: solid 1px var(--color-bg-alt2);
 	border-radius: .4rem;
 	resize: none;
 	min-height: 2.4rem;
@@ -256,7 +257,7 @@ main {
 }
 .insert-examination .charge-row select,
 .insert-examination .charge-row select option {
-	color: var(--color-green);
+	color: var(--color-insert);
 }
 
 .overlay-box .charge-row .remove-charged {
@@ -269,14 +270,14 @@ main {
 	border: none;
 	border-radius: .4rem;
 	margin-left: .8rem;
-	background-color: var(--color-red);
-	color: var(--color-white);
+	background-color: var(--color-delete);
+	color: var(--color-bg);
 	font-weight: bolder;
 	cursor: pointer;
 	transition: background-color .1s ease-out;
 }
 .overlay-box .charge-row .remove-charged:hover {
-	background-color: var(--color-red-hover)
+	background-color: var(--color-delete-hover)
 }
 
 .overlay-box .add-charged {
@@ -284,45 +285,45 @@ main {
 	justify-content: center;
 	align-items: center;
 	padding: .8rem;
-	color: var(--color-green);
+	color: var(--color-insert);
 	font-weight: bolder;
 	cursor: pointer;
 	transition: background-color .1s ease-out;
 }
 .overlay-box .add-charged:hover {
-	background-color: #e4e4e4;
+	background-color: var(--color-bg-alt);
 }
 .insert-examination .add-charged {
-	border: dotted 2px var(--color-green);
+	border: dotted 2px var(--color-insert);
 }
 .edit-examination .add-charged {
-	border: dotted 2px var(--color-blue);
+	border: dotted 2px var(--color-main);
 }
 
 .insert-examination input[type="submit"],
 .edit-examination input[type="submit"] {
 	border: none;
-	color: white;
+	color: var(--color-bg);
 }
 
 .examinations-infos{
 	display: flex;
 	flex-direction: column;
-	background-color: var(--color-white);
+	background-color: var(--color-bg);
 	margin: 1.2rem;
 	border-radius: .8rem;
-	box-shadow: .4rem .4rem .8rem #29292933;
+	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
 	overflow: hidden;
 }
 .examinations-infos .container-header{
 	display: flex;
 	justify-content: space-between;
 	padding: .8rem 1.2rem;
-	background-color: var(--color-orange);
+	background-color: var(--color-details);
 }
 .examinations-infos h1{
 	text-align: center;
-	color: var(--color-white);
+	color: var(--color-bg);
 	margin-right: 2.4rem;
 }
 .info-container {
@@ -339,15 +340,14 @@ main {
 
 .info-container .infos-row p,
 .info-container .infos-row span {
-	color: var(--color-orange);
+	color: var(--color-details);
 	padding: .8rem;
 }
 .info-container .infos-row hr {
 	background-color: none;
 	border: solid .8rem none dotted;
 	border-style: none none dotted;
-	color: var(--color-orange);
-	/* border-radius: 99rem; */
+	color: var(--color-details);
 	display: flex;
 	flex-grow: 1;
 	min-width: 10rem;
@@ -364,9 +364,9 @@ main {
 	padding: .8rem;
 	width: 100%;
 	border-radius: .4rem;
-	background-color: var(--color-blue);
-	box-shadow: .4rem .4rem .8rem #29292933;
-	color: var(--color-white);
+	background-color: var(--color-main);
+	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
+	color: var(--color-bg);
 }
 @media screen and (max-width: 1240px) {
 	.filter-params {
@@ -382,8 +382,8 @@ main {
 	border: none;
 	border-radius: .4rem;
 	margin: 1.2rem;
-	background-color: var(--color-white);
-	color: var(--color-blue);
+	background-color: var(--color-bg);
+	color: var(--color-main);
 	overflow: hidden;
 }
 .search-box .search {
@@ -407,8 +407,8 @@ main {
 	border: none;
 	border-radius: .4rem;
 	cursor: pointer;
-	background-color: var(--color-white);
-	color: var(--color-blue);
+	background-color: var(--color-bg);
+	color: var(--color-main);
 }
 
 .show-actives-box {
@@ -443,7 +443,7 @@ main {
 	justify-content: center;
 	align-items: center;
 	width: 100%;
-	color: var(--color-black);
+	color: var(--color-text);
 	opacity: .75;
 }
 .examinations-message h1 {
@@ -458,8 +458,8 @@ main {
 	width: 100%;
 }
 .role-header {
-	background-color: var(--color-blue);
-	color: var(--color-white);
+	background-color: var(--color-main);
+	color: var(--color-bg);
 	padding: .8rem;
 	border-radius: .4rem;
 }
@@ -492,12 +492,12 @@ main {
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
-	color: var(--color-black);
+	color: var(--color-text);
 	width: 100%;
 	padding: 1.2rem;
-	border: solid 1px #c4c4c433;
+	border: solid 1px var(--color-input-border);
 	border-radius: .8rem;
-	box-shadow: .4rem .4rem .8rem #29292933;
+	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
 }
 .examination-card div {
     display: flex;
@@ -506,7 +506,7 @@ main {
 }
 
 .examination-stats {
-    color: #848484;
+    color: var(--color-alt3);
 	margin: .8rem 0;
 }
 .examination-description {
@@ -531,7 +531,7 @@ main {
 	opacity: .3;
 }
 .examination-users p {
-	color: #848484;
+	color: var(--color-alt3);
 }
 
 .examination-card .btn-container {

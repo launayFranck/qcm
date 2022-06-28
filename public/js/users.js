@@ -59,7 +59,7 @@ const phone = document.getElementsByName('phone')[0];
 const password = document.getElementsByName('password')[0];
 const role = document.getElementsByName('role')[0];
 
-// Users infos
+// Users details
 const usersContainer = document.querySelector('#users-container');
 const usersNb = document.querySelector('.users-number');
 const adminsNb = document.querySelector('.admins-number');
@@ -67,7 +67,7 @@ const managersNb = document.querySelector('.managers-number');
 const formersNb = document.querySelector('.formers-number');
 const internsNb = document.querySelector('.interns-number');
 
-// Filter & order infos
+// Filter & order params
 const search = document.querySelector('.search');
 const orderProperty = document.querySelector('.order-property');
 const orderAscending = document.querySelector('.order-ascending');
@@ -233,16 +233,56 @@ const countAllUsers = async () => {
 /**
  * Shows informations about the users in the HTML
  */
-const fillUsersInfos = async () => {
-	const { users : number } = await countAllUsers();
+const setDetails = async (users) => {
 	try {
-		usersNb.innerText = number.users_number;
-		adminsNb.innerText = number.admins_number;
-		managersNb.innerText = number.managers_number;
-		formersNb.innerText = number.formers_number;
-		internsNb.innerText = number.interns_number;
+		const stats = [
+			{
+				name : "Nombre d'administrateurs",
+				value : users.filter(user => user.role == 1).length
+			},
+			{
+				name : "Nombre de gestionnaires",
+				value : users.filter(user => user.role == 2).length
+			},
+			{
+				name : "Nombre de formateurs",
+				value : users.filter(user => user.role == 3).length
+			},
+			{
+				name : "Nombre de stagiaires",
+				value : users.filter(user => user.role == 4).length
+			},
+			{
+				name : "Total d'utilisateurs",
+				value : users.length
+			},
+			{
+				name : "Utilisateurs actifs",
+				value : `${users.filter(user => user.activated === true).length} / ${users.length}`
+			},
+			{
+				name : "Utilisateur le plus ancien",
+				value : users.sort((a, b) => a.created_at > b.created_at ? 1 : -1)[0].username
+			},
+			{
+				name : "Utilisateur le plus récent",
+				value : users.sort((a, b) => a.created_at > b.created_at ? -1 : 1)[0].username
+			}
+		];
+		
+		const detailsContainer = document.querySelector('.details-container');
+		detailsContainer.innerHTML = "";
+		stats.forEach((stat, i) => {
+			detailsContainer.innerHTML += `
+				<div class="details-row${i % 2 ? ' darkened' : ''}">
+					<p>${stat.name}</p>
+					<hr>
+					<span>${stat.value}</span>
+				</div>
+			`;
+		});
 	} catch (err) {
-		console.error(err.message);
+		sendMessageToPanel(err.message, 'var(--color-bad-message)');
 	};
 };
 
@@ -361,12 +401,11 @@ const setDeleteUserForm = async (user) => {
 	displayOverlay(true, deleteUserBox);
 };
 
-const setUsers = async () => {
-	await fillUsersInfos();
-	
+const setUsers = async () => {	
 	// Fetching users
 	const {users} = await getAllUsers();
 	users.sort((a, b) => (a.role > b.role ? 1 : -1));
+	setDetails(users);
 
 	const { roles, rolesIds } = await filterRoles(users);
 

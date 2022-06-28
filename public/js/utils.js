@@ -128,10 +128,13 @@ const sendMessageToPanel = async (msg, color) => {
 	};
 };
 
+const validateEmail = (str) => str.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
+
 export {
     capitalize,
     formatDate,
     sendMessageToPanel,
-	sortByProperty
+	sortByProperty,
+	validateEmail
 };
 

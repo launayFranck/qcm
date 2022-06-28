@@ -1,17 +1,27 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="theme-classic">
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Admin | QPC</title>
 	<link rel="stylesheet" href="css/pages/admin.css">
+	<link rel="icon" href="/img/favicon.ico">
 </head>
 <body>
 	<header>
 		<%- include("../partials/navbar") %>
 	</header>
-	<main></main>
+	<main>
+		<section id="message-overlay">
+			<div class="message-panel">
+			</div>
+		</section>
+		
+		<section>
+			<div class="user-infos"></div>
+		</section>
+	</main>
 	<footer></footer>
 	<script type="module" src="js/admin.js"></script>
 </body>

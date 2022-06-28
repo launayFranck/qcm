@@ -1,4 +1,5 @@
 import {jwtDecode} from "./jwt-decode.js";
+import { sendMessageToPanel } from "./utils.js";
 
 const formLogin = document.querySelector("form");
 const msg = document.querySelector(".msg");
@@ -21,11 +22,12 @@ formLogin.onsubmit = async (e) => {
 
 	// Manage error case and let the user know
 	if (loginDetails.error) {
-		msg.style.setProperty('color', 'red');
-		msg.innerText = loginDetails.error;
-		document.querySelectorAll('input[type="email"], input[type="password"]').forEach(input => {
-			input.style.setProperty('border-color', 'red');
-		});
+		// msg.style.setProperty('color', 'red');
+		// msg.innerText = loginDetails.error;
+		// document.querySelectorAll('input[type="email"], input[type="password"]').forEach(input => {
+		// 	input.style.setProperty('border-color', 'red');
+		// });
+		sendMessageToPanel(loginDetails.error, 'var(--color-red)');
 		return;
 	};
 

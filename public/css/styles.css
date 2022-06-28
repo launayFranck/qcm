@@ -2,24 +2,6 @@
 
 :root {
     --navbar-size: 4.8rem;
-
-    --color-blue: #337ab7;
-    --color-blue-hover: #468bc7;
-    --color-horror-movie-blue: #0026FF;
-
-    --color-orange: #FD7000;
-    --color-orange-hover: #ff9e4e;
-
-    --color-green: #5cb85c;
-    --color-green-hover: #449D44;
-
-    --color-red: #f16060;
-    --color-red-hover: #dc3b3b;
-    
-    --color-white: #fefefe;
-    --color-light-gray: #c4c4c4;
-    --color-lighter-gray: #ececec;
-    --color-black: #292929;
 }
 
 * {

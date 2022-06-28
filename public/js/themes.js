@@ -6,19 +6,19 @@ const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 const hostname = window.location.href.split(window.location.pathname)[0];
 
 // Overlay buttons
-const insertThemeBtn = document.querySelector('#insert-theme-btn');
-const detailsThemeBtn = document.querySelector('#details-theme-btn');
+const insertThemeBtn = document.querySelector('#insert-overlay-btn');
+const detailsThemeBtn = document.querySelector('#details-overlay-btn');
 
 // Overlay stuff
 const overlay = document.querySelector(".overlay");
 const overlayBg = document.querySelector(".overlay-bg");
-const insertThemeBox = document.querySelector(".insert-theme");
-const detailsThemeBox = document.querySelector(".details-theme");
-const editThemeBox = document.querySelector(".edit-theme");
-const deleteThemeBox = document.querySelector(".delete-theme");
+const insertThemeBox = document.querySelector(".insert-overlay");
+const detailsThemeBox = document.querySelector(".details-overlay");
+const editThemeBox = document.querySelector(".edit-overlay");
+const deleteThemeBox = document.querySelector(".delete-overlay");
 
-const insertAddChargedBtn = document.querySelector('.insert-theme .add-charged');
-const editAddChargedBtn = document.querySelector('.edit-theme .add-charged');
+const insertAddChargedBtn = document.querySelector('.insert-overlay .add-charged');
+const editAddChargedBtn = document.querySelector('.edit-overlay .add-charged');
 
 const getUsersWithThemeRights = async () => {
 	const res = await fetch(`${hostname}/api/users/theme_rights`, {
@@ -135,15 +135,7 @@ document.querySelectorAll('.overlay-closer').forEach(overlayCloser => {
 	});
 });
 
-// Form infos
-const title = document.getElementsByName('title')[0];
-const description = document.getElementsByName('description')[0];
-
-// Themes infos
-const themesContainer = document.querySelector('#themes-container');
-const themesNb = document.querySelector('.themes-number');
-
-// Filter & order infos
+// Filter & order params
 const search = document.querySelector('.search');
 const orderProperty = document.querySelector('.order-property');
 const orderAscending = document.querySelector('.order-ascending');
@@ -233,13 +225,13 @@ const removeDuplicates = async (array) => {
 };
 
 // The event listener for the insert theme form's submit event
-document.querySelector('.insert-theme form').addEventListener('submit', async (e) => {
+document.querySelector('.insert-overlay form').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	try {
-		const title = document.querySelector('.insert-theme .title').value;
-		const description = document.querySelector('.insert-theme .description').value;
+		const title = document.querySelector('.insert-overlay .title').value;
+		const description = document.querySelector('.insert-overlay .description').value;
 
-		const users = await removeDuplicates(Array.from(document.querySelectorAll('.insert-theme .charge')).map(user => user.value));
+		const users = await removeDuplicates(Array.from(document.querySelectorAll('.insert-overlay .charge')).map(user => user.value));
 
 		const insertDetails = await insertTheme({title, description, users});
 		if (insertDetails.error) throw insertDetails.error;
@@ -254,10 +246,10 @@ document.querySelector('.insert-theme form').addEventListener('submit', async (e
 });
 
 /**
- * Set infos about the themes
+ * Set details about the themes
  * @param {array} themes 
  */
-const setInfos = (themes) => {
+const setDetails = (themes) => {
 	const stats = [
 		{
 			name : 'Nombre de thèmes',
@@ -319,11 +311,11 @@ const setInfos = (themes) => {
 		}
 	];
 
-	const infoContainer = document.querySelector('.info-container');
-	infoContainer.innerHTML = "";
+	const detailsContainer = document.querySelector('.details-container');
+	detailsContainer.innerHTML = "";
 	stats.forEach((stat, i) => {
-		infoContainer.innerHTML += `
-			<div class="infos-row" style="background-color: ${i % 2 ? '#ececec' : 'transparent'}">
+		detailsContainer.innerHTML += `
+			<div class="details-row${i % 2 ? ' darkened' : ''}">
 				<p>${stat.name}</p>
 				<hr>
 				<span>${stat.value}</span>
@@ -333,14 +325,14 @@ const setInfos = (themes) => {
 };
 
 /**
- * Sets the edit-theme form so it depends on which user we're editing
+ * Sets the edit-overlay form so it depends on which user we're editing
  * @param {object} theme The theme on which to base the edit form depending on what we're editing
  */
 const setEditThemeForm = async (theme) => {
 	const properties = ["title", "description"];
 
 	// Getting form and emptying charged users list
-	const form = document.querySelector('.edit-theme form');
+	const form = document.querySelector('.edit-overlay form');
 	form.querySelectorAll('.charge-row').forEach(chargeRow => {
 		chargeRow.parentElement.removeChild(chargeRow);
 	});
@@ -360,10 +352,10 @@ const setEditThemeForm = async (theme) => {
 	formClone.addEventListener('submit', async (e) => {
 		e.preventDefault();
 
-		const title = document.querySelector('.edit-theme .title');
-		const description = document.querySelector('.edit-theme .description');
+		const title = document.querySelector('.edit-overlay .title');
+		const description = document.querySelector('.edit-overlay .description');
 
-		const charges = await removeDuplicates(Array.from(document.querySelectorAll('.edit-theme .charge')).map(charge => {
+		const charges = await removeDuplicates(Array.from(document.querySelectorAll('.edit-overlay .charge')).map(charge => {
 			return charge.value;
 		}));
 
@@ -399,7 +391,7 @@ const setEditThemeForm = async (theme) => {
 	});
 
 	properties.forEach(prop => {
-		const input = document.querySelector(`.edit-theme .${prop}`);
+		const input = document.querySelector(`.edit-overlay .${prop}`);
 		input.value = theme[prop] ? theme[prop] : "";
 	});
 
@@ -413,7 +405,7 @@ const setEditThemeForm = async (theme) => {
 const setDeleteThemeForm = async (theme) => {
 	document.querySelector('.delete-query').innerText = `Souhaitez-vous vraiment supprimer ${theme.title} ?`;
 
-	const deleteThemeBtn = document.querySelector('.delete-theme .delete-btn');
+	const deleteThemeBtn = document.querySelector('.delete-overlay .delete-btn');
 	const deleteThemeBtnClone = deleteThemeBtn.cloneNode(true);
 
 	deleteThemeBtnClone.addEventListener('click', async (e) => {
@@ -543,7 +535,7 @@ const displayThemes = async (themes) => {
 	const cardsBox = document.createElement('div');
 	cardsBox.classList.add('cards-box');
 
-	setInfos(themes);
+	setDetails(themes);
 
 	// Emptying themes container
 	container.innerHTML = '';

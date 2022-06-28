@@ -13,13 +13,13 @@
 	align-items: center;
 	margin: .8rem 1.2rem;
 	padding: .8rem 1.2rem;
-	color: var(--color-white);
+	color: var(--color-bg);
 	border: none;
 	border-radius: .4rem;
-	background-color: var(--color-green);
+	background-color: var(--color-insert);
 }
 #insert-overlay-btn:hover {
-	background-color : var(--color-green-hover);
+	background-color : var(--color-insert-hover);
 }
 #insert-overlay-btn img {
 	width: 1.6rem;
@@ -36,15 +36,16 @@
 	border-radius: .4rem;
 	margin: .8rem;
 	min-width: 3.2rem;
+	background-color: transparent;
 	background-image: url('/img/sheet.svg');
 	background-position: center;
 	background-size: 2.4rem;
 	background-repeat: no-repeat;
-	filter: brightness(.6);
+	filter: brightness(var(--sheet-brightness));
 	transition: filter .1s ease-out;
 }
 #details-overlay-btn:hover {
-	filter: brightness(.75);
+	filter: brightness(var(--sheet-brightness-hover));
 }
 
 /* - - - Overlay parts - - - */
@@ -57,9 +58,10 @@
 	right: 0;
 	left: calc(var(--navbar-size) * 4);
 	bottom: 0;
+	background-color: transparent;
 	z-index: 99;
 }
-.overlay-bg{
+.overlay-bg {
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -87,6 +89,7 @@ button.overlay-closer {
 	width: 2.4rem;
 	height: 2.4rem;
 	border: none;
+	margin-left: .8rem;
 	background-image: url('/img/plus.svg');
 	background-position: center;
 	background-size: contain;
@@ -109,40 +112,40 @@ button.overlay-closer {
 }
 .overlay-box .container-header h1 {
 	text-align: center;
-	color: var(--color-white);
+	color: var(--color-bg);
 }
 
 /* Specific design for insert-overlay */
 .insert-overlay .container-header,
 .insert-overlay input[type="submit"] {
-	background-color: var(--color-green);
+	background-color: var(--color-insert);
 }
 .insert-overlay input[type="submit"]:hover {
-	background-color: var(--color-green-hover);
+	background-color: var(--color-insert-hover);
 }
 .insert-overlay .input-box label {
-	color: var(--color-green);
+	color: var(--color-insert);
 }
 
 /* Specific design for details overlay */
 .details-box {
 	display: flex;
 	flex-direction: column;
-	background-color: var(--color-white);
+	background-color: var(--color-bg);
 	margin: 1.2rem;
 	border-radius: .8rem;
-	box-shadow: .4rem .4rem .8rem #29292933;
+	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
 	overflow: hidden;
 }
 .details-box .container-header {
 	display: flex;
 	justify-content: space-between;
 	padding: .8rem 1.2rem;
-	background-color: var(--color-orange);
+	background-color: var(--color-details);
 }
 .details-box h1 {
 	text-align: center;
-	color: var(--color-white);
+	color: var(--color-bg);
 	margin-right: 2.4rem;
 }
 .details-container {
@@ -156,17 +159,20 @@ button.overlay-closer {
 	align-items: center;
 	padding: .8rem .4rem;
 }
+.details-container .details-row.darkened {
+	background-color: var(--color-bg-alt);
+}
 
 .details-container .details-row p,
 .details-container .details-row span {
-	color: var(--color-orange);
+	color: var(--color-details);
 	padding: .8rem;
 }
 .details-container .details-row hr {
 	background-color: none;
 	border: solid .8rem none dotted;
 	border-style: none none dotted;
-	color: var(--color-orange);
+	color: var(--color-details);
 	display: flex;
 	flex-grow: 1;
 }
@@ -174,13 +180,13 @@ button.overlay-closer {
 /* Specific design for edit-overlay */
 .edit-overlay .container-header,
 .edit-overlay input[type="submit"] {
-	background-color: var(--color-blue);
+	background-color: var(--color-edit);
 }
 .edit-overlay input[type="submit"]:hover {
-	background-color: var(--color-blue-hover);
+	background-color: var(--color-edit-hover);
 }
 .edit-overlay .input-box label {
-	color: var(--color-blue);
+	color: var(--color-edit);
 }
 
 /* Specific design for delete-overlay */
@@ -191,33 +197,33 @@ button.overlay-closer {
 	flex-grow: inherit;
 }
 .delete-overlay .cancel-delete-btn {
-	color: var(--color-red);
+	color: var(--color-delete);
 	background-color: transparent;
 	border: none;
 }
 .delete-overlay .cancel-delete-btn:hover {
-	color: var(--color-white);
+	color: var(--color-bg);
 	border: none;
-	background-color: var(--color-red-hover);
+	background-color: var(--color-delete-hover);
 }
 .delete-overlay .delete-query {
 	padding: .8rem 1.2rem;
-	color: var(--color-red);
+	color: var(--color-delete);
 }
 .delete-overlay .container-header,
 .delete-overlay .delete-btn {
-	color: var(--color-white);
-	background-color: var(--color-red);
+	color: var(--color-bg);
+	background-color: var(--color-delete);
 	border: none;
 }
 .delete-overlay .delete-btn:hover {
-	background-color: var(--color-red-hover);
+	background-color: var(--color-delete-hover);
 }
 
 .container-body {
 	display: flex;
 	flex-direction: column;
-	background-color: var(--color-white);
+	background-color: var(--color-bg);
 	padding: .8rem;
 }
 
@@ -240,9 +246,9 @@ button.overlay-closer {
 .input-box input,
 .input-box select {
 	display: flex;
-	color: var(--color-black);
-	background-color: var(--color-white);
-	border: solid .5px #c4c4c4;
+	color: var(--color-text);
+	background-color: var(--color-bg);
+	border: solid .5px var(--color-input-border);
 	border-radius: .4rem;
 	padding: .8rem;
 }
@@ -254,7 +260,7 @@ button.overlay-closer {
 	cursor: pointer;
 }
 .input-box select:hover {
-	background-color: #ededed;
+	background-color: var(--color-bg-alt);
 }
 
 .input-box input[type="submit"] {
@@ -267,5 +273,69 @@ button.overlay-closer {
 .insert-overlay input[type="submit"],
 .edit-overlay input[type="submit"] {
 	border: none;
-	color: white;
+	color: var(--color-bg);
+}
+
+/* - - - THEMES EXCLUSIVES - - - */
+.overlay-box textarea {
+	padding: .8rem;
+	border: solid 1px var(--color-bg-alt2);
+	border-radius: .4rem;
+	resize: none;
+	min-height: 2.4rem;
+}
+
+.overlay-box .charge-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: .8rem;
+}
+.overlay-box .charge-row select {
+	display: flex;
+	flex-grow: 1;
+}
+.insert-overlay .charge-row select,
+.insert-overlay .charge-row select option {
+	color: var(--color-insert);
+}
+
+.overlay-box .charge-row .remove-charged {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 3.2rem;
+	height: 3.2rem;
+	padding: .8rem;
+	border: none;
+	border-radius: .4rem;
+	margin-left: .8rem;
+	background-color: var(--color-delete);
+	color: var(--color-bg);
+	font-weight: bolder;
+	cursor: pointer;
+	transition: background-color .1s ease-out;
+}
+.overlay-box .charge-row .remove-charged:hover {
+	background-color: var(--color-delete-hover)
+}
+
+.overlay-box .add-charged {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: .8rem;
+	color: var(--color-insert);
+	font-weight: bolder;
+	cursor: pointer;
+	transition: background-color .1s ease-out;
+}
+.overlay-box .add-charged:hover {
+	background-color: var(--color-bg-alt);
+}
+.insert-overlay .add-charged {
+	border: dotted 2px var(--color-insert);
+}
+.edit-overlay .add-charged {
+	border: dotted 2px var(--color-edit);
 }
