@@ -21,7 +21,7 @@ const formatDate = (timestamp, format = '$D/$M/$Y à $H:$m') => {
 	const formatted = new Date(timestamp);
 
 	const year = formatted.getFullYear();
-	const month = ((formatted.getMonth()).toString()).length < 2 ? `0${formatted.getMonth()}` : formatted.getMonth();
+	const month = ((formatted.getMonth()).toString()).length < 2 ? `0${formatted.getMonth() + 1}` : formatted.getMonth() + 1;
 	const date = ((formatted.getDate()).toString()).length < 2 ? `0${formatted.getDate()}` : formatted.getDate();
 	const day = (() => {
 		const lang = (document.querySelector('html').getAttribute('lang')).toUpperCase();
@@ -72,6 +72,16 @@ const formatDate = (timestamp, format = '$D/$M/$Y à $H:$m') => {
 	tmp = tmp.replace('$s', seconds);
 
 	return tmp;
+};
+
+/**
+ * Formats a phone number. E.g. : '0123456789' will be turned to '01.23.45.67.89'
+ * @param {string} phone The phone number to format
+ * @param {string} char The character used between every 2 characters from the phone number
+ * @returns {string} The formatted phone number
+ */
+const formatPhone = (phone, char = '.') => {
+	return phone.match(/.{1,2}/g).join(char);
 };
 
 /**
@@ -133,6 +143,7 @@ const validateEmail = (str) => str.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{
 export {
     capitalize,
     formatDate,
+    formatPhone,
     sendMessageToPanel,
 	sortByProperty,
 	validateEmail

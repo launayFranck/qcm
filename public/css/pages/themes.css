@@ -60,24 +60,24 @@ main {
 	color: var(--color-bg);
 	margin-right: 2.4rem;
 }
-.info-container {
+.details-container {
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
 }
-.info-container .infos-row {
+.details-container .details-row {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	padding: .8rem .4rem;
 }
 
-.info-container .infos-row p,
-.info-container .infos-row span {
+.details-container .details-row p,
+.details-container .details-row span {
 	color: var(--color-details);
 	padding: .8rem;
 }
-.info-container .infos-row hr {
+.details-container .details-row hr {
 	background-color: none;
 	border: solid .8rem none dotted;
 	border-style: none none dotted;
