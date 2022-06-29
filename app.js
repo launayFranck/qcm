@@ -16,6 +16,7 @@ import chapterRouter from './routes/chapter-routes.js';
 import questionRouter from './routes/question-routes.js';
 import examinationsRouter from './routes/examination-routes.js';
 import authRouter from './routes/auth-routes.js';
+import logRouter from './routes/log-routes.js';
 
 // • Server Config
 const PORT = process.env.PORT || 5000;
@@ -35,6 +36,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/themes', themeRouter);
 app.use('/api/chapters', chapterRouter);
 app.use('/api/questions', questionRouter);
+app.use('/api/logs', logRouter);
 
 // Pages
 app.get('/', (req, res) => {

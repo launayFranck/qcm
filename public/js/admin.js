@@ -66,7 +66,6 @@ const setDetails = (user) => {
 		const detailsContainer = document.querySelector('.user-details .container-body');
 		detailsContainer.innerHTML = "";
 		datas.forEach((data, i) => {
-			console.log(i, data.name);
 			detailsContainer.innerHTML += `
 				<div class="row${(i % 2) ? ' darkened' : ''}">
 					<p>${data.name}</p>
@@ -80,34 +79,24 @@ const setDetails = (user) => {
 	};
 };
 
-const setActivity = (activity) => {
+const setActivity = async () => {
 	try {
-		const datas = [
-			{
-				message : `gdepardieu a supprimé l'utilisateur hkovert`,
-				created_at : `2022-06-21 23:58`
-			},
-			{
-				message : `adreemurr a créé l'utilisateur cclavier`,
-				created_at : `2022-06-21 23:51`
-			},
-			{
-				message : `admin a supprimé le thème Managerz`,
-				created_at : `2022-06-21 23:55`
-			},
-			{
-				message : `cclavier a mis à jour l'utilisateur cclavier`,
-				created_at : `2022-06-21 23:59`
-			}
-		];
+		const data = await getLogs();
+
+		if (data.error) {
+			throw new Error(`Logs couldn't be fetched`);
+		};
+
+		const { logs } = data;
+
 		const activityContainer = document.querySelector('.user-activity .container-body');
 		activityContainer.innerHTML = "";
-		datas.sort((a, b) => new Date(a.created_at) > new Date(b.created_at) ? -1 : 1).forEach((data, i) => {
+		logs.sort((a, b) => new Date(a.created_at) > new Date(b.created_at) ? -1 : 1).forEach((log, i) => {
 			activityContainer.innerHTML += `
 				<div class="row${i % 2 ? ' darkened' : ''}">
-					<p>${data.message}</p>
+					<p>${log.content.replace('$1', log.created_by)}</p>
 					<hr>
-					<span>${formatDate(data.created_at, '$D/$M/$Y à $H:$m')}</span>
+					<span>${formatDate(log.created_at, '$D/$M/$Y à $H:$m')}</span>
 				</div>
 			`;
 		});
@@ -122,7 +111,7 @@ const setActivity = (activity) => {
 		const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 		const {users : user} = await getUserById(jwtDecoded.id);
 
-		console.table(user);
+		// console.table(user);
 
 		setDetails(user);
 		setActivity();

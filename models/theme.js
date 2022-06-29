@@ -1,5 +1,5 @@
 import knex from './knexClient.js';
-import user from './user.js';
+import log from './log.js';
 
 /**
  * Getting all themes in an array
@@ -165,11 +165,13 @@ const create = async (payload, token) => {
 		const verif = await knex('theme').select('title').where('title', '=', payload.title);
 		console.log(verif);
 		console.log(verif.length);
-		if (verif.length > 0) throw new Error(`Le thème ${payload.title} existe déjà`);
+		if (verif.length > 0) {
+			throw new Error(`Le thème ${payload.title} existe déjà`);
+		};
 
 		const themeResult = await knex('theme').insert(payload).returning('*');
 
-		const usersData = users.map(user => {
+		const usersPayload = users.map(user => {
 			return {
 				user_id : user,
 				theme_id : themeResult[0].id,
@@ -177,15 +179,22 @@ const create = async (payload, token) => {
 				updated_by : themeResult[0].updated_by
 			};
 		});
-		console.log(usersData);
+		// console.log(usersPayload);
 		
-		const userResult = await knex('theme_user').insert(usersData).returning('*');
+		const userResult = await knex('theme_user').insert(usersPayload).returning('*');
+
+		const logResult = await log.create({
+			content : `$1 a créé le thème ${payload.title}`,
+			created_by : token.id
+		});
+		console.log(logResult);
+		
 		return {
 			theme : themeResult[0],
 			users : userResult
 		};
 	} catch (err) {
-		return err;
+		throw err;
 	};
 };
 
@@ -208,7 +217,7 @@ const update = async (id, payload, token) => {
 
 	try {
 		// Vérification de l'existence du thème à modifier
-		const verif = await knex('theme').select().where({id});
+		const verif = await knex('theme').select('id', 'title').where({id});
 		if (verif.length < 1) throw new Error(`Le thème avec l'ID ${id} n'existe pas`);
 
 		// Getting all users in charge for the specified theme
@@ -280,7 +289,7 @@ const update = async (id, payload, token) => {
 		if (themePayload) {
 			themePayload.updated_at = new Date();
 			themePayload.updated_by = token.id;
-			console.log(themePayload);
+			// console.log(themePayload);
 			try {
 				const themeQuery = await knex('theme').update(themePayload).where({id}).returning('*');
 				result.theme = themeQuery[0];
@@ -288,6 +297,12 @@ const update = async (id, payload, token) => {
 				result.theme = err;
 			};
 		};
+
+		const logResult = await log.create({
+			content : `$1 a modifié le thème ${verif[0].title}`,
+			created_by : token.id
+		});
+		console.log(logResult);
 
 		return result;
 	} catch (err) {
@@ -301,17 +316,27 @@ const update = async (id, payload, token) => {
  * @param {number} id 
  * @returns {} deleted theme
  */
-const destroy = async (id) => {
+const destroy = async (id, token) => {
 	try {
 		if (!Number.isInteger(parseInt(id))) {
 			throw new Error(`${id} is incorrect`);
 		};
-		const exists = await knex('theme').select('id').where({id});
-		if (exists.length <= 0) {
-			throw new Error(`${id} not found`);
-		};
+
+		// Checking the existence of the requested theme
+		const verif = await knex('theme').select('id', 'title').where({id});
+		if (verif.length <= 0) throw new Error(`${id} not found`);
+
 		const linkResponse = await knex('theme_user').delete().where('theme_id', '=', id).returning('*');
 		const response = await knex('theme').delete().where({id}).returning('*');
+
+		console.log(verif[0]);
+		console.log(verif[0].title);
+		const logResult = await log.create({
+			content : `$1 a supprimé le thème ${verif[0].title}`,
+			created_by : token.id
+		});
+		console.log(logResult);
+
 		return {
 			theme_user : linkResponse[0],
 			theme: response[0]

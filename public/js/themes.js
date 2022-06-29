@@ -234,14 +234,16 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 		const users = await removeDuplicates(Array.from(document.querySelectorAll('.insert-overlay .charge')).map(user => user.value));
 
 		const insertDetails = await insertTheme({title, description, users});
-		if (insertDetails.error) throw insertDetails.error;
+		if (insertDetails.error) throw new Error(insertDetails.error);
 
-		sendMessageToPanel(`Le thème "${insertDetails.theme.title}" a été créé`, 'var(--color-green)');
+		console.log(insertDetails);
+
+		sendMessageToPanel(`Le thème "${insertDetails.theme.title}" a été créé`, 'var(--color-good-message)');
 		await setThemes();
 		displayOverlay(false);
 		e.target.reset();
 	} catch (err) {
-		sendMessageToPanel(err.message, 'var(--color-red)');
+		sendMessageToPanel(err.message, 'var(--color-bad-message)');
 	};
 });
 
@@ -382,11 +384,11 @@ const setEditThemeForm = async (theme) => {
 			console.log(updateThemeDetails);
 			
 			await setThemes();
-			sendMessageToPanel(`Le thème "${theme.title}" a été modifié`, 'var(--color-green)');
+			sendMessageToPanel(`Le thème "${theme.title}" a été modifié`, 'var(--color-good-message)');
 			displayOverlay(false);
 
 		} catch (err) {
-			sendMessageToPanel(err.message, 'var(--color-red)');
+			sendMessageToPanel(err.message, 'var(--color-bad-message)');
 		};
 	});
 
@@ -413,15 +415,13 @@ const setDeleteThemeForm = async (theme) => {
 
 		try {
 			const deleteDetails = await deleteTheme(theme.id);
-			if (deleteDetails.error) {
-				throw new Error(deleteDetails.error);
-			};
+			if (deleteDetails.error) throw new Error(deleteDetails.error);
 
 			await setThemes();
-			sendMessageToPanel(`Le thème "${theme.title}" a été supprimé`, 'var(--color-green)');
+			sendMessageToPanel(`Le thème "${theme.title}" a été supprimé`, 'var(--color-good-message)');
 			displayOverlay(false);
 		} catch (err) {
-			sendMessageToPanel(err.message, 'var(--color-red)');
+			sendMessageToPanel(err.message, 'var(--color-bad-message)');
 		};
 	});
 
