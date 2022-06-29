@@ -18,6 +18,18 @@ const getUserById = async (id) => {
 	return await res.json();
 };
 
+const getLogs = async () => {
+	const res = await fetch(`${hostname}/api/logs`, {
+		method: 'GET',
+		credentials:'include',
+		cache:'no-cache',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
+	return await res.json();
+};
+
 const setDetails = (user) => {
 	try {
 		const datas = [
