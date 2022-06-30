@@ -89,7 +89,6 @@ router.delete('/:id', async (req, res) => {
 			const response = await theme.destroy(req.params.id, user);
 			res.status(200).json(response);
 		});
-		
 	} catch (err) {
 		res.status(400).json(err.message);
 	};
