@@ -409,182 +409,196 @@ const setUsers = async () => {
 
 	const { roles, rolesIds } = await filterRoles(users);
 
-	/**
-	 * Shows up users sorted by role
-	 */
-	const displayUsers = () => {
-		// Resetting usersContainer's content
-		usersContainer.innerHTML = '';
-		rolesIds.forEach(roleId => {
-			const newRoleBox = document.createElement('section');
-			newRoleBox.setAttribute('id', roles[roleId]);
-			newRoleBox.classList.add('role-box');
-			newRoleBox.innerHTML = `
-				<div class="role-header">
-					<h1>${capitalize((() => {
-						// Traduction des roles anglais en français
-						switch (roles[roleId]) {
-							case "admin" :
-								return "administrateurs";
-							case "manager" :
-								return "gestionnaires";
-							case "former" :
-								return "formateurs";
-							case "intern" :
-								return "stagiaires";
-							default :
-								return "utilisateurs";
-						}
-					})())}</h1>
+	displayUsersByRole(users, roles, rolesIds);
+
+	search.addEventListener('input', async () => {
+		displayUsersByRole(users, roles, rolesIds);
+	});
+	orderProperty.addEventListener('change', async () => {
+		displayUsersByRole(users, roles, rolesIds);
+	});
+	orderAscending.addEventListener('change', async () => {
+		displayUsersByRole(users, roles, rolesIds);
+	});
+	showActives.addEventListener('change', async () => {
+		displayUsersByRole(users, roles, rolesIds);
+	});
+};
+
+const displayUsersByRole = (users, roles, rolesIds) => {
+	usersContainer.innerHTML = '';
+	rolesIds.forEach(roleId => {
+		const filteredUsers = users.filter(user => user.role == roleId);
+		displayUsers(filterUsers(filteredUsers), roles, roleId);
+	});
+};
+
+/**
+ * Filtering by search query
+ * @param {Array<object>} users 
+ * @returns {Array<object>} filtered users
+ */
+const filterUsers = (users) => {
+	// If search input is set
+	let filtered = search.value ?
+		filtered.filter(user => {
+			// Checking if the search query contains any of the following values
+			const res = [
+				user.username.toLowerCase(),
+				user.firstname.toLowerCase(),
+				user.lastname.toLowerCase(),
+				user.email.toLowerCase(),
+				user.phone.toLowerCase()
+			].map(element => element.includes(search.value.toLowerCase()));
+			return res.includes(true);
+		})
+		:
+		users
+	;
+
+	// If show actives checkbox is set
+	filtered = showActives.checked ?
+		filtered.filter(user => user.activated)
+		:
+		filtered
+	;
+
+	return filtered;
+};
+
+/**
+ * Displays all users passed as arguments
+ * @param {Array<object>} users 
+ * @param {array} roles The roles to use as categories
+ * @param {array} rolesIds The roles ids used for bracket notation to get the roles' name
+ */
+ const displayUsers = (users, roles, roleId) => {
+	// Resetting usersContainer's content
+	const newRoleBox = document.createElement('section');
+		newRoleBox.setAttribute('id', roles[roleId]);
+		newRoleBox.classList.add('role-box');
+		newRoleBox.innerHTML = `
+			<div class="role-header">
+				<h1>${capitalize((() => {
+					// Traduction des roles anglais en français
+					switch (roles[roleId]) {
+						case "admin" :
+							return "administrateurs";
+						case "manager" :
+							return "gestionnaires";
+						case "former" :
+							return "formateurs";
+						case "intern" :
+							return "stagiaires";
+						default :
+							return "utilisateurs";
+					}
+				})())}</h1>
+			</div>
+		`;
+
+		const cardsBox = document.createElement('div');
+		cardsBox.classList.add('cards-box');
+
+		const sortedUsers = sortByProperty(users, orderProperty.value, JSON.parse(orderAscending.value));
+		sortedUsers.forEach(user => {
+			const cardContainer = document.createElement('div');
+			cardContainer.classList.add('card-container');
+			
+			const card = document.createElement('article');
+			card.classList.add('user-card');
+			
+			const userBox = document.createElement('div');
+			userBox.classList.add('user-box');
+			userBox.innerHTML = `
+				<div class="user-personal">
+					<h2>${user.firstname} ${user.lastname}</h2>
+					<p class="username">${user.username}</p>
+				</div>
+				<div class="user-contact">
+					<a href="mailto:${user.email}" class="email">${user.email}</a>
+					<a href="tel:${user.phone}" class="phone">${user.phone}</a>
+				</div>
+				<div class="user-stats">
+					<p class="createdAt">Inscrit le ${formatDate(user.created_at)}</p>
+					<p class="updatedAt">Modifié le ${formatDate(user.updated_at)}</p>
 				</div>
 			`;
 
-			/**
-			 * Filtering by search query
-			 * @param {Array<object>} users 
-			 * @returns {Array<object>} filtered users
-			 */
-			const filterUsers = (users) => {
-				let tmp = users.filter(user => user.role == roleId);
+			const btnContainer = document.createElement('div');
+			btnContainer.classList.add('btn-container');
 
-				// If search input is set
-				tmp = search.value ?
-					tmp.filter(user => {
-						// Checking if the search query contains any of the following values
-						const res = [
-							user.username.toLowerCase(),
-							user.firstname.toLowerCase(),
-							user.lastname.toLowerCase(),
-							user.email.toLowerCase(),
-							user.phone.toLowerCase()
-						].map(element => element.includes(search.value.toLowerCase()));
-						return res.includes(true);
-					})
-					:
-					tmp
-				;
+			// Preventing auto-deletion and auto-deactivation
+			if (jwtDecoded.id !== user.id) {
+				// Toggle switch
+				const toggleSwitch = document.createElement('div');
+				toggleSwitch.classList.add('toggle-switch');
 
-				// If show actives checkbox is set
-				tmp = showActives.checked ?
-					tmp.filter(user => user.activated)
-					:
-					tmp
-				;
+				const label = document.createElement('label');
+				label.classList.add('switch');
 
-				return tmp;
-			};
-
-			// Filtering by "show actives accounts" only query
-			const cardsBox = document.createElement('div');
-			cardsBox.classList.add('cards-box');
-
-			const sortedUsers = sortByProperty(filterUsers(users), orderProperty.value, JSON.parse(orderAscending.value));
-			sortedUsers.forEach(user => {
-				const cardContainer = document.createElement('div');
-				cardContainer.classList.add('card-container');
+				const input = document.createElement('input');
+				input.type = 'checkbox';
 				
-				const card = document.createElement('article');
-				card.classList.add('user-card');
-				
-				const userBox = document.createElement('div');
-				userBox.classList.add('user-box');
-				userBox.innerHTML = `
-					<div class="user-personal">
-						<h2>${user.firstname} ${user.lastname}</h2>
-						<p class="username">${user.username}</p>
-					</div>
-					<div class="user-contact">
-						<a href="mailto:${user.email}" class="email">${user.email}</a>
-						<a href="tel:${user.phone}" class="phone">${user.phone}</a>
-					</div>
-					<div class="user-stats">
-						<p class="createdAt">Inscrit le ${formatDate(user.created_at)}</p>
-						<p class="updatedAt">Modifié le ${formatDate(user.updated_at)}</p>
-					</div>
-				`;
-
-				const btnContainer = document.createElement('div');
-				btnContainer.classList.add('btn-container');
-
-				// Preventing auto-deletion and auto-deactivation
-				if (jwtDecoded.id !== user.id) {
-					// Toggle switch
-					const toggleSwitch = document.createElement('div');
-					toggleSwitch.classList.add('toggle-switch');
-
-					const label = document.createElement('label');
-					label.classList.add('switch');
-
-					const input = document.createElement('input');
-					input.type = 'checkbox';
-					
-					if (user.activated) {
-						input.setAttribute('checked', '');
-					} else {
-						input.removeAttribute('checked');
-					};
-
-					input.addEventListener('click', async (e) => {
-						const activated = input.checked;
-						const updateUserDetails = await updateUser(user.id, {activated});
-						user.activated = activated;
-
-						if (!input.ckecked && showActives.checked) {
-							setTimeout(setUsers, 1000);
-						}
-					});
-					
-					const span = document.createElement('span');
-					span.classList.add('slider', 'round');
-
-					label.appendChild(input);
-					label.appendChild(span);
-					toggleSwitch.appendChild(label);
-
-					// Edit button
-					const editBtn = document.createElement('button');
-					editBtn.classList.add('edit');
-					editBtn.addEventListener('click', async () => {
-						await setEditUserForm(user);
-					});
-
-					// Delete button
-					const deleteBtn = document.createElement('button');
-					deleteBtn.classList.add('destroy');
-					deleteBtn.addEventListener('click', async () => {
-						await setDeleteUserForm(user);
-					});
-
-					btnContainer.appendChild(toggleSwitch);
-					btnContainer.appendChild(editBtn);
-					btnContainer.appendChild(deleteBtn);
+				if (user.activated) {
+					input.setAttribute('checked', '');
 				} else {
-					// Edit button
-					const editBtn = document.createElement('button');
-					editBtn.classList.add('edit');
-					editBtn.addEventListener('click', async () => {
-						await setEditUserForm(user);
-					});
-
-					btnContainer.appendChild(editBtn);
+					input.removeAttribute('checked');
 				};
-				card.appendChild(userBox);
-				card.appendChild(btnContainer);
 
-				cardContainer.appendChild(card);
-				cardsBox.appendChild(cardContainer);
-			});
-			newRoleBox.appendChild(cardsBox);
+				input.addEventListener('click', async (e) => {
+					const activated = input.checked;
+					const updateUserDetails = await updateUser(user.id, {activated});
+					user.activated = activated;
 
-			usersContainer.appendChild(newRoleBox);
+					if (!input.ckecked && showActives.checked) {
+						setTimeout(setUsers, 1000);
+					}
+				});
+				
+				const span = document.createElement('span');
+				span.classList.add('slider', 'round');
+
+				label.appendChild(input);
+				label.appendChild(span);
+				toggleSwitch.appendChild(label);
+
+				// Edit button
+				const editBtn = document.createElement('button');
+				editBtn.classList.add('edit');
+				editBtn.addEventListener('click', async () => {
+					await setEditUserForm(user);
+				});
+
+				// Delete button
+				const deleteBtn = document.createElement('button');
+				deleteBtn.classList.add('destroy');
+				deleteBtn.addEventListener('click', async () => {
+					await setDeleteUserForm(user);
+				});
+
+				btnContainer.appendChild(toggleSwitch);
+				btnContainer.appendChild(editBtn);
+				btnContainer.appendChild(deleteBtn);
+			} else {
+				// Edit button
+				const editBtn = document.createElement('button');
+				editBtn.classList.add('edit');
+				editBtn.addEventListener('click', async () => {
+					await setEditUserForm(user);
+				});
+
+				btnContainer.appendChild(editBtn);
+			};
+			card.appendChild(userBox);
+			card.appendChild(btnContainer);
+
+			cardContainer.appendChild(card);
+			cardsBox.appendChild(cardContainer);
 		});
-	};
-	displayUsers();
+		newRoleBox.appendChild(cardsBox);
 
-	search.addEventListener('input', displayUsers);
-	orderProperty.addEventListener('change', displayUsers);
-	orderAscending.addEventListener('change', displayUsers);
-	showActives.addEventListener('change', displayUsers);
+		usersContainer.appendChild(newRoleBox);
 };
 
 setUsers();
