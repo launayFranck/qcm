@@ -54,10 +54,34 @@ const update = async (id, payload) => {
 	};
 };
 
-const destroy = async (id) => {
+/**
+ * Deleting an examination
+ * @async
+ * @param {number} id 
+ * @returns {} deleted examination
+ */
+ const destroy = async (id, token) => {
 	try {
-		const result = await knex('examination').destroy().where({id}).returning('*');
-		return result[0];
+		if (!Number.isInteger(parseInt(id))) {
+			throw new Error(`${id} is incorrect`);
+		};
+
+		// Checking the existence of the requested examination
+		const verif = await knex('examination').select('id', 'title').where({id});
+		if (verif.length <= 0) throw new Error(`${id} not found`);
+
+		const chapterResponse = await knex('chapter').delete().where('id', '=', id);
+		const response = await knex('examination').delete().where({id}).returning('*');
+
+		// const logResult = await log.create({
+		// 	content : `$1 a supprimé le thème ${verif[0].title}`,
+		// 	created_by : token.id
+		// });
+
+		return {
+			examination: response[0], 
+			chapter: chapterResponse
+		};
 	} catch (err) {
 		throw err;
 	};

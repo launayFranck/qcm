@@ -90,7 +90,7 @@ router.delete('/:id', async (req, res) => {
 			res.status(200).json(response);
 		});
 	} catch (err) {
-		res.status(400).json(err.message);
+		res.status(400).json({ error : err.message });
 	};
 });
 

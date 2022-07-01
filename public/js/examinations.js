@@ -115,6 +115,57 @@ setExaminations();
 };
 
 /**
+ * Deletes an examination from the DB
+ * @param {number} id Integer referring to a examination's id
+ * @returns {object} The deleted examination
+ */
+ const deleteExamination = async (id) => {
+	const res = await fetch(`${hostname}/api/examinations/${id}`, {
+		method: 'DELETE',
+		credentials:'include',
+		cache:'no-cache',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
+	console.log(res);
+	return await res.json();
+};
+
+/**
+ * Creates a form on which we'd base a examination to set up the deletion depending on it
+ * @param {object} examination The examination on which we'll base the delete examination form
+ */
+ const setDeleteExaminationForm = async (examination) => {
+	document.querySelector('.delete-query').innerText = `Souhaitez-vous vraiment supprimer ${examination.title} ?`;
+
+	const deleteExaminationBtn = document.querySelector('.delete-overlay .delete-btn');
+	const deleteExaminationBtnClone = deleteExaminationBtn.cloneNode(true);
+
+	deleteExaminationBtnClone.addEventListener('click', async (e) => {
+		e.preventDefault;
+
+		try {
+			const deleteDetails = await deleteExamination(examination.id);
+			// console.log(deleteDetails);
+
+			if (deleteDetails.error) throw new Error(deleteDetails.error);
+
+			await setExaminations();
+			sendMessageToPanel(`L'examen "${examination.title}" a été supprimé`, 'var(--color-good-message)');
+			displayOverlay(false);
+		} catch (err) {
+			sendMessageToPanel(err.message, 'var(--color-bad-message)');
+		};
+	});
+
+	deleteExaminationBtn.parentElement.replaceChild(deleteExaminationBtnClone, deleteExaminationBtn);
+
+	displayOverlay(true, deleteExaminationBox);
+};
+
+
+/**
  * Filtering by search query
  * @param {Array<object>} examinations 
  * @returns {Array<object>} filtered users
