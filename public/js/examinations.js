@@ -89,6 +89,7 @@ document.querySelectorAll('.overlay-closer').forEach(overlayCloser => {
 
 const setExaminations = async () => {
 	const {examinations} = await getAllExaminations();
+	console.log(examinations);
 	await displayExaminations(await filterExaminations(examinations));
 };
 
@@ -120,6 +121,9 @@ setExaminations();
  * @returns {Array<object>} filtered users
  */
  const filterExaminations = (examinations) => {
+	if (!examinations) return {message : "Aucun examen ne correspond à ces critères"};
+	if (examinations.length < 1) return {message : "Aucun examen ne correspond à ces critères"};
+
 	let tmp = examinations;
 
 	// If search input is set
@@ -136,12 +140,17 @@ setExaminations();
 		tmp
 	;
 
+	if (tmp.length < 1) return {message : "Aucun examen ne correspond à ces critères"};
+
 	// If show actives checkbox is set
 	tmp = showActives.checked ?
 		tmp.filter(examination => examination.active)
 		:
 		tmp
 	;
+
+	if (tmp.length < 1) return {message : "Aucun examen ne correspond à ces critères"};
+
 	return tmp;
 };
 
