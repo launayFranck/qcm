@@ -225,7 +225,7 @@ main {
 }
 
 .theme-stats {
-    color: #848484;
+	color: var(--color-bg-alt3);
 	margin: .8rem 0;
 }
 .theme-description {

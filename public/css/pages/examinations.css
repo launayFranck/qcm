@@ -1,7 +1,9 @@
 @import url('../styles.css');
 @import url('../theme.css');
 @import url('../partials/navbar.css');
+@import url('../partials/overlay.css');
 @import url('../partials/message-overlay.css');
+@import url('../partials/toggle-switch.css');
 @import url('../partials/footer.css');
 
 main {
@@ -56,29 +58,6 @@ main {
 #details-examination-btn:hover {
 	filter: brightness(.75);
 }
-/* Overlay */
-.overlay {
-	display: none;
-	justify-content: center;
-	align-items: center;
-	position: fixed;
-	top: 0;
-	right: 0;
-	left: calc(var(--navbar-size) * 4);
-	bottom: 0;
-	z-index: 99;
-}
-.overlay-bg{
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	background-color: #29292988;
-	backdrop-filter: blur(8px);
-}
-.overlay-box{
-	position: absolute;
-	display: flex;
-}
 
 /* Page content */
 #examinations-section {
@@ -91,266 +70,6 @@ main {
 	justify-content: flex-end;
 	width: 100%;
 	margin-bottom: 10rem;
-}
-
-/* Overlay boxes */
-.container-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-.overlay-box button.overlay-closer {
-	width: 2.4rem;
-	height: 2.4rem;
-	border: none;
-	margin-left: .8rem;
-	background-image: url('/img/plus.svg');
-	background-position: center;
-	background-size: contain;
-	background-repeat: no-repeat;
-	transform: rotate(45deg);
-}
-
-.insert-examination,
-.edit-examination,
-.delete-examination {
-	display: flex;
-	flex-direction: column;
-	max-width: 48rem;
-	border-radius: .8rem;
-	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
-	overflow: hidden;
-}
-.overlay-box .container-header {
-	padding: .8rem 1.2rem;
-}
-.overlay-box .container-header h1 {
-	text-align: center;
-	color: var(--color-bg);
-}
-
-/* Specific design for insert-examination */
-.insert-examination .container-header,
-.insert-examination input[type="submit"] {
-	background-color: var(--color-insert);
-}
-.insert-examination input[type="submit"]:hover {
-	background-color: var(--color-insert-hover);
-}
-.insert-examination .input-box label {
-	color: var(--color-insert);
-}
-
-/* Specific design for edit-examination */
-.edit-examination .container-header,
-.edit-examination input[type="submit"] {
-	background-color: var(--color-main);
-}
-.edit-examination input[type="submit"]:hover {
-	background-color: var(--color-main-hover);
-}
-.edit-examination .input-box label {
-	color: var(--color-main);
-}
-
-/* Specific design for delete-examination */
-.delete-examination .delete-btn-box {
-	justify-content: flex-end;
-}
-.delete-examination .delete-btn-box .input-box {
-	flex-grow: inherit;
-}
-.delete-examination .cancel-delete-btn {
-	color: var(--color-delete);
-	background-color: transparent;
-	border: none;
-}
-.delete-examination .cancel-delete-btn:hover {
-	color: var(--color-bg);
-	border: none;
-	background-color: var(--color-delete-hover);
-}
-.delete-examination .delete-query {
-	padding: .8rem 1.2rem;
-	color: var(--color-delete);
-}
-.delete-examination .container-header,
-.delete-examination .delete-btn {
-	color: var(--color-bg);
-	background-color: var(--color-delete);
-	border: none;
-}
-.delete-examination .delete-btn:hover {
-	background-color: var(--color-delete-hover);
-}
-
-.insert-examination form {
-	display: flex;
-	flex-direction: column;
-}
-.container-body {
-	display: flex;
-	flex-direction: column;
-	background-color: var(--color-bg);
-	padding: .8rem;
-}
-
-.form-row {
-	display: flex;
-	width: 100%;
-}
-.input-box {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	padding: .8rem;
-}
-.input-box label {
-	margin-bottom: .4rem;
-	width: max-content;
-}
-.input-box input,
-.input-box select {
-	display: flex;
-	color: var(--color-text);
-	background-color: var(--color-bg);
-	border: solid .5px var(--color-bg-alt2);
-	border-radius: .4rem;
-	padding: .8rem;
-}
-.input-box input {
-	width: 100%;
-}
-.input-box select {
-	transition: background-color .1s ease-out;
-	cursor: pointer;
-}
-.input-box select:hover {
-	background-color: var(--color-bg-alt);
-}
-
-.input-box input[type="submit"] {
-	margin-top: 1.6rem;
-	padding: .8rem 1.6rem;
-	margin: auto;
-	width: fit-content;
-	transition: background-color .1s ease-out;
-}
-
-.overlay-box textarea {
-	padding: .8rem;
-	border: solid 1px var(--color-bg-alt2);
-	border-radius: .4rem;
-	resize: none;
-	min-height: 2.4rem;
-}
-
-.overlay-box .charge-row {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: .8rem;
-}
-.overlay-box .charge-row select {
-	display: flex;
-	flex-grow: 1;
-}
-.insert-examination .charge-row select,
-.insert-examination .charge-row select option {
-	color: var(--color-insert);
-}
-
-.overlay-box .charge-row .remove-charged {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 3.2rem;
-	height: 3.2rem;
-	padding: .8rem;
-	border: none;
-	border-radius: .4rem;
-	margin-left: .8rem;
-	background-color: var(--color-delete);
-	color: var(--color-bg);
-	font-weight: bolder;
-	cursor: pointer;
-	transition: background-color .1s ease-out;
-}
-.overlay-box .charge-row .remove-charged:hover {
-	background-color: var(--color-delete-hover)
-}
-
-.overlay-box .add-charged {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	padding: .8rem;
-	color: var(--color-insert);
-	font-weight: bolder;
-	cursor: pointer;
-	transition: background-color .1s ease-out;
-}
-.overlay-box .add-charged:hover {
-	background-color: var(--color-bg-alt);
-}
-.insert-examination .add-charged {
-	border: dotted 2px var(--color-insert);
-}
-.edit-examination .add-charged {
-	border: dotted 2px var(--color-main);
-}
-
-.insert-examination input[type="submit"],
-.edit-examination input[type="submit"] {
-	border: none;
-	color: var(--color-bg);
-}
-
-.examinations-infos{
-	display: flex;
-	flex-direction: column;
-	background-color: var(--color-bg);
-	margin: 1.2rem;
-	border-radius: .8rem;
-	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
-	overflow: hidden;
-}
-.examinations-infos .container-header{
-	display: flex;
-	justify-content: space-between;
-	padding: .8rem 1.2rem;
-	background-color: var(--color-details);
-}
-.examinations-infos h1{
-	text-align: center;
-	color: var(--color-bg);
-	margin-right: 2.4rem;
-}
-.info-container {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-}
-.info-container .infos-row {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: .8rem .4rem;
-}
-
-.info-container .infos-row p,
-.info-container .infos-row span {
-	color: var(--color-details);
-	padding: .8rem;
-}
-.info-container .infos-row hr {
-	background-color: none;
-	border: solid .8rem none dotted;
-	border-style: none none dotted;
-	color: var(--color-details);
-	display: flex;
-	flex-grow: 1;
-	min-width: 10rem;
 }
 
 .line-row {
@@ -495,7 +214,6 @@ main {
 	color: var(--color-text);
 	width: 100%;
 	padding: 1.2rem;
-	border: solid 1px var(--color-input-border);
 	border-radius: .8rem;
 	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
 }
@@ -505,8 +223,11 @@ main {
     width: 100%;
 }
 
+.examination-card h2 {
+	color: var(--color-main);
+}
 .examination-stats {
-    color: var(--color-alt3);
+    color: var(--color-bg-alt3);
 	margin: .8rem 0;
 }
 .examination-description {

@@ -523,7 +523,7 @@ const filterThemes = async (themes) => {
 
 	if (tmp.length < 1) return {message : "Aucun thème ne correspond à ces critères"};
 
-	return sortByProperty(tmp, orderProperty.value, JSON.parse(orderAscending.value));
+	return tmp;
 };
 
 /**
@@ -549,8 +549,9 @@ const displayThemes = async (themes) => {
 		`;
 		return;
 	};
-	// Looping on all themes to add theme one by one
-	themes.forEach(theme => {
+	// Looping on all sorted themes to add theme one by one
+	const sortedThemes = sortByProperty(themes, orderProperty.value, JSON.parse(orderAscending.value));
+	sortedThemes.forEach(theme => {
 		const title = theme.title;
 		const description = theme.description;
 		const createdAt = formatDate(theme.created_at);

@@ -111,25 +111,25 @@ const sendMessageToPanel = async (msg, color) => {
  * Sorts an array of objects by one of the objects' property
  * @param {array} array The array containing objects to sort
  * @param {string} property The name of the property to use as a filter
- * @param {boolean} ascending Specifies the order of the required informations
+ * @param {boolean} asc Specifies the order of the required informations
  * @returns {Array<object>} The sorted array
  */
- const sortByProperty = (array, property, ascending = true) => {
+ const sortByProperty = (array, property, asc = true) => {
 	try {
-		const res = array.sort((a, b) => (a[property].toLowerCase() > b[property].toLowerCase() ?
-			(ascending ? 1 : -1)
-			:
-			(ascending ? -1 : 1)
-		));
-		// const res = array.sort((a, b) => {
-		// 	const aX = Array.isArray(a[property]) ? a[property].length : a[property].toLowerCase();
-		// 	const bX = Array.isArray(b[property]) ? b[property].length : b[property].toLowerCase();
+		/**
+		 * Turns a value into an easy sortable value
+		 * @param {any} el The value to convert in order to making it "sortable"
+		 * @returns {any} The converted value
+		 */
+		const makeSortable = (el) => {
+			return Array.isArray(el) ? el.length : el.toLowerCase();
+		};
+		
+		const res = array.sort((a, b) => makeSortable(a[property]) > makeSortable(b[property]) ?
+			(asc ? 1 : -1) : (asc ? -1 : 1)
+		);
 
-		// 	const result = aX > bX ? (ascending ? 1 : -1) : (ascending ? -1 : 1);
-			
-		// 	console.log(aX, bX, result);
-		// 	return result;
-		// });
+		console.log(res);
 
 		return res;
 	} catch (err) {

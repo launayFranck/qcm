@@ -3,6 +3,7 @@
 @import url('../partials/navbar.css');
 @import url('../partials/overlay.css');
 @import url('../partials/message-overlay.css');
+@import url('../partials/toggle-switch.css');
 @import url('../partials/footer.css');
 
 main {
@@ -200,64 +201,6 @@ main {
 	margin-top: .8rem;
 	padding: .8rem 0;
 	width: 100%;
-}
-
-/* Rounded sliders */
-.toggle-switch .switch {
-    position: relative;
-    display: inline-block;
-	margin: 0 1.6rem;
-    width: 4rem;
-    height: 2.4rem;
-}
-.toggle-switch .switch input { 
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-.toggle-switch .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--color-slider-off);
-    -webkit-transition: .4s;
-    transition: .4s;
-}
-
-.toggle-switch .slider:before {
-    position: absolute;
-    content: "";
-    height: 1.6rem;
-    width: 1.6rem;
-    left: .4rem;
-    bottom: .4rem;
-    background-color: var(--color-bg);
-    -webkit-transition: .4s;
-    transition: .4s;
-}
-
-.toggle-switch input:checked + .slider {
-    background-color: var(--color-main);
-}
-
-.toggle-switch input:focus + .slider {
-    box-shadow: 0 0 .1rem var(--color-main);
-}
-
-.toggle-switch input:checked + .slider:before {
-    -webkit-transform: translateX(1.6rem);
-    -ms-transform: translateX(1.6rem);
-    transform: translateX(1.6rem);
-}
-.toggle-switch .slider.round {
-    border-radius: 3.4rem;
-}
-  
-.toggle-switch .slider.round:before {
-    border-radius: 50%;
 }
 
 .user-card .btn-container button {

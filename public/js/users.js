@@ -478,7 +478,8 @@ const setUsers = async () => {
 			const cardsBox = document.createElement('div');
 			cardsBox.classList.add('cards-box');
 
-			for (let user of sortByProperty(filterUsers(users), orderProperty.value, JSON.parse(orderAscending.value))) {
+			const sortedUsers = sortByProperty(filterUsers(users), orderProperty.value, JSON.parse(orderAscending.value));
+			sortedUsers.forEach(user => {
 				const cardContainer = document.createElement('div');
 				cardContainer.classList.add('card-container');
 				
@@ -572,7 +573,7 @@ const setUsers = async () => {
 
 				cardContainer.appendChild(card);
 				cardsBox.appendChild(cardContainer);
-			};
+			});
 			newRoleBox.appendChild(cardsBox);
 
 			usersContainer.appendChild(newRoleBox);
