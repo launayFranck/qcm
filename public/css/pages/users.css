@@ -194,6 +194,13 @@ main {
 	margin: .8rem 0;
 	color: var(--color-bg-alt3);
 }
+.user-card .user-box .user-contact a {
+	width: max-content;
+}
+.user-card .user-box .user-contact a:hover {
+	color: var(--color-text);
+}
+
 .user-card .btn-container {
 	display: flex;
 	justify-content: center;

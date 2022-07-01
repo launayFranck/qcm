@@ -1,5 +1,5 @@
 import { jwtDecode } from "./jwt-decode.js";
-import { capitalize, formatDate, sendMessageToPanel, sortByProperty } from './utils.js';
+import { capitalize, formatDate, formatPhone, sendMessageToPanel, sortByProperty } from './utils.js';
 
 const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 
@@ -517,7 +517,7 @@ const filterUsers = (users) => {
 				</div>
 				<div class="user-contact">
 					<a href="mailto:${user.email}" class="email">${user.email}</a>
-					<a href="tel:${user.phone}" class="phone">${user.phone}</a>
+					<a href="tel:${user.phone}" class="phone">${formatPhone(user.phone)}</a>
 				</div>
 				<div class="user-stats">
 					<p class="createdAt">Inscrit le ${formatDate(user.created_at)}</p>
