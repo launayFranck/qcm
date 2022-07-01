@@ -439,6 +439,9 @@ const displayUsersByRole = (users, roles, rolesIds) => {
  * @returns {Array<object>} filtered users
  */
 const filterUsers = (users) => {
+	if (!users) return {message : "Aucun utilisateur ne correspond à ces critères"};
+	if (users.length < 1) return {message : "Aucun utilisateur ne correspond à ces critères"};
+
 	// If search input is set
 	let filtered = search.value ?
 		filtered.filter(user => {
@@ -456,12 +459,16 @@ const filterUsers = (users) => {
 		users
 	;
 
+	if (users.length < 1) return {message : "Aucun utilisateur ne correspond à ces critères"};
+
 	// If show actives checkbox is set
 	filtered = showActives.checked ?
 		filtered.filter(user => user.activated)
 		:
 		filtered
 	;
+
+	if (users.length < 1) return {message : "Aucun utilisateur ne correspond à ces critères"};
 
 	return filtered;
 };

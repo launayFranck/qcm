@@ -496,6 +496,9 @@ const setThemes = async () => {
  * @returns {array<Object>} themes
  */
 const filterThemes = async (themes) => {
+	if (!themes) return {message : "Aucun thème ne correspond à ces critères"};
+	if (themes.length < 1) return {message : "Aucun thème ne correspond à ces critères"};
+
 	// If search input is set
 	let tmp = search.value ?
 		themes.filter(theme => {
