@@ -81,7 +81,8 @@ document.querySelectorAll('.overlay-closer').forEach(overlayCloser => {
 		credentials:'include',
 		cache:'no-cache',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
 		}
 	});
 	return await res.json();
@@ -89,7 +90,7 @@ document.querySelectorAll('.overlay-closer').forEach(overlayCloser => {
 
 const setExaminations = async () => {
 	const {examinations} = await getAllExaminations();
-	console.log(examinations);
+	// console.log(examinations);
 	await displayExaminations(await filterExaminations(examinations));
 };
 
