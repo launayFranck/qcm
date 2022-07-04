@@ -156,6 +156,11 @@ const sendMessageToPanel = async (msg, color) => {
 	};
 };
 
+/**
+ * Verifies if the given string is a legit email address
+ * @param {string} str The email address we want to verify
+ * @returns {boolean} Returns true if the given email is a correct email address
+ */
 const validateEmail = (str) => str.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
 
 export {
