@@ -7,8 +7,10 @@ import examination from '../models/examination.js';
 
 const router = express.Router();
 
-// • Fetching all examination
+// • Fetching all examinations
 router.get('/', async (req, res) => {
+	const authorization = req.headers['authorization'];
+	console.log(authorization);
 	try {
 		const result = await examination.findAll();
 		res.status(200).json({examinations : result});
