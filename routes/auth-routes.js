@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
 			sameSite: 'none',
 			secure: true
 		});
-		res.json(tokens);
+		res.status(200).json(tokens);
 	} catch (err) {
 		res.status(401).json({error: err.message});
 	};
