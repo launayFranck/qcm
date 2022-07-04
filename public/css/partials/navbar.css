@@ -32,7 +32,7 @@
 	padding: .8rem 1.6rem;
 	width: 100%;
 	height: var(--navbar-size);
-	color: #fefefe;
+	color: var(--color-bg);
 	border: none;
 	opacity: .5;
 	transition: padding-left .1s ease-out;
