@@ -1,13 +1,13 @@
 /**
  * Capitalizes a string
  * @param {string} str The string to capitalize
- * @param {boolean} capitalizeAllWords Defines if each word from the string must be capitalized
+ * @param {boolean} allWords Defines if each word from the string must be capitalized
  * @returns {string} The capitalized string
  */
-const capitalize = (str, capitalizeAllWords = false) => {
+const capitalize = (str, allWords = false) => {
 	const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
-	if (capitalizeAllWords) return str.split(' ').map(str => cap(str)).join('');
+	if (allWords) return str.split(' ').map(str => cap(str)).join('');
 	else return cap(str);
 };
 
