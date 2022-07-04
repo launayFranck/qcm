@@ -287,9 +287,9 @@ const setDetails = async (users) => {
 };
 
 /**
-	 * Creates an array inside which all roles will be stored
-	 * @param {Array<object>} users 
-	 */
+ * Creates an array inside which all roles will be stored
+ * @param {Array<object>} users 
+ */
  const filterRoles = async (users) => {
 	let roles = {};
 	users.forEach(user => {
@@ -307,9 +307,7 @@ const setDetails = async (users) => {
  */
 const setInfosRowColor = () => {
 	document.querySelectorAll('.infos-row').forEach((row, i) => {
-		if ((i % 2)) {
-			row.style.backgroundColor = "#ececec";
-		}
+		if (i % 2) row.style.backgroundColor = "var(--color-bg-alt3)";
 	});
 };
 setInfosRowColor();
