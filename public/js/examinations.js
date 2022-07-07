@@ -181,9 +181,11 @@ const getAllThemes = async () => {
 	return await res.json();
 };
 
-const setThemesInSelect = async (themes, select) => {
-	select.innerHTML = `<option value="">-- Sélectionnez un thème</option>`
-	select.innerHTML = sortByProperty(themes, 'title').map((theme) => `<option value="${theme.id}">${theme.title}</option>`).join('');
+const addThemesInSelect = async (select, id) => {
+	const { themes } = await getAllThemes();
+
+	select.innerHTML = `<option value="" disabled ${id ? '' : 'selected'}>-- Sélectionnez un thème</option>`;
+	select.innerHTML += sortByProperty(themes, 'title').map((theme) => `<option value="${theme.id}" ${id ? theme.id == id ? 'selected' : '' : ''}>${theme.title}</option>`).join('');
 };
 
 // The listener for the insert examination form's submit event
@@ -217,15 +219,151 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 	};
 });
 
-const setExaminations = async () => {
-	const { examinations } = await getAllExaminations();
-	const { themes } = await getAllThemes();
-	
-	await setThemesInSelect(themes, document.querySelector('.insert-overlay .theme'));
-	await displayExaminations(await filterExaminations(examinations));
+/**
+ * Set details about the themes
+ * @param {array} themes 
+ */
+ const setDetails = (themes) => {
+	const stats = [
+		{
+			name : 'Nombre de thèmes',
+			value : themes.length
+		},
+		{
+			name : "Nombre min d'utilisateur",
+			value : themes.sort((a, b) => a.users.length > b.users.length ? 1 : -1)[0].users.length
+		},
+		{
+			name : "Nombre max d'utilisateur",
+			value : themes.sort((a, b) => a.users.length < b.users.length ? 1 : -1)[0].users.length
+		},
+		{
+			name : "Utilisateur gérant le moins de thèmes",
+			value : (() => {
+				const usersNb = {};
+				themes.forEach(theme => {
+					theme.users.forEach(user => {
+						if (usersNb[user.name]) {
+							usersNb[user.name] += 1;
+						} else {
+							usersNb[user.name] =1;
+						};
+					});
+				});
+
+				const users = Object.keys(usersNb).map(user => {
+					return {
+						name : user,
+						number : usersNb[user]
+					}
+				});
+				return users.sort((a, b) => a.number > b.number ? 1 : -1)[0].name
+			})()
+		},
+		{
+			name : "Utilisateur gérant le plus de thèmes",
+			value : (() => {
+				const usersNb = {};
+				themes.forEach(theme => {
+					theme.users.forEach(user => {
+						if (usersNb[user.name]) {
+							usersNb[user.name] += 1;
+						} else {
+							usersNb[user.name] =1;
+						};
+					});
+				});
+
+				const users = Object.keys(usersNb).map(user => {
+					return {
+						name : user,
+						number : usersNb[user]
+					}
+				});
+				return users.sort((a, b) => a.number < b.number ? 1 : -1)[0].name
+			})()
+		}
+	];
+
+	const detailsContainer = document.querySelector('.details-container');
+	detailsContainer.innerHTML = "";
+	stats.forEach((stat, i) => {
+		detailsContainer.innerHTML += `
+			<div class="details-row${i % 2 ? ' darkened' : ''}">
+				<p>${stat.name}</p>
+				<hr>
+				<span>${stat.value}</span>
+			</div>
+		`;
+	});
 };
 
-setExaminations();
+/**
+ * Sets the edit-overlay form so it depends on which user we're editing
+ * @param {object} examination The theme on which to base the edit form depending on what we're editing
+ */
+const setEditExaminationForm = async (examination) => {
+	// Getting form and emptying charged users list
+	const form = document.querySelector('.edit-overlay form');
+
+	// Cloning the form to remove all the event listeners
+	const formClone = form.cloneNode(true);
+
+	// Replacing the previous form with the freshly created clone
+	form.parentNode.replaceChild(formClone, form);
+
+	const allowedProperties = ["title", "theme_id", "description", "duration", "always_available", "starts_at", "ends_at", "required_score"];
+
+	formClone.querySelector(`.title`).value = examination.title;
+	addThemesInSelect(formClone.querySelector(`.theme-id`), examination.theme_id);
+	formClone.querySelector(`.description`).value = examination.description;
+	formClone.querySelector(`.duration`).value = examination.duration;
+	formClone.querySelector(`.always-available`).value = examination.always_available;
+	formClone.querySelector(`.starts-at`).value = examination.starts_at;
+	formClone.querySelector(`.ends-at`).value = examination.ends_at;
+	formClone.querySelector(`.required-score`).value = examination.required_score;
+
+	formClone.addEventListener('submit', async (e) => {
+		e.preventDefault();
+
+		
+		const payload = {
+			title : document.querySelector('.edit-overlay .title'),
+			theme_id : document.querySelector('.edit-overlay .theme-id'),
+			description : document.querySelector('.edit-overlay .description'),
+			duration : document.querySelector('.edit-overlay .duration'),
+			always_available : document.querySelector('.edit-overlay .always-available'),
+			starts_at : document.querySelector('.edit-overlay .starts-at'),
+			ends_at : document.querySelector('.edit-overlay .ends-at'),
+			required_score : document.querySelector('.edit-overlay .required-score')
+		};
+
+		Object.keys(payload).forEach(property => {
+			if (!allowedProperties.includes(property)) {
+				throw new Error(`Property ${property} is not allowed`);
+			};
+		});
+
+		try {
+			// Not updating if nothing to change
+			if (Object.keys(payload).length < 1) throw new Error(`Le thème "${examination.title}" n'a pas été modifié`);
+
+			const updateThemeDetails = await updateTheme(examination.id, payload);
+			if (updateThemeDetails.error) throw new Error(updateThemeDetails.error);
+
+			console.log(updateThemeDetails);
+			
+			await setThemes();
+			sendMessageToPanel(`Le thème "${examination.title}" a été modifié`, 'var(--color-good-message)');
+			displayOverlay(false);
+
+		} catch (err) {
+			sendMessageToPanel(err.message, 'var(--color-bad-message)');
+		};
+	});
+
+	displayOverlay(true, editExaminationBox);
+};
 
 /**
  * Creates a form on which we'd base a examination to set up the deletion depending on it
@@ -259,15 +397,23 @@ const setDeleteExaminationForm = async (examination) => {
 	displayOverlay(true, deleteExaminationBox);
 };
 
-const setFormFlexBasis = () => {
-	const formRows = document.querySelectorAll('.insert-overlay .form-row');
+const setFormRowsFlexBasis = (formRows) => {
 	formRows.forEach(row => {
 		for (let i = 0; i < row.children.length; i++) {
 			row.children[i].style.setProperty('flex-basis', `${100 / row.children.length}%`);
 		};
 	});
 };
-setFormFlexBasis();
+setFormRowsFlexBasis(document.querySelectorAll('.insert-overlay .form-row'));
+
+const setExaminations = async () => {
+	const { examinations } = await getAllExaminations();
+	
+	await addThemesInSelect(document.querySelector('.insert-overlay .theme'));
+	await displayExaminations(await filterExaminations(examinations));
+};
+
+setExaminations();
 
 /**
  * Filtering by search query
@@ -286,7 +432,8 @@ const filterExaminations = (examinations) => {
 			// Checking if the search query contains any of the following values
 			const res = [
 				examination.title.toLowerCase(),
-				examination.description ? examination.description.toLowerCase() : examination.description
+				examination.description ? examination.description.toLowerCase() : examination.description,
+				examination.theme_title.toLowerCase()
 			].map(element => element ? element.includes(search.value.toLowerCase()) : false);
 			return res.includes(true);
 		})
@@ -312,7 +459,7 @@ const filterExaminations = (examinations) => {
  * Displays all examinations passed as arguments
  * @param {Array<object>} examinations 
  */
- const displayExaminations = async (examinations) => {
+const displayExaminations = async (examinations) => {
 	const container = document.querySelector('#examinations-container'); 
 	const cardsBox = document.createElement('div');
 	cardsBox.classList.add('cards-box');
@@ -333,7 +480,7 @@ const filterExaminations = (examinations) => {
 	};
 
 	// Looping on all sorted examinations to add them one by one
-	const sortedExams = sortByProperty(examinations, orderProperty.value, JSON.parse(orderAscending.value));
+	const sortedExams = sortByProperty(examinations, orderProperty.value.replaceAll('-', '_'), JSON.parse(orderAscending.value));
 	sortedExams.forEach(examination => {
 
 		const cardContainer = document.createElement('div');
@@ -371,9 +518,9 @@ const filterExaminations = (examinations) => {
 			<div class="examination-availability">
 				
 				${(() => {
-					console.log(examination.always_available);
-					console.log(examination.starts_at);
-					console.log(examination.ends_at);
+					// console.log(examination.always_available);
+					// console.log(examination.starts_at);
+					// console.log(examination.ends_at);
 
 					if (examination.always_available) {
 						return `<p class="available">Éternellement disponible</p>`;
@@ -402,7 +549,7 @@ const filterExaminations = (examinations) => {
 				};
 			})()}
 			<div class="examination-required-score">
-				<p>${examination.required_score} points requis</p>
+				<p>${examination.required_score} point${examination.required_score > 1 ? 's' : ''} requis</p>
 			</div>
 		`;
 
@@ -470,17 +617,13 @@ const filterExaminations = (examinations) => {
 
 search.addEventListener('input', () => {
 	setExaminations(search.value);
-	console.log(search.value);
 });
 orderProperty.addEventListener('change', () => {
 	setExaminations(orderProperty.value);
-	console.log(orderProperty.value);
 });
 orderAscending.addEventListener('change', () => {
 	setExaminations(orderAscending.value);
-	console.log(orderAscending.value);
 });
 showActives.addEventListener('change', () => {
 	setExaminations(showActives.value);
-	console.log(showActives.value);
 });

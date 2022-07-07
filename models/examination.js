@@ -7,6 +7,7 @@ const findAll = async () => {
 				"examination".id,
 				"examination".title,
 				"examination".description,
+				"examination".theme_id,
 				"theme".title AS "theme_title",
 				"examination".duration,
 				"examination".always_available,
