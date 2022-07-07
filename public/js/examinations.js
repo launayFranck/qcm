@@ -42,7 +42,7 @@ const examinationsNb = document.querySelector('.examinations-number');
  * @param {boolean} visible Specifies if the overlay must be visible or not
  * @param {*} boxName The name of the box we wish to display with the overlay
  */
- const displayOverlay = (visible = true, boxName) => {
+const displayOverlay = (visible = true, boxName) => {
 	// Checking if required overlay box is the one we requested
 	if (boxName) {
 		document.querySelectorAll('.overlay-box').forEach(box => {
@@ -75,26 +75,37 @@ document.querySelectorAll('.overlay-closer').forEach(overlayCloser => {
  * @async
  * @returns examinations
  */
- const getAllExaminations = async () => {
+const getAllExaminations = async () => {
 	const res = await fetch(`${hostname}/api/examinations`, {
 		method: 'GET',
-		credentials:'include',
-		cache:'no-cache',
+		credentials: 'include',
+		cache: 'no-cache',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
 		}
 	});
 	return await res.json();
 };
 
-const setExaminations = async () => {
-	const {examinations} = await getAllExaminations();
-	console.log(examinations);
-	await displayExaminations(await filterExaminations(examinations));
+/**
+ * Insert an examination into the DB
+ * @param {object} payload An object containing the properties to insert
+ * @returns {object} The created examination
+ */
+const insertExamination = async (payload) => {
+	const res = await fetch(`${hostname}/api/examinations`, {
+		method: 'POST',
+		credentials: 'include',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+		},
+		body: JSON.stringify(payload)
+	});
+	return await res.json();
 };
-
-setExaminations();
-
 
 /**
  * Updates an examination from the DB
@@ -102,13 +113,14 @@ setExaminations();
  * @param {object} payload An object containing the properties to modify
  * @returns {object} The updated examination
  */
- const updateExamination = async (id, payload) => {
+const updateExamination = async (id, payload) => {
 	const res = await fetch(`${hostname}/api/examinations/${id}`, {
 		method: 'PUT',
-		credentials:'include',
-		cache:'no-cache',
+		credentials: 'include',
+		cache: 'no-cache',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
 		},
 		body: JSON.stringify(payload)
 	});
@@ -120,24 +132,75 @@ setExaminations();
  * @param {number} id Integer referring to a examination's id
  * @returns {object} The deleted examination
  */
- const deleteExamination = async (id) => {
+const deleteExamination = async (id) => {
 	const res = await fetch(`${hostname}/api/examinations/${id}`, {
 		method: 'DELETE',
-		credentials:'include',
-		cache:'no-cache',
+		credentials: 'include',
+		cache: 'no-cache',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
 		}
 	});
 	console.log(res);
 	return await res.json();
 };
 
+const getAllThemes = async () => {
+	const res = await fetch(`${hostname}/api/themes`, {
+		method: 'GET',
+		credentials: 'include',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+		}
+	});
+	return await res.json();
+};
+
+const setThemesInSelect = async (themes, select) => {
+	select.innerHTML = `<option value="">-- Sélectionnez un thème</option>`
+	select.innerHTML = sortByProperty(themes, 'title').map((theme) => `<option value="${theme.id}">${theme.title}</option>`).join('');
+};
+
+// The listener for the insert examination form's submit event
+document.querySelector('.insert-overlay form').addEventListener('submit', async (e) => {
+	e.preventDefault();
+	try {
+		const title = document.querySelector('.insert-overlay .title').value;
+		const theme = document.querySelector('.insert-overlay .theme').value;
+		const description = document.querySelector('.insert-overlay .description').value;
+
+		const insertDetails = await insertTheme({title, description, users});
+		if (insertDetails.error) throw new Error(insertDetails.error);
+
+		console.log(insertDetails);
+
+		sendMessageToPanel(`Le thème "${insertDetails.theme.title}" a été créé`, 'var(--color-good-message)');
+		await setThemes();
+		displayOverlay(false);
+		e.target.reset();
+	} catch (err) {
+		sendMessageToPanel(err.message, 'var(--color-bad-message)');
+	};
+});
+
+const setExaminations = async () => {
+	const { examinations } = await getAllExaminations();
+	const { themes } = await getAllThemes();
+	
+	await setThemesInSelect(themes, document.querySelector('.insert-overlay .theme'));
+	await displayExaminations(await filterExaminations(examinations));
+};
+
+setExaminations();
+
 /**
  * Creates a form on which we'd base a examination to set up the deletion depending on it
  * @param {object} examination The examination on which we'll base the delete examination form
  */
- const setDeleteExaminationForm = async (examination) => {
+const setDeleteExaminationForm = async (examination) => {
 	document.querySelector('.delete-query').innerText = `Souhaitez-vous vraiment supprimer ${examination.title} ?`;
 
 	const deleteExaminationBtn = document.querySelector('.delete-overlay .delete-btn');
@@ -165,13 +228,22 @@ setExaminations();
 	displayOverlay(true, deleteExaminationBox);
 };
 
+const setFormFlexBasis = () => {
+	const formRows = document.querySelectorAll('.insert-overlay .form-row');
+	formRows.forEach(row => {
+		for (let i = 0; i < row.children.length; i++) {
+			row.children[i].style.setProperty('flex-basis', `${100 / row.children.length}%`);
+		};
+	});
+};
+setFormFlexBasis();
 
 /**
  * Filtering by search query
  * @param {Array<object>} examinations 
  * @returns {Array<object>} filtered users
  */
- const filterExaminations = (examinations) => {
+const filterExaminations = (examinations) => {
 	if (!examinations) return {message : "Aucun examen ne correspond à ces critères"};
 	if (examinations.length < 1) return {message : "Aucun examen ne correspond à ces critères"};
 
@@ -240,7 +312,6 @@ setExaminations();
 		card.classList.add('examination-card');
 		
 		const formatInterval = (interval) => {
-			console.log(interval)
 			const hours = interval.hours ? interval.hours : '00';
 			const minutes = interval.minutes ? interval.minutes : '00';
 
@@ -257,30 +328,34 @@ setExaminations();
 				<p>Créé le ${formatDate(examination.created_at, '$D/$M/$Y à $H:$m')} par ${examination.created_by}</p>
 				<p>Modifié le ${formatDate(examination.updated_at, '$D/$M/$Y à $H:$m')} par ${examination.updated_by}</p>
 			</div>
+			<div class="examination-theme">
+				<p>${examination.theme_title}</p>
+			</div>
+			<div class="examination-duration">
+				<div>
+					<img src="/img/stopwatch.svg" alt="stopwatch" title="Durée moyenne de l'examen">
+					<p>${formatInterval(examination.duration)}</p>
+				</div>
+			</div>
+			<div class="examination-availability">
+				${new Date(examination.starts_at) < new Date() && new Date(examination.ends_at) > new Date() ? `<p class="available">Actuellement disponible</p>` : `<p class="unavailable">Actuellement indisponible</p>`}
+				<p>Disponible le ${formatDate(examination.starts_at)}</p>
+				<p>Termine le ${formatDate(examination.ends_at)}</p>
+			</div>
 			${(() => {
 				if (examination.description !== null) {
 					return `
 						<div class="examination-description">
 							<p>${examination.description}</p>
 						</div>
-					`
+					`;
 				} else {
 					return '';
-				}
+				};
 			})()}
-			<div class="examination-duration">
-				<p>Durée : ${formatInterval(examination.duration)}</p>
-			</div>
-			<div class="examination-start-date">
-				<p>Disponible le ${formatDate(examination.starts_at)}</p>
-			</div>
-			<div class="examination-end-date">
-				<p>Termine le ${formatDate(examination.ends_at)}</p>
-			</div>
 			<div class="examination-required-score">
-				<p>Score requis : ${examination.required_score}</p>
+				<p>${examination.required_score} points requis</p>
 			</div>
-			
 		`;
 
 		const btnContainer = document.createElement('div');

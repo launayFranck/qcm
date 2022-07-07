@@ -307,9 +307,7 @@ const setDetails = async (users) => {
  */
 const setInfosRowColor = () => {
 	document.querySelectorAll('.infos-row').forEach((row, i) => {
-		if ((i % 2)) {
-			row.style.backgroundColor = "#ececec";
-		}
+		if (i % 2) row.style.backgroundColor = "var(--color-bg-alt3)";
 	});
 };
 setInfosRowColor();
@@ -426,10 +424,13 @@ const setUsers = async () => {
 };
 
 const displayUsersByRole = (users, roles, rolesIds) => {
+	if (!users) return {message : "Aucun utilisateur ne correspond à ces critères"};
+	if (users.length < 1) return {message : "Aucun utilisateur ne correspond à ces critères"};
+	
 	usersContainer.innerHTML = '';
 	rolesIds.forEach(roleId => {
-		const filteredUsers = users.filter(user => user.role == roleId);
-		displayUsers(filterUsers(filteredUsers), roles, roleId);
+		const filteredUsers = filterUsers(users.filter(user => user.role == roleId));
+		displayUsers(filteredUsers, roles, roleId);
 	});
 };
 
@@ -480,6 +481,17 @@ const filterUsers = (users) => {
  * @param {array} rolesIds The roles ids used for bracket notation to get the roles' name
  */
  const displayUsers = (users, roles, roleId) => {
+	// If something is to be said (potentially an error)
+	if (users.message) {
+		container.innerHTML = `
+			<div class="themes-message">
+				<h1>:(</h1>
+				<p>${themes.message}</p>
+			</div>
+		`;
+		return;
+	};
+
 	// Resetting usersContainer's content
 	const newRoleBox = document.createElement('section');
 		newRoleBox.setAttribute('id', roles[roleId]);

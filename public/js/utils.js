@@ -1,14 +1,19 @@
 /**
  * Capitalizes a string
  * @param {string} str The string to capitalize
- * @param {boolean} capitalizeAllWords Defines if each word from the string must be capitalized
+ * @param {boolean} allWords Defines if each word from the string must be capitalized
  * @returns {string} The capitalized string
  */
-const capitalize = (str, capitalizeAllWords = false) => {
-	const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const capitalize = (str, allWords = false) => {
+	try {
+		const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
-	if (capitalizeAllWords) return str.split(' ').map(str => cap(str)).join('');
-	else return cap(str);
+		if (allWords) return str.split(' ').map(str => cap(str)).join('');
+		else return cap(str);
+	} catch (err) {
+		console.error(`Couldn't apply a capitalization to the given element.\n${err.message}`);
+		return str;
+	};
 };
 
 /**
@@ -18,60 +23,65 @@ const capitalize = (str, capitalizeAllWords = false) => {
  * @returns {string} A date with the following format : "DD/MM/YYYY"
  */
 const formatDate = (timestamp, format = '$D/$M/$Y à $H:$m') => {
-	const formatted = new Date(timestamp);
+	try {
+		const formatted = new Date(timestamp);
 
-	const year = formatted.getFullYear();
-	const month = ((formatted.getMonth()).toString()).length < 2 ? `0${formatted.getMonth() + 1}` : formatted.getMonth() + 1;
-	const date = ((formatted.getDate()).toString()).length < 2 ? `0${formatted.getDate()}` : formatted.getDate();
-	const day = (() => {
-		const lang = (document.querySelector('html').getAttribute('lang')).toUpperCase();
-		const days = {
-			EN : {
-				0 : 'Sunday',
-				1 : 'Monday',
-				2 : 'Tuesday',
-				3 : 'Wednesday',
-				4 : 'Thursday',
-				5 : 'Friday',
-				6 : 'Saturday',
-				default : 'Unknown day'
-			},
-			FR : {
-				0 : 'Dimanche',
-				1 : 'Lundi',
-				2 : 'Mardi',
-				3 : 'Mercredi',
-				4 : 'Jeudi',
-				5 : 'Vendredi',
-				6 : 'Samedi',
-				default : 'Jour inconnu'
-			}
-		};
-		
-		return days[lang] ?
-			days[lang][formatted.getDay()] ?
-				days[lang][formatted.getDay()]
+		const year = formatted.getFullYear();
+		const month = ((formatted.getMonth()).toString()).length < 2 ? `0${formatted.getMonth() + 1}` : formatted.getMonth() + 1;
+		const date = ((formatted.getDate()).toString()).length < 2 ? `0${formatted.getDate()}` : formatted.getDate();
+		const day = (() => {
+			const lang = (document.querySelector('html').getAttribute('lang')).toUpperCase();
+			const days = {
+				EN : {
+					0 : 'Sunday',
+					1 : 'Monday',
+					2 : 'Tuesday',
+					3 : 'Wednesday',
+					4 : 'Thursday',
+					5 : 'Friday',
+					6 : 'Saturday',
+					default : 'Unknown day'
+				},
+				FR : {
+					0 : 'Dimanche',
+					1 : 'Lundi',
+					2 : 'Mardi',
+					3 : 'Mercredi',
+					4 : 'Jeudi',
+					5 : 'Vendredi',
+					6 : 'Samedi',
+					default : 'Jour inconnu'
+				}
+			};
+			
+			return days[lang] ?
+				days[lang][formatted.getDay()] ?
+					days[lang][formatted.getDay()]
+					:
+					days[lang].default
 				:
-				days[lang].default
-			:
-			days.EN.default
-		;
-	})();
-	
-	const hours = ((formatted.getHours()).toString()).length < 2 ? `0${formatted.getHours()}` : formatted.getHours();
-	const minutes = ((formatted.getMinutes()).toString()).length < 2 ? `0${formatted.getMinutes()}` : formatted.getMinutes();
-	const seconds = ((formatted.getSeconds()).toString()).length < 2 ? `0${formatted.getSeconds()}` : formatted.getSeconds();
+				days.EN.default
+			;
+		})();
+		
+		const hours = ((formatted.getHours()).toString()).length < 2 ? `0${formatted.getHours()}` : formatted.getHours();
+		const minutes = ((formatted.getMinutes()).toString()).length < 2 ? `0${formatted.getMinutes()}` : formatted.getMinutes();
+		const seconds = ((formatted.getSeconds()).toString()).length < 2 ? `0${formatted.getSeconds()}` : formatted.getSeconds();
 
-	let tmp = format;
-	tmp = tmp.replace('$Y', year);
-	tmp = tmp.replace('$M', month);
-	tmp = tmp.replace('$D', date);
-	tmp = tmp.replace('$d', day);
-	tmp = tmp.replace('$H', hours);
-	tmp = tmp.replace('$m', minutes);
-	tmp = tmp.replace('$s', seconds);
+		let tmp = format;
+		tmp = tmp.replace('$Y', year);
+		tmp = tmp.replace('$M', month);
+		tmp = tmp.replace('$D', date);
+		tmp = tmp.replace('$d', day);
+		tmp = tmp.replace('$H', hours);
+		tmp = tmp.replace('$m', minutes);
+		tmp = tmp.replace('$s', seconds);
 
-	return tmp;
+		return tmp;
+	} catch (err) {
+		console.error(`Couldn't convert the given date to a string.\n${err.message}`);
+		return timestamp;
+	};
 };
 
 /**
@@ -81,8 +91,12 @@ const formatDate = (timestamp, format = '$D/$M/$Y à $H:$m') => {
  * @returns {string} The formatted phone number
  */
 const formatPhone = (phone, char = '.') => {
-	return phone.match(/.{1,2}/g).join(char);
-};
+	try {
+		phone.match(/.{1,2}/g).join(char);
+	} catch (err) {
+		console.error(`Couldn't format phone number`)
+	}
+}
 
 /**
  * Function used to display a message in the top-left corner of the page (navbar not included)
@@ -90,21 +104,25 @@ const formatPhone = (phone, char = '.') => {
  * @param {string} color The color in which the message box will be painted
  */
 const sendMessageToPanel = async (msg, color) => {
-	const messageBox = document.createElement('div');
-	messageBox.style.setProperty('background-color', color);
-	messageBox.classList.add('message-box');
-
-	const message = document.createElement('p');
-	message.innerText = msg;
-
-	messageBox.append(message);
-
-	const messagePanel = document.querySelector('.message-panel')
-	messagePanel.append(messageBox);
-
-	setTimeout(() => {
-		messagePanel.removeChild(messageBox);
-	}, 5000);
+	try {
+		const messageBox = document.createElement('div');
+		messageBox.style.setProperty('background-color', color);
+		messageBox.classList.add('message-box');
+	
+		const message = document.createElement('p');
+		message.innerText = msg;
+	
+		messageBox.append(message);
+	
+		const messagePanel = document.querySelector('.message-panel')
+		messagePanel.append(messageBox);
+	
+		setTimeout(() => {
+			messagePanel.removeChild(messageBox);
+		}, 5000);
+	} catch (err) {
+		console.error(`Couldn't send message to the message panel.\n${err.message}`);
+	};
 };
 
 /**
@@ -129,15 +147,18 @@ const sendMessageToPanel = async (msg, color) => {
 			(asc ? 1 : -1) : (asc ? -1 : 1)
 		);
 
-		console.log(res);
-
 		return res;
 	} catch (err) {
-		console.error(err.message);
+		console.error(`Couldn't sort by property.\n${err.message}`);
 		return array;
 	};
 };
 
+/**
+ * Verifies if the given string is a legit email address
+ * @param {string} str The email address we want to verify
+ * @returns {boolean} Returns true if the given email is a correct email address
+ */
 const validateEmail = (str) => str.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
 
 export {
@@ -148,4 +169,3 @@ export {
 	sortByProperty,
 	validateEmail
 };
-

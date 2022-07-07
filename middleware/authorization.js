@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken';
 
 /**
  * Authenticate token middleware
- * @param {object} req 
- * @param {object} res 
+ * @param {object} req
+ * @param {object} res
  * @param {function} next
  */
 function authenticateToken(req, res, next) {
@@ -17,4 +17,4 @@ function authenticateToken(req, res, next) {
 	});
 };
 
-export {authenticateToken};
+export { authenticateToken };

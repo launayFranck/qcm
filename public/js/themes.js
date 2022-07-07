@@ -70,11 +70,11 @@ const addChargedField = async (node, userId) => {
 			for (let user of filteredUsers) {
 				const option = document.createElement('option');
 				option.setAttribute('value', user.id);
+				if (userId) if (userId == user.id) option.setAttribute('selected', true);
 				option.innerText = `${user.username} (${user.firstname} ${user.lastname})`;
 
 				optGroup.appendChild(option);
 			};
-			if (userId) select.value = userId;
 
 			select.appendChild(optGroup);
 		});
@@ -224,7 +224,7 @@ const removeDuplicates = async (array) => {
 	return Object.keys(tmp);
 };
 
-// The event listener for the insert theme form's submit event
+// The listener for the insert theme form's submit event
 document.querySelector('.insert-overlay form').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	try {
@@ -431,7 +431,7 @@ const setDeleteThemeForm = async (theme) => {
 };
 
 /**
- * @async
+ * @async Adds all users with theme rights into a select box
  * @param {htmlnode} select The select tag inside which we want to add the users
  */
 const displayUsersInSelect = async (select) => {

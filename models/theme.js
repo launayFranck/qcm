@@ -205,34 +205,38 @@ const create = async (payload, token) => {
  * @param {object} payload with the new informations
  */
 const update = async (id, payload, token) => {
-	let charges = payload.charges.map(charge => parseInt(charge));
-
-	// Suppression des propriétés non autorisées
-	Object.keys(payload).forEach(property => {
-		if (!['title', 'description'].includes(property)) {
-			delete payload[property];
-		};
-	});
-	const themePayload = Object.keys(payload).length > 0 ? payload : undefined;
-
 	try {
+		console.log(payload);
+		if (!payload.charges) throw new Error('Le thème doit être attribué à au moins un utilisateur.');
+		if (payload.charges.length < 1) throw new Error('Le thème doit être attribué à au moins un utilisateur.');
+
+		let charges = payload.charges.map(charge => parseInt(charge));
+
+		// Suppression des propriétés non autorisées
+		Object.keys(payload).forEach(property => {
+			if (!['title', 'description'].includes(property)) {
+				delete payload[property];
+			};
+		});
+		const themePayload = Object.keys(payload).length > 0 ? payload : undefined;
+
 		// Vérification de l'existence du thème à modifier
 		const verif = await knex('theme').select('id', 'title').where({id});
 		if (verif.length < 1) throw new Error(`Le thème avec l'ID ${id} n'existe pas`);
 
 		// Getting all users in charge for the specified theme
 		const themeUsers = (await knex('theme_user').select().where({theme_id : id})).map(themeUser => themeUser.user_id);
-		console.log("charges : ", charges);
-		console.log("themeUsers : ", themeUsers);
+		// console.log("charges : ", charges);
+		// console.log("themeUsers : ", themeUsers);
 
 		// Filtering charged users depending on what action to do with them
 		const toUpdate = themeUsers.filter(x => charges.indexOf(x) === themeUsers.indexOf(x));
 		const toInsert = charges.filter(x => themeUsers.indexOf(x) === -1);
 		const toDestroy = themeUsers.filter(x => charges.indexOf(x) === -1);
 
-		console.log("toUpdate : ", toUpdate);
-		console.log("toInsert : ", toInsert);
-		console.log("toDestroy : ", toDestroy);
+		// console.log("toUpdate : ", toUpdate);
+		// console.log("toInsert : ", toInsert);
+		// console.log("toDestroy : ", toDestroy);
 
 		// --- Requests
 		const result = {};

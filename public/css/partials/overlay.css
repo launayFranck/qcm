@@ -123,7 +123,7 @@ button.overlay-closer {
 .insert-overlay input[type="submit"]:hover {
 	background-color: var(--color-insert-hover);
 }
-.insert-overlay .input-box label {
+.insert-overlay label {
 	color: var(--color-insert);
 }
 
@@ -270,13 +270,32 @@ button.overlay-closer {
 	width: fit-content;
 	transition: background-color .1s ease-out;
 }
+
 .insert-overlay input[type="submit"],
 .edit-overlay input[type="submit"] {
 	border: none;
 	color: var(--color-bg);
 }
 
-/* - - - THEMES EXCLUSIVES - - - */
+.checkbox-box {
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-end;
+	align-items: center;
+	flex-grow: 1;
+	padding: .8rem;
+}
+
+.checkbox-box label {
+	margin-left: .8rem;
+}
+.checkbox-box input[type="checkbox"] {
+	width: 2.4rem;
+	height: 2.4rem;
+	cursor: pointer;
+}
+
+/* - - - THEMES & EXAMINATIONS EXCLUSIVES - - - */
 .overlay-box textarea {
 	padding: .8rem;
 	border: solid 1px var(--color-bg-alt2);
