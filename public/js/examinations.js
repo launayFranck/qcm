@@ -26,16 +26,38 @@ const orderProperty = document.querySelector('.order-property');
 const orderAscending = document.querySelector('.order-ascending');
 const showActives = document.querySelector('.show-actives');
 
-// Form infos
-const title = document.getElementsByName('title')[0];
-const duration = document.getElementsByName('duration')[0];
-const startsAt = document.getElementsByName('starts-at')[0];
-const endsAt = document.getElementsByName('ends-at')[0];
-const requiredScore = document.getElementsByName('required-score')[0];
+// Insert form
+const title = document.querySelector('.insert-overlay .title');
+const theme = document.querySelector('.insert-overlay .theme');
+const description = document.querySelector('.insert-overlay .description');
+const duration = document.querySelector('.insert-overlay .duration');
+const alwaysAvailable = document.querySelector('.insert-overlay .always-available');
+const startsAt = document.querySelector('.insert-overlay .starts-at');
+const endsAt = document.querySelector('.insert-overlay .ends-at');
+const requiredScore = document.querySelector('.insert-overlay .required-score');
 
 // examinations infos
 const examinationsContainer = document.querySelector('#examinations-container');
 const examinationsNb = document.querySelector('.examinations-number');
+
+const toggleAvailability = (bool) => {
+	const status = bool ? !bool : alwaysAvailable.checked;
+
+	const inputs = document.querySelectorAll('.availability input');
+	if (status) {
+		inputs.forEach(input => {
+			input.setAttribute('disabled', 'true');
+		});
+	} else {
+		inputs.forEach(input => {
+			input.removeAttribute('disabled');
+		});
+	};
+};
+
+alwaysAvailable.addEventListener('click', () => {
+	toggleAvailability()
+});
 
 /**
  * Function displaying or hiding the overlay and its black blurred transparent background
@@ -168,19 +190,28 @@ const setThemesInSelect = async (themes, select) => {
 document.querySelector('.insert-overlay form').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	try {
-		const title = document.querySelector('.insert-overlay .title').value;
-		const theme = document.querySelector('.insert-overlay .theme').value;
-		const description = document.querySelector('.insert-overlay .description').value;
+		const payload = {
+			title : title.value,
+			theme_id : theme.value,
+			description : description.value,
+			duration : duration.value,
+			always_available : alwaysAvailable.checked,
+			starts_at : !alwaysAvailable.checked ? startsAt.value : null,
+			ends_at : !alwaysAvailable.checked ? endsAt.value : null,
+			required_score : requiredScore.value
+		};
 
-		const insertDetails = await insertTheme({title, description, users});
+		const insertDetails = await insertExamination(payload);
 		if (insertDetails.error) throw new Error(insertDetails.error);
 
 		console.log(insertDetails);
 
-		sendMessageToPanel(`Le thème "${insertDetails.theme.title}" a été créé`, 'var(--color-good-message)');
-		await setThemes();
+		sendMessageToPanel(`L'examen "${insertDetails.examination.title}" a été créé`, 'var(--color-good-message)');
+		await setExaminations();
 		displayOverlay(false);
 		e.target.reset();
+		toggleAvailability(false);
+
 	} catch (err) {
 		sendMessageToPanel(err.message, 'var(--color-bad-message)');
 	};
@@ -338,9 +369,26 @@ const filterExaminations = (examinations) => {
 				</div>
 			</div>
 			<div class="examination-availability">
-				${new Date(examination.starts_at) < new Date() && new Date(examination.ends_at) > new Date() ? `<p class="available">Actuellement disponible</p>` : `<p class="unavailable">Actuellement indisponible</p>`}
-				<p>Disponible le ${formatDate(examination.starts_at)}</p>
-				<p>Termine le ${formatDate(examination.ends_at)}</p>
+				
+				${(() => {
+					console.log(examination.always_available);
+					console.log(examination.starts_at);
+					console.log(examination.ends_at);
+
+					if (examination.always_available) {
+						return `<p class="available">Éternellement disponible</p>`;
+					} else {
+						return `
+							${new Date(examination.starts_at) < new Date() && new Date(examination.ends_at) > new Date() ?
+								`<p class="available">Actuellement disponible</p>`
+								:
+								`<p class="unavailable">Actuellement indisponible</p>`
+							}
+							<p>Disponible le ${formatDate(examination.starts_at)}</p>
+							<p>Termine le ${formatDate(examination.ends_at)}</p>
+						`;
+					};
+				})()}
 			</div>
 			${(() => {
 				if (examination.description !== null) {

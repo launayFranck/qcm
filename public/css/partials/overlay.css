@@ -358,3 +358,7 @@ button.overlay-closer {
 .edit-overlay .add-charged {
 	border: dotted 2px var(--color-edit);
 }
+
+input:disabled {
+	opacity: .5;
+}

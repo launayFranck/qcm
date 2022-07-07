@@ -9,6 +9,7 @@ const findAll = async () => {
 				"examination".description,
 				"theme".title AS "theme_title",
 				"examination".duration,
+				"examination".always_available,
 				"examination".starts_at,
 				"examination".ends_at,
 				"examination".required_score,
@@ -37,8 +38,11 @@ const findById = async (id) => {
 	};
 };
 
-const create = async (payload) => {
+const create = async (payload, user) => {
 	try {
+		payload.created_by = user.id;
+		payload.updated_by = user.id;
+
 		const result = await knex('examination').insert(payload).returning('*');
 		return result[0];
 	} catch (err) {
