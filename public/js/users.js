@@ -287,9 +287,9 @@ const setDetails = async (users) => {
 };
 
 /**
-	 * Creates an array inside which all roles will be stored
-	 * @param {Array<object>} users 
-	 */
+ * Creates an array inside which all roles will be stored
+ * @param {Array<object>} users 
+ */
  const filterRoles = async (users) => {
 	let roles = {};
 	users.forEach(user => {
