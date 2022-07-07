@@ -230,36 +230,59 @@ main {
     color: var(--color-bg-alt3);
 	margin: .8rem 0;
 }
-.examination-description {
+.examination-theme {
 	margin: .8rem 0;
 }
 
-.examination-users {
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-	width: 100%;
-	margin: .8rem 0;
-}
-.examination-users li {
+.examination-duration > div {
 	display: flex;
 	align-items: center;
 }
-.examination-users img {
-	width: 1.6rem;
-	height: 1.6rem;
-	margin-right: .8rem;
-	opacity: .3;
+.examination-duration img {
+	height: 2rem;
+	width: 2rem;
+	object-fit: contain;
+	filter: brightness(.5);
+	margin-right: .4rem;
 }
-.examination-users p {
-	color: var(--color-alt3);
+
+.examination-availability {
+	display: flex;
+	flex-direction: column;
+	margin: .8rem 0;
+	padding: .8rem;
+	border-radius: .4rem;
+	background-color: var(--color-bg-alt);
+}
+.available {
+	color: var(--color-insert);
+}
+.unavailable {
+	color: var(--color-delete);
+}
+
+.examination-description {
+	margin: .8rem 0;
+}
+.examination-description p {
+	color: var(--color-bg-alt3);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 4; /* number of lines to show */
+	-webkit-box-orient: vertical;
+}
+
+.examination-required-score {
+	margin: .8rem 0;
 }
 
 .examination-card .btn-container {
 	display: flex;
 	flex-direction: row;
+	flex: 1;
 	justify-content: center;
-	align-items: center;
+	align-items: flex-end;
 	margin-top: .8rem;
 	padding: .8rem 0;
 	width: 100%;

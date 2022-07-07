@@ -147,8 +147,6 @@ const sendMessageToPanel = async (msg, color) => {
 			(asc ? 1 : -1) : (asc ? -1 : 1)
 		);
 
-		console.log(res);
-
 		return res;
 	} catch (err) {
 		console.error(`Couldn't sort by property.\n${err.message}`);

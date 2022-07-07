@@ -224,7 +224,7 @@ const removeDuplicates = async (array) => {
 	return Object.keys(tmp);
 };
 
-// The event listener for the insert theme form's submit event
+// The listener for the insert theme form's submit event
 document.querySelector('.insert-overlay form').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	try {

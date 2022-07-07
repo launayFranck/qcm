@@ -3,7 +3,7 @@ import { jwtDecode } from "./jwt-decode.js";
 const hostname = window.location.href.split(window.location.pathname)[0];
 
 const checkRights = (user, right) => {
-	console.log(user, right);
+	// console.log(user, right);
 	return true;
 };
 
@@ -14,7 +14,7 @@ const setNavbarLinks = (token) => {
 	navLinks.innerHTML = '';
 	try {
 		navLinks.innerHTML += `
-			${checkRights(jwtDecoded, 'isAdmin') ? `<li><a href="/admin">Admin</a></li>` : `<li><a href="/">Home</a></li>`}
+			${checkRights(jwtDecoded, 'canViewAdminPage') ? `<li><a href="/admin">Admin</a></li>` : `<li><a href="/">Home</a></li>`}
 			${checkRights(jwtDecoded, 'canViewUsers') ? `<li><a href="/users">Utilisateurs</a></li>` : ``}
 			${checkRights(jwtDecoded, 'canViewThemes') ? `<li><a href="/themes">Thèmes</a></li>` : ``}
 			${checkRights(jwtDecoded, 'canViewExaminations') ? `<li><a href="/examinations">Examens</a></li>` : ``}
@@ -28,7 +28,6 @@ const setNavbarLinks = (token) => {
 	try {
 		navOptions.innerHTML += `
 			${checkRights(jwtDecoded, 'isAdmin') ? `<li><a href="/settings">Paramètres</a></li>` : ``}
-			
 		`;
 
 		// Logout button

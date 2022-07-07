@@ -7,6 +7,7 @@ const findAll = async () => {
 				"examination".id,
 				"examination".title,
 				"examination".description,
+				"theme".title AS "theme_title",
 				"examination".duration,
 				"examination".starts_at,
 				"examination".ends_at,
@@ -17,6 +18,7 @@ const findAll = async () => {
 				"creator".username AS created_by,
 				"updator".username AS updated_by
 			FROM "examination"
+			JOIN "theme" ON "examination".theme_id = "theme".id
 			JOIN "user" AS "creator" ON "examination".created_by = "creator".id
 			JOIN "user" AS "updator" ON "examination".created_by = "updator".id;
 		`);
