@@ -52,7 +52,6 @@ const create = async (payload, user) => {
 };
 
 const update = async (id, payload) => {
-	console.log(id, payload)
 	try {
 		const result = await knex('examination').update(payload).where({id}).returning('*');
 		return result[0];

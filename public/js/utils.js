@@ -17,6 +17,21 @@ const capitalize = (str, allWords = false) => {
 };
 
 /**
+ * Used to convert a date into a legit timestamp
+ * @param {date} dateVar The variable containing a date
+ * @returns {string} The newly generated timestamp based on the given date
+ */
+const convertToTimestamp = (dateVar = new Date()) => {
+	const year = dateVar.getFullYear();
+	const month = formatNumber(dateVar.getMonth() + 1);
+	const date = formatNumber(dateVar.getDate());
+	const hours = formatNumber(dateVar.getHours());
+	const minutes = formatNumber(dateVar.getMinutes());
+
+	return `${year}-${month}-${date}T${hours}:${minutes}`;
+};
+
+/**
  * Turns a timestamp into a formatted date string
  * @param {date} timestamp The timestamp we wish to convert
  * @param {string} format The string to use as a template for the formatted date. Can include $Y (year), $M (month), $D (date), $d (day), $H (hours), $m (minutes), $s (seconds). E.g. : "$Y/$M/$D at $H/$m".
@@ -85,6 +100,41 @@ const formatDate = (timestamp, format = '$D/$M/$Y à $H:$m') => {
 };
 
 /**
+ * Turns an object containing hours, minutes and/or seconds properties into a string
+ * E.g.: { hours: 1, minutes: 30 } => '01:30'
+ * @param {object} interval The object containing hours, minutes or seconds properties. E.g.: { minutes : 50 }
+ * @param {string} format The appearance of the returned string, can contain $H for hours, $m for minutes and/or $s for seconds. E.g.: '$H:$m:$s'
+ * @returns {string} The formatted interval, now a string
+ */
+const formatInterval = (interval, format = '$H:$m') => {
+	try {
+		let tmp = format;
+		tmp = tmp.includes('$H') ? tmp.replaceAll('$H', interval.hours ? formatNumber(interval.hours) : '00') : tmp;
+		tmp = tmp.includes('$m') ? tmp.replaceAll('$m', interval.minutes ? formatNumber(interval.minutes) : '00') : tmp;
+		tmp = tmp.includes('$s') ? tmp.replaceAll('$s', interval.seconds ? formatNumber(interval.seconds) : '00') : tmp;
+		return tmp;
+	} catch (err) {
+		console.error(err.message);
+	};
+};
+
+/**
+ * Converts a number to a string and adds zeros before it if the string's required length isn't satisfied
+ * @param {number} number The number to format
+ * @param {number} length The amount of characters the string must be
+ * @returns {string} The number converted to a string
+ */
+const formatNumber = (number, length = 2) => {
+	return (number.toString()).length < length ? `${(() => {
+		let zeroStr = '';
+		for (let i = 0; i < (length - (number.toString()).length); i++) {
+			zeroStr += '0';
+		};
+		return zeroStr;
+	})()}${number}` : number;
+};
+
+/**
  * Formats a phone number. E.g. : '0123456789' will be turned to '01.23.45.67.89'
  * @param {string} phone The phone number to format
  * @param {string} char The character used between every 2 characters from the phone number
@@ -97,6 +147,30 @@ const formatPhone = (phone, char = '.') => {
 		console.error(`Couldn't format phone number`)
 	}
 }
+
+/**
+	 * Turns a string into an object containing hours, minutes and/or seconds properties
+	 * E.g.: '01:30' => { hours: 1, minutes: 30 }
+	 * @param {string} format The appearance of the returned string, can contain $H for hours, $m for minutes and/or $s for seconds. E.g.: '$H:$m:$s'
+	 * @param {object} str The string containing hours, minutes or seconds. E.g.: "01:30"
+	 * @returns {string} The formatted interval, now an object
+	 */
+ const reverseFormatInterval = (str) => {
+	try {
+		const string = (str.split(':')).map(s => parseInt(s));
+
+		const properties = ["hours", "minutes", "seconds"];
+
+		let tmp = {};
+		for (let i = 0; i < string.length; i++) {
+			if (string[i] != 0) tmp[properties[i]] = string[i];
+		};
+		
+		return tmp;
+	} catch (err) {
+		console.error(err.message);
+	};
+};
 
 /**
  * Function used to display a message in the top-left corner of the page (navbar not included)
@@ -163,8 +237,12 @@ const validateEmail = (str) => str.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{
 
 export {
     capitalize,
+	convertToTimestamp,
     formatDate,
+	formatInterval,
+	formatNumber,
     formatPhone,
+	reverseFormatInterval,
     sendMessageToPanel,
 	sortByProperty,
 	validateEmail

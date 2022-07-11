@@ -9,11 +9,14 @@ const router = express.Router();
 
 // • Fetching all examinations
 router.get('/', async (req, res) => {
-	const authorization = req.headers['authorization'];
-	console.log(authorization);
 	try {
-		const result = await examination.findAll();
-		res.status(200).json({examinations : result});
+		const authorization = req.headers['authorization'].split(' ')[1];
+		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+			if (err) throw err;
+
+			const result = await examination.findAll();
+			res.status(200).json({examinations : result});
+		});
 	} catch (err) {
 		res.status(500).json({error : err.message});
 	};
@@ -22,8 +25,13 @@ router.get('/', async (req, res) => {
 // • Fetching examination by id
 router.get('/:id', async (req, res) => {
 	try {
-		const result = await examination.findById(req.params.id);
-		res.status(200).json({examination : result});
+		const authorization = req.headers['authorization'].split(' ')[1];
+		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+			if (err) throw err;
+
+			const result = await examination.findById(req.params.id);
+			res.status(200).json({examination : result});
+		});
 	} catch (err) {
 		res.status(500).json({error : err.message});
 	};
@@ -33,30 +41,27 @@ router.get('/:id', async (req, res) => {
 router.post("/", async (req, res) => {
 	try {
 		const authorization = req.headers['authorization'].split(' ')[1];
-		console.log(authorization)
-		console.log(req.body)
-
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
 			if (err) throw err;
 
 			const result = await examination.create(req.body, user);
-		
 			res.status(200).json({examination : result});
 		});
-
 	} catch (err) {
 		res.status(500).json({error : err.message});
 	};
-
-	
 });
 
 // • Updating examination
 router.put('/:id', async (req, res) => {
-	console.log(req.params.id)
 	try {
-		const response = await examination.update(req.params.id, req.body);
-		res.status(200).json(response);
+		const authorization = req.headers['authorization'].split(' ')[1];
+		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+			if (err) throw err;
+
+			const response = await examination.update(req.params.id, req.body);
+			res.status(200).json(response);
+		});
 	} catch (err) {
 		res.status(400).json({error : err.message});
 	};
@@ -65,8 +70,8 @@ router.put('/:id', async (req, res) => {
 // • Deleting an examination
 router.delete('/:id', async (req, res) => {
 	try {
-		const { access_token : accessToken } = req.cookies;
-		jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+		const authorization = req.headers['authorization'].split(' ')[1];
+		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
 			if (err) throw err;
 
 			const response = await examination.destroy(req.params.id, user);

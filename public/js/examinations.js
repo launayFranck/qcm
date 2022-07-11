@@ -1,5 +1,5 @@
 import { jwtDecode } from "./jwt-decode.js";
-import { capitalize, formatDate, sendMessageToPanel, sortByProperty } from './utils.js';
+import { capitalize, formatDate, formatInterval, reverseFormatInterval, sendMessageToPanel, sortByProperty } from './utils.js';
 
 const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 
@@ -36,17 +36,13 @@ const startsAt = document.querySelector('.insert-overlay .starts-at');
 const endsAt = document.querySelector('.insert-overlay .ends-at');
 const requiredScore = document.querySelector('.insert-overlay .required-score');
 
-// examinations infos
-const examinationsContainer = document.querySelector('#examinations-container');
-const examinationsNb = document.querySelector('.examinations-number');
+const toggleAvailability = (overlay, bool) => {
+	const status = bool ? !bool : overlay.querySelector('.always-available').checked;
 
-const toggleAvailability = (bool) => {
-	const status = bool ? !bool : alwaysAvailable.checked;
-
-	const inputs = document.querySelectorAll('.availability input');
+	const inputs = overlay.querySelectorAll('.availability input');
 	if (status) {
 		inputs.forEach(input => {
-			input.setAttribute('disabled', 'true');
+			input.setAttribute('disabled', '');
 		});
 	} else {
 		inputs.forEach(input => {
@@ -56,7 +52,7 @@ const toggleAvailability = (bool) => {
 };
 
 alwaysAvailable.addEventListener('click', () => {
-	toggleAvailability()
+	toggleAvailability(insertExaminationBox);
 });
 
 /**
@@ -164,7 +160,6 @@ const deleteExamination = async (id) => {
 			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
 		}
 	});
-	console.log(res);
 	return await res.json();
 };
 
@@ -203,6 +198,19 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 			required_score : requiredScore.value
 		};
 
+		// Content checking
+		if ((payload.title.toString()).length < 1) throw new Error('Le titre ne peut être nul !');
+		if ((payload.theme_id.toString()).length < 1) throw new Error('Le thème ne peut être nul !');
+		if (Object.keys(payload.duration).length < 1) throw new Error('La durée ne peut être nulle !');
+		if (!payload.always_available) {
+			if ((payload.starts_at.toString()).length < 1) throw new Error('La date de début ne peut être nulle !');
+			if ((payload.ends_at.toString()).length < 1) throw new Error('La date de fin ne peut être nulle !');
+		};
+		if (payload.always_available) {
+			if (payload.starts_at != null && payload.ends_at != null) throw new Error(`Les dates de début et de fin ne peuvent être fournies lorsque l'examen est toujours disponible !`);
+		};
+		if ((payload.required_score.toString()).length < 1) throw new Error('Le score minimal requis ne peut être nul !');
+		
 		const insertDetails = await insertExamination(payload);
 		if (insertDetails.error) throw new Error(insertDetails.error);
 
@@ -212,7 +220,7 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 		await setExaminations();
 		displayOverlay(false);
 		e.target.reset();
-		toggleAvailability(false);
+		toggleAvailability(insertExaminationBox, false);
 
 	} catch (err) {
 		sendMessageToPanel(err.message, 'var(--color-bad-message)');
@@ -299,8 +307,8 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 };
 
 /**
- * Sets the edit-overlay form so it depends on which user we're editing
- * @param {object} examination The theme on which to base the edit form depending on what we're editing
+ * Sets the edit-overlay form so it depends on which examination we're editing
+ * @param {object} examination The examination on which to base the edit form depending on what we're editing
  */
 const setEditExaminationForm = async (examination) => {
 	// Getting form and emptying charged users list
@@ -315,46 +323,73 @@ const setEditExaminationForm = async (examination) => {
 	const allowedProperties = ["title", "theme_id", "description", "duration", "always_available", "starts_at", "ends_at", "required_score"];
 
 	formClone.querySelector(`.title`).value = examination.title;
-	addThemesInSelect(formClone.querySelector(`.theme-id`), examination.theme_id);
+	await addThemesInSelect(formClone.querySelector(`.theme-id`), examination.theme_id);
 	formClone.querySelector(`.description`).value = examination.description;
-	formClone.querySelector(`.duration`).value = examination.duration;
-	formClone.querySelector(`.always-available`).value = examination.always_available;
-	formClone.querySelector(`.starts-at`).value = examination.starts_at;
-	formClone.querySelector(`.ends-at`).value = examination.ends_at;
+
+	formClone.querySelector(`.duration`).value = formatInterval(examination.duration);
+	formClone.querySelector(`.always-available`).checked = examination.always_available;
+	formClone.querySelector(`.always-available`).addEventListener('click', () => {
+		toggleAvailability(editExaminationBox);
+	});
+	// Setting the starts_at and ends_at input boxes disabled status on form load
+	toggleAvailability(editExaminationBox, !examination.always_available);
+
+	const startsAt = examination.starts_at ? formatDate(examination.starts_at, `$Y-$M-$D $H:$m`)  : null;
+	const endsAt = examination.ends_at ? formatDate(examination.ends_at, `$Y-$M-$D $H:$m`) : null;
+
+	formClone.querySelector(`.starts-at`).value = startsAt ? startsAt : '';
+	formClone.querySelector(`.ends-at`).value = endsAt ? endsAt : '';
 	formClone.querySelector(`.required-score`).value = examination.required_score;
 
 	formClone.addEventListener('submit', async (e) => {
 		e.preventDefault();
-
-		
-		const payload = {
-			title : document.querySelector('.edit-overlay .title'),
-			theme_id : document.querySelector('.edit-overlay .theme-id'),
-			description : document.querySelector('.edit-overlay .description'),
-			duration : document.querySelector('.edit-overlay .duration'),
-			always_available : document.querySelector('.edit-overlay .always-available'),
-			starts_at : document.querySelector('.edit-overlay .starts-at'),
-			ends_at : document.querySelector('.edit-overlay .ends-at'),
-			required_score : document.querySelector('.edit-overlay .required-score')
-		};
-
-		Object.keys(payload).forEach(property => {
-			if (!allowedProperties.includes(property)) {
-				throw new Error(`Property ${property} is not allowed`);
-			};
-		});
-
 		try {
+			const startsAt = document.querySelector('.edit-overlay .starts-at').value;
+			const endsAt = document.querySelector('.edit-overlay .ends-at').value;
+
+			let payload = {
+				title : document.querySelector('.edit-overlay .title').value,
+				theme_id : document.querySelector('.edit-overlay .theme-id').value,
+				description : document.querySelector('.edit-overlay .description').value,
+				duration : document.querySelector('.edit-overlay .duration').value,
+				always_available : document.querySelector('.edit-overlay .always-available').checked,
+				starts_at : startsAt ? formatDate(startsAt, `$Y-$M-$DT$H:$m:00.000Z`) : null,
+				ends_at : endsAt ? formatDate(endsAt, `$Y-$M-$DT$H:$m:00.000Z`) : null,
+				required_score : document.querySelector('.edit-overlay .required-score').value
+			};
+
+			// Forbidding null start and end dates if not always available
+			if (!payload.always_available) {
+				if (payload.starts_at === null) throw new Error('Veuillez spécifier la date de début !');
+				if (payload.ends_at === null) throw new Error('Veuillez spécifier la date de fin !');
+			};
+
+			Object.keys(payload).forEach(property => {
+				if (!allowedProperties.includes(property)) {
+					throw new Error(`Property ${property} is not allowed`);
+				};
+				if (payload[property] === null) {
+					delete payload[property];
+					return;
+				};
+				if (payload[property] == examination[property]) {
+					delete payload[property];
+					return;
+				};
+			});
+
+			if (payload.duration == formatInterval(examination.duration)) delete payload.duration;
+
 			// Not updating if nothing to change
-			if (Object.keys(payload).length < 1) throw new Error(`Le thème "${examination.title}" n'a pas été modifié`);
+			if (Object.keys(payload).length < 1) throw new Error(`L'examen "${examination.title}" n'a pas été modifié`);
 
-			const updateThemeDetails = await updateTheme(examination.id, payload);
-			if (updateThemeDetails.error) throw new Error(updateThemeDetails.error);
+			const updateExaminationDetails = await updateExamination(examination.id, payload);
+			if (updateExaminationDetails.error) throw new Error(updateExaminationDetails.error);
 
-			console.log(updateThemeDetails);
+			// console.log(updateExaminationDetails);
 			
-			await setThemes();
-			sendMessageToPanel(`Le thème "${examination.title}" a été modifié`, 'var(--color-good-message)');
+			await setExaminations();
+			sendMessageToPanel(`L'examen "${examination.title}" a été modifié`, 'var(--color-good-message)');
 			displayOverlay(false);
 
 		} catch (err) {
@@ -500,7 +535,7 @@ const displayExaminations = async (examinations) => {
 
 		card.innerHTML = `
 			<div class="examination-title">
-				<h2>${examination.title}</h2>
+				<a href="/examinations/${examination.id}"><h2>${examination.title}</h2></a>
 			</div>
 			<div class="examination-stats">
 				<p>Créé le ${formatDate(examination.created_at, '$D/$M/$Y à $H:$m')} par ${examination.created_by}</p>

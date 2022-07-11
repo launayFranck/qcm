@@ -18,10 +18,10 @@ router.post('/login', async (req, res) => {
 
 		// PASSWORD CHECK
 		const validPassword = await bcrypt.compare(password, user.password);
-		if(!validPassword) return res.status(401).json({error: 'Email ou mot de passe incorrect'});
+		if (!validPassword) return res.status(401).json({error: 'Email ou mot de passe incorrect'});
 		delete user.password;
 
-		if(!user.activated) return res.status(401).json({error: 'Ce compte a été désactivé'});
+		if (!user.activated) return res.status(401).json({error: 'Ce compte a été désactivé'});
 
 		// JWT
 		const tokens = jwtTokens(user);
