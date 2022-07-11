@@ -1,6 +1,8 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/authorization.js';
 
+import jwt from 'jsonwebtoken';
+
 import chapter from '../models/chapter.js';
 
 const router = express.Router();
@@ -8,28 +10,43 @@ const router = express.Router();
 // • Fetching all chapters
 router.get('/', async (req, res) => {
 	try {
-		const result = await chapter.findAll();
-		res.status(200).json({chapters : result});
+		const authorization = req.headers['authorization'].split(' ')[1];
+		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+			if (err) throw err;
+
+			const result = await chapter.findAll();
+			res.status(200).json({chapters : result});
+		});
 	} catch (err) {
 		res.status(500).json({error : err.message});
 	};
 });
 
-// • Fetching a chapter by its id
+// • Fetching chapters by examination id
+router.get('/examination/:id', async (req, res) => {
+	try {
+		const authorization = req.headers['authorization'].split(' ')[1];
+		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+			if (err) throw err;
+
+			const result = await chapter.findBychapterId(req.params.id);
+			res.status(200).json({chapters : result});
+		});
+	} catch (err) {
+		res.status(500).json({error : err.message});
+	};
+});
+
+// • Fetching chapter by id
 router.get('/:id', async (req, res) => {
 	try {
-		const result = await chapter.findById(req.params.id);
-		res.status(200).json({chapter : result});
-	} catch (err) {
-		res.status(500).json({error : err.message});
-	};
-});
+		const authorization = req.headers['authorization'].split(' ')[1];
+		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+			if (err) throw err;
 
-// • Fetching a chapter by its name
-router.get('/name/:name', async (req, res) => {
-	try {
-		const result = await chapter.findByName(req.params.name);
-		res.status(200).json({chapter : result});
+			const result = await chapter.findById(req.params.id);
+			res.status(200).json({chapter : result});
+		});
 	} catch (err) {
 		res.status(500).json({error : err.message});
 	};
@@ -37,33 +54,47 @@ router.get('/name/:name', async (req, res) => {
 
 // • Creating new chapter
 router.post("/", async (req, res) => {
-    try {
-        const response = await chapter.create(req.body);
-        res.status(201).json(response);
-    } catch (err) {
-        res.status(400).send(err.message);
-    };
+	try {
+		const authorization = req.headers['authorization'].split(' ')[1];
+		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+			if (err) throw err;
+
+			const result = await chapter.create(req.body, user);
+			res.status(200).json({chapter : result});
+		});
+	} catch (err) {
+		res.status(500).json({error : err.message});
+	};
 });
 
-// • Updating a user
+// • Updating chapter
 router.put('/:id', async (req, res) => {
 	try {
-		const response = await chapter.update(req.params.id, req.body);
-		res.status(200).json(response);
+		const authorization = req.headers['authorization'].split(' ')[1];
+		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+			if (err) throw err;
+
+			const response = await chapter.update(req.params.id, req.body);
+			res.status(200).json(response);
+		});
 	} catch (err) {
 		res.status(400).json({error : err.message});
 	};
 });
 
-// • Deleting a chapter
+// • Deleting an chapter
 router.delete('/:id', async (req, res) => {
 	try {
-		const response = await chapter.destroy(req.params.id);
-		res.status(200).json(response);
+		const authorization = req.headers['authorization'].split(' ')[1];
+		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+			if (err) throw err;
+
+			const response = await chapter.destroy(req.params.id, user);
+			res.status(200).json(response);
+		});
 	} catch (err) {
-		res.status(400).json(err.message);
+		res.status(400).json({error: err.message});
 	};
 });
-
 
 export default router;

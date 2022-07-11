@@ -1,0 +1,20 @@
+@import url('../styles.css');
+@import url('../theme.css');
+@import url('../partials/navbar.css');
+@import url('../partials/overlay.css');
+@import url('../partials/message-overlay.css');
+@import url('../partials/toggle-switch.css');
+@import url('../partials/footer.css');
+
+main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+#exam-section {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	margin: .8rem;
+	max-width: 120rem;
+}

@@ -30,18 +30,14 @@ const findById = async (id) => {
 };
 
 /**
- * Get a chapter by its name in the database and returns in an object
+ * Getting a chapter with by the provided exam id
  * @async
- * @param {string} name
- * @returns {object} the wanted chapter 
+ * @param {number} examination_id the wanted id
+ * @returns {chapter} the chapter
  */
-const findByName = async (name) => {
-	name = name.trim();
+ const findByExaminationId = async (examination_id) => {
 	try {
-		if (name === "") {
-			throw new Error("Veuillez entrer un nom de chapitre valide.");
-		};
-		const result = await knex("chapter").select().whereRaw('LOWER(title) = ?', [name]).first();
+		const result = await knex('chapter').select().where({id: examination_id});
 		return result;
 	} catch (err) {
 		throw err;
@@ -107,7 +103,7 @@ const destroy = async (id) => {
 export default {
 	findAll,
 	findById,
-	findByName,
+	findByExaminationId,
 	create,
 	update,
 	destroy
