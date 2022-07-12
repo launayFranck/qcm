@@ -3,6 +3,12 @@
 @import url('../partials/message-overlay.css');
 @import url('../partials/footer.css');
 
+#message-overlay {
+    left: 0;
+    display: flex;
+    justify-content: center;
+}
+
 main {
     display: flex;
     justify-content: center;

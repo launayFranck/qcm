@@ -140,13 +140,14 @@ const formatNumber = (number, length = 2) => {
  * @param {string} char The character used between every 2 characters from the phone number
  * @returns {string} The formatted phone number
  */
-const formatPhone = (phone, char = '.') => {
+const formatPhone = (phone, char = ' ') => {
 	try {
-		phone.match(/.{1,2}/g).join(char);
+		return phone.match(/.{1,2}/g).join(char);
 	} catch (err) {
-		console.error(`Couldn't format phone number`)
-	}
-}
+		console.error(`Couldn't format phone number`);
+		return phone;
+	};
+};
 
 /**
 	 * Turns a string into an object containing hours, minutes and/or seconds properties

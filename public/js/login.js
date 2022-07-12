@@ -19,25 +19,16 @@ formLogin.onsubmit = async (e) => {
 	const password = formLogin.password.value;
 
 	const loginDetails = await login({email, password});
-
+	console.log(loginDetails)
 	// Manage error case and let the user know
 	if (loginDetails.error) {
-		// msg.style.setProperty('color', 'red');
-		// msg.innerText = loginDetails.error;
-		// document.querySelectorAll('input[type="email"], input[type="password"]').forEach(input => {
-		// 	input.style.setProperty('border-color', 'red');
-		// });
-		sendMessageToPanel(loginDetails.error, 'var(--color-red)');
+		sendMessageToPanel(loginDetails.error, 'var(--color-delete)');
 		return;
 	};
 
 	// Let the user know everything went right
-	msg.style.setProperty('color', 'lime');
-	msg.innerText = 'Login success';
-	const inputs = document.querySelectorAll('input[type="email"], input[type="password"]');
-	inputs.forEach(input => {
-		input.style.removeProperty('border-color');
-	});
+	sendMessageToPanel('Connexion réussie', 'var(--color-insert)');
+	
 
 	// Put access token in a variable
 	const accessToken = loginDetails.accessToken;
