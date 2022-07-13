@@ -37,7 +37,7 @@ const findById = async (id) => {
  */
  const findByExaminationId = async (id) => {
 	try {
-		const result = await knex('chapter').select().where({examination_id: id});
+		const result = await knex('chapter').select().where({examination_id: id}).orderBy('position_number', 'ASC');
 		return result;
 	} catch (err) {
 		throw err;

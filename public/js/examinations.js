@@ -535,7 +535,7 @@ const displayExaminations = async (examinations) => {
 
 		card.innerHTML = `
 			<div class="examination-title">
-				<a href="/examinations/${examination.id}"><h2>${examination.title}</h2></a>
+				<h2>${examination.title}</h2>
 			</div>
 			<div class="examination-stats">
 				<p>Créé le ${formatDate(examination.created_at, '$D/$M/$Y à $H:$m')} par ${examination.created_by}</p>
@@ -625,21 +625,27 @@ const displayExaminations = async (examinations) => {
 		label.appendChild(span);
 		toggleSwitch.appendChild(label);
 
+		// Reform button
+		const reformBtn = document.createElement('a');
+		reformBtn.classList.add('btn', 'reform');
+		reformBtn.setAttribute('href', `examinations/${examination.id}`);
+
 		// Edit button
 		const editBtn = document.createElement('button');
-		editBtn.classList.add('edit');
+		editBtn.classList.add('btn', 'edit');
 		editBtn.addEventListener('click', async () => {
 			await setEditExaminationForm(examination);
 		});
 
 		// Delete button
 		const deleteBtn = document.createElement('button');
-		deleteBtn.classList.add('destroy');
+		deleteBtn.classList.add('btn', 'destroy');
 		deleteBtn.addEventListener('click', async () => {
 			await setDeleteExaminationForm(examination);
 		});
 
 		btnContainer.appendChild(toggleSwitch);
+		btnContainer.appendChild(reformBtn);
 		btnContainer.appendChild(editBtn);
 		btnContainer.appendChild(deleteBtn);
 

@@ -25,7 +25,6 @@ main {
 	justify-content: space-between;
 	margin: .8rem;
 	padding: .8rem 1.2rem;
-	width: 100%;
 	border-radius: .4rem;
 	background-color: var(--color-main);
 	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
@@ -40,15 +39,17 @@ main {
 .chapter-box {
 	display: flex;
 	flex-direction: column;
-	padding: .8rem 1.2rem;
 	margin: .8rem;
-	background-color: var(--color-details-hover);
 	color: var(--color-bg);
 	border-radius: .4rem;
+	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
+	overflow: hidden;
 }
 .chapter-header {
 	display: flex;
 	align-items: center;
+	padding: .8rem 1.2rem;
+	background-color: var(--color-details-hover);
 }
 .chapter-header span {
 	display: flex;
@@ -58,7 +59,7 @@ main {
 	border-radius: .4rem;
 	width: 3.2rem;
 	height: 3.2rem;
-	color: var(--color-details);
+	color: var(--color-details-hover);
 	font-weight: bold;
 }
 .chapter-header h2 {
@@ -67,51 +68,128 @@ main {
 	flex: 1;
 	margin: 0 .8rem;
 }
-.chapter-header .btn-container {
+	.chapter-header .btn-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		padding: .8rem 0;
+		max-width: 16rem;
+	}
+
+	.chapter-header .btn-container button {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 2.4rem;
+		width: 2.4rem;
+		margin: 0 .8rem;
+		background-position: center;
+		background-size: contain;
+		background-repeat: no-repeat;
+		opacity: .3;
+		border: none;
+		transition: all .1s ease-out;
+	}
+	.chapter-header .btn-container button:hover {
+		opacity: .5;
+	}
+
+	.chapter-header .btn-container button:active {
+		animation: buttonClicked .1s ease-out;
+	}
+	@keyframes buttonClicked {
+		0% {
+			transform: scale(1);
+		}
+		50% {
+			transform: scale(.8);
+		}
+		100% {
+			transform: scale(1);
+		}
+	}
+
+	.chapter-header .btn-container .edit-chapter {
+		background-image: url('/img/pen.svg');
+	}
+	.chapter-header .btn-container .delete-chapter {
+		background-color: var(--color-delete);
+		border-radius: 50%;
+		background-image: url('/img/plus.svg');
+		background-size: 50%;
+		transform: rotate(45deg);
+	}
+
+.question-box {
 	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	padding: .8rem 0;
-	max-width: 16rem;
+	flex-direction: column;
+	margin: .8rem;
+	padding: .8rem;
+	background-color: var(--color-bg-alt);
+	color: var(--color-text);
+	border-radius: .4rem;
 }
 
-.chapter-header .btn-container button {
+.question-header {
 	display: flex;
-	justify-content: center;
 	align-items: center;
-	height: 2.4rem;
-	width: 2.4rem;
-	margin: 0 .8rem;
-	background-position: center;
-	background-size: contain;
-	background-repeat: no-repeat;
-	opacity: .3;
-	border: none;
-	transition: all .1s ease-out;
 }
-.chapter-header .btn-container button:hover {
-	opacity: .5;
+.question-header > p {
+	display: flex;
+	align-items: center;
+	flex: 1;
 }
 
-.chapter-header .btn-container button:active {
-	animation: buttonClicked .1s ease-out;
-}
-@keyframes buttonClicked {
-	0% {
-		transform: scale(1);
+	.question-header .btn-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		padding: .8rem 0;
+		max-width: 16rem;
 	}
-	50% {
-		transform: scale(.8);
-	}
-	100% {
-		transform: scale(1);
-	}
-}
 
-.chapter-header .btn-container .edit-chapter {
-	background-image: url('/img/pen.svg');
-}
-.chapter-header .btn-container .delete-chapter {
-	background-image: url('/img/trash.svg');
-}
+	.question-header .btn-container button {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 2.4rem;
+		width: 2.4rem;
+		margin: 0 .8rem;
+		background-position: center;
+		background-size: contain;
+		background-repeat: no-repeat;
+		opacity: .3;
+		border: none;
+		transition: all .1s ease-out;
+	}
+	.question-header .btn-container button:hover {
+		opacity: .5;
+	}
+
+	.question-header .btn-container button:active {
+		animation: buttonClicked .1s ease-out;
+	}
+	@keyframes buttonClicked {
+		0% {
+			transform: scale(1);
+		}
+		50% {
+			transform: scale(.8);
+		}
+		100% {
+			transform: scale(1);
+		}
+	}
+
+	.question-header .btn-container .edit-question {
+		background-image: url('/img/pen.svg');
+	}
+	.question-header .btn-container .delete-question {
+		background-color: var(--color-delete);
+		border-radius: 50%;
+		background-image: url('/img/plus.svg');
+		background-size: 50%;
+		transform: rotate(45deg);
+	}

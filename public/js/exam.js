@@ -80,64 +80,85 @@ const buildExam = async (examId) => {
 		// Fetching all chapters linked to this exam
 		const chapters = await getChaptersByExamId(examId);
 		if (chapters.error) throw new Error(chapters.error);
-
-		chapters.chapters.forEach(async (chapter) => {
-			const chapterBox = document.createElement('div');
-			chapterBox.classList.add('chapter-box');
-			const chapterHeader = document.createElement('div');
-			chapterHeader.classList.add('chapter-header');
-			chapterHeader.innerHTML = `
-				<span>${chapter.position_number}</span>
-				<h2>${chapter.title}</h2>
-			`;
-			const buttonContainer = document.createElement('div');
-			buttonContainer.classList.add('btn-container');
-
-			const editChapter = document.createElement('button');
-			editChapter.classList.add('edit-chapter');
-			editChapter.addEventListener('click', () => {
-				console.log(chapter.id);
-			});
-			buttonContainer.appendChild(editChapter);
-
-			const deleteChapter = document.createElement('button');
-			deleteChapter.classList.add('delete-chapter');
-			deleteChapter.addEventListener('click', () => {
-				console.log(chapter.id);
-			});
-			buttonContainer.appendChild(deleteChapter);
-
-			chapterHeader.appendChild(buttonContainer);
-			chapterBox.appendChild(chapterHeader);
-			chaptersContainer.appendChild(chapterBox);
+		if (chapters.chapters.length > 0) {
+			// Looping on all chapters and showing up all of them
+			for (let chapter of chapters.chapters) {
+				const chapterBox = document.createElement('div');
+				chapterBox.classList.add('chapter-box');
+				const chapterHeader = document.createElement('div');
+				chapterHeader.classList.add('chapter-header');
+				chapterHeader.innerHTML = `
+					<span>${chapter.position_number}</span>
+					<h2>${chapter.title}</h2>
+				`;
+				const buttonContainer = document.createElement('div');
+				buttonContainer.classList.add('btn-container');
+	
+				const editChapter = document.createElement('button');
+				editChapter.classList.add('edit-chapter');
+				editChapter.addEventListener('click', () => {
+					console.log(chapter.id);
+				});
+				buttonContainer.appendChild(editChapter);
+	
+				const deleteChapter = document.createElement('button');
+				deleteChapter.classList.add('delete-chapter');
+				deleteChapter.addEventListener('click', () => {
+					console.log(chapter.id);
+				});
+				buttonContainer.appendChild(deleteChapter);
+	
+				chapterHeader.appendChild(buttonContainer);
+				chapterBox.appendChild(chapterHeader);
+	
+				const questions = await getQuestionsByChapterId(chapter.id);
+				if (questions.error) throw new Error(questions.error);
+				// Looping on all questions and showing up all of them
+				if (questions.questions.length > 0) {
+					const questionsContainer = document.createElement('div');
+					questionsContainer.classList.add('questions-container');
+		
+					for (let question of questions.questions) {
+						console.log(question);
+						const questionBox = document.createElement('div');
+						questionBox.classList.add('question-box');
+						const questionHeader = document.createElement('div');
+						questionHeader.classList.add('question-header');
+						questionHeader.innerHTML = `<p>${question.title}</p>`;
+						
+						const buttonContainer = document.createElement('div');
+						buttonContainer.classList.add('btn-container');
 			
-
-
-			// chaptersContainer.appendChild()
-			// Fetching all questions linked to this chapter
-			const questions = await getQuestionsByChapterId(chapter.id);
-			if (questions.error) throw new Error(questions.error);
-			if (questions.questions.length < 1) return;
-
-			const questionsContainer = document.createElement('div');
-			questionsContainer.classList.add('questions-container');
-
-			questions.questions.forEach(async (question) => {
-				const questionBox = document.createElement('div');
-				questionBox.classList.add('question-box');
-				const questionHeader = document.createElement('div');
-				questionHeader.classList.add('question-header');
-
-
-
-				const responses = await getResponsesByQuestionId(question.id);
-				if (responses.error) throw new Error(responses.error);
-				if (responses.responses.length < 1) return;
-
-				
-			});
-		});
-
+						const editQuestion = document.createElement('button');
+						editQuestion.classList.add('edit-question');
+						editQuestion.addEventListener('click', () => {
+							console.log(chapter.id);
+						});
+						buttonContainer.appendChild(editQuestion);
+			
+						const deleteQuestion = document.createElement('button');
+						deleteQuestion.classList.add('delete-question');
+						deleteQuestion.addEventListener('click', () => {
+							console.log(chapter.id);
+						});
+						buttonContainer.appendChild(deleteQuestion);
+			
+						questionHeader.appendChild(buttonContainer);
+		
+						const responses = await getResponsesByQuestionId(question.id);
+						if (responses.error) throw new Error(responses.error);
+						if (responses.responses.length > 0) {
+							// Looping on all questions and showing up all of them
+						};
+		
+						questionBox.appendChild(questionHeader);
+						questionsContainer.appendChild(questionBox);
+					};
+					chapterBox.appendChild(questionsContainer);
+				};
+				chaptersContainer.appendChild(chapterBox);
+			};
+		};
 	} catch (err) {
 		console.log(err.message);
 	};

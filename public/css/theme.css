@@ -1,9 +1,11 @@
 .theme-classic {
     --color-main: #337ab7;
     --color-main-hover: #468bc7;
+    --color-main-light: #c6e4ff;
 
     --color-details: #FD7000;
     --color-details-hover: #ff9e4e;
+    --color-details-light: #ffe2ca;
 
     --color-insert: #5cb85c;
     --color-insert-hover: #449D44;
