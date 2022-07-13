@@ -11,10 +11,107 @@ main {
 	flex-direction: column;
 	align-items: center;
 }
-#exam-section {
+#exam-container {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
 	margin: .8rem;
+	width: 100%;
 	max-width: 120rem;
+}
+.exam-info {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: .8rem;
+	padding: .8rem 1.2rem;
+	width: 100%;
+	border-radius: .4rem;
+	background-color: var(--color-main);
+	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
+	color: var(--color-bg);
+	
+}
+#chapter-container {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+}
+.chapter-box {
+	display: flex;
+	flex-direction: column;
+	padding: .8rem 1.2rem;
+	margin: .8rem;
+	background-color: var(--color-details-hover);
+	color: var(--color-bg);
+	border-radius: .4rem;
+}
+.chapter-header {
+	display: flex;
+	align-items: center;
+}
+.chapter-header span {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--color-bg);
+	border-radius: .4rem;
+	width: 3.2rem;
+	height: 3.2rem;
+	color: var(--color-details);
+	font-weight: bold;
+}
+.chapter-header h2 {
+	display: flex;
+	align-items: center;
+	flex: 1;
+	margin: 0 .8rem;
+}
+.chapter-header .btn-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: .8rem 0;
+	max-width: 16rem;
+}
+
+.chapter-header .btn-container button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 2.4rem;
+	width: 2.4rem;
+	margin: 0 .8rem;
+	background-position: center;
+	background-size: contain;
+	background-repeat: no-repeat;
+	opacity: .3;
+	border: none;
+	transition: all .1s ease-out;
+}
+.chapter-header .btn-container button:hover {
+	opacity: .5;
+}
+
+.chapter-header .btn-container button:active {
+	animation: buttonClicked .1s ease-out;
+}
+@keyframes buttonClicked {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(.8);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+.chapter-header .btn-container .edit-chapter {
+	background-image: url('/img/pen.svg');
+}
+.chapter-header .btn-container .delete-chapter {
+	background-image: url('/img/trash.svg');
 }

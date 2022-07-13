@@ -32,7 +32,21 @@ const findAll = async () => {
 
 const findById = async (id) => {
 	try {
-		const result = await knex('examination').select().where({id}).first();
+		const result = await knex('examination').join('theme', 'theme.id', '=', 'examination.theme_id').select(
+			'examination.active',
+			'examination.duration',
+			'examination.starts_at',
+			'examination.ends_at',
+			'examination.required_score',
+			'examination.created_at',
+			'examination.updated_at',
+			'examination.created_by',
+			'examination.updated_by',
+			'examination.title',
+			'theme.title AS theme',
+			'examination.description',
+			'examination.always_available',
+		).where('examination.id', '=', id).first();
 		return result;
 	} catch (err) {
 		throw err;

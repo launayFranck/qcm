@@ -37,7 +37,18 @@ const findById = async (id) => {
  */
  const findByChapterId = async (id) => {
 	try {
-		const result = await knex('question').join('chapter', 'chapter.id', '=', 'question.chapter_id').select('question.title', 'question.score', 'question.correction', 'question.active', 'question.created_at', 'question.updated_at', 'question.created_by', 'question.updated_by').where('chapter.id','=', id);
+		const result = await knex('question').join('chapter', 'chapter.id', '=', 'question.chapter_id').select(
+			'question.id',
+			'question.title',
+			'question.score',
+			'question.correction',
+			'question.active',
+			'question.chapter_id',
+			'question.created_at',
+			'question.updated_at',
+			'question.created_by',
+			'question.updated_by'
+		).where('question.chapter_id', '=', id);
         console.log(result);
 		return result;
 	} catch (err) {

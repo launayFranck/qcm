@@ -38,7 +38,7 @@ router.delete('/:id', async (req, res) => {
 		const response = await log.destroy(req.params.id);
 		res.status(200).json(response);
 	} catch (err) {
-		res.status(400).json(err.message);
+		res.status(400).json({error : err.message});
 	};
 });
 

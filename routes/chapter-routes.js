@@ -29,7 +29,7 @@ router.get('/examination/:id', async (req, res) => {
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
 			if (err) throw err;
 
-			const result = await chapter.findBychapterId(req.params.id);
+			const result = await chapter.findByExaminationId(req.params.id);
 			res.status(200).json({chapters : result});
 		});
 	} catch (err) {

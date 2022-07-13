@@ -12,9 +12,10 @@ dotenv.config();
 // • External Scripts Imports
 import usersRouter from './routes/user-routes.js';
 import themeRouter from './routes/theme-routes.js';
+import examinationRouter from './routes/examination-routes.js';
 import chapterRouter from './routes/chapter-routes.js';
 import questionRouter from './routes/question-routes.js';
-import examinationsRouter from './routes/examination-routes.js';
+import responseRouter from './routes/response-routes.js';
 import authRouter from './routes/auth-routes.js';
 import logRouter from './routes/log-routes.js';
 
@@ -31,11 +32,12 @@ app.use(cookieParser());
 // • Routes Config
 // Api
 app.use('/api/users', usersRouter);
-app.use('/api/examinations', examinationsRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/themes', themeRouter);
+app.use('/api/examinations', examinationRouter);
 app.use('/api/chapters', chapterRouter);
 app.use('/api/questions', questionRouter);
+app.use('/api/responses', responseRouter);
 app.use('/api/logs', logRouter);
 
 // Pages

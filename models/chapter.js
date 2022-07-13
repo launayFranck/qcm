@@ -32,12 +32,12 @@ const findById = async (id) => {
 /**
  * Getting a chapter with by the provided exam id
  * @async
- * @param {number} examination_id the wanted id
+ * @param {number} id the wanted id
  * @returns {chapter} the chapter
  */
- const findByExaminationId = async (examination_id) => {
+ const findByExaminationId = async (id) => {
 	try {
-		const result = await knex('chapter').select().where({id: examination_id});
+		const result = await knex('chapter').select().where({examination_id: id});
 		return result;
 	} catch (err) {
 		throw err;
