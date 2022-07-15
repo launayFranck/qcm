@@ -122,13 +122,14 @@ const buildExam = async (examId) => {
 						console.log(question);
 						const questionBox = document.createElement('div');
 						questionBox.classList.add('question-box');
+						// The question header (question + buttons)
 						const questionHeader = document.createElement('div');
 						questionHeader.classList.add('question-header');
 						questionHeader.innerHTML = `<p>${question.title}</p>`;
 						
 						const buttonContainer = document.createElement('div');
 						buttonContainer.classList.add('btn-container');
-			
+
 						const editQuestion = document.createElement('button');
 						editQuestion.classList.add('edit-question');
 						editQuestion.addEventListener('click', () => {
@@ -144,14 +145,40 @@ const buildExam = async (examId) => {
 						buttonContainer.appendChild(deleteQuestion);
 			
 						questionHeader.appendChild(buttonContainer);
+						questionBox.appendChild(questionHeader);
+
+						// The question correction after the question header
+						const questionCorrection = document.createElement('div');
+						questionCorrection.classList.add('question-header');
+						questionCorrection.innerHTML = `<p>${question.correction}</p>`;
+						questionBox.appendChild(questionCorrection);
+
+						// The hr after the question correction
+						const hr = document.createElement('hr');
+						questionBox.appendChild(hr);
 		
 						const responses = await getResponsesByQuestionId(question.id);
 						if (responses.error) throw new Error(responses.error);
 						if (responses.responses.length > 0) {
 							// Looping on all questions and showing up all of them
+							const responsesContainer = document.createElement('div');
+							responsesContainer.classList.add('questions-container');
+				
+							for (let response of responses.responses) {
+								console.log(response);
+								const responseBox = document.createElement('div');
+								responseBox.classList.add('response-box');
+
+								responseBox.innerHTML = `
+									<div class='response-${JSON.stringify(response.correct)}'></div>
+									<p>${response.title}</p>
+								`;
+								responsesContainer.appendChild(responseBox);
+							};
+
+							questionBox.appendChild(responsesContainer);
 						};
-		
-						questionBox.appendChild(questionHeader);
+
 						questionsContainer.appendChild(questionBox);
 					};
 					chapterBox.appendChild(questionsContainer);
