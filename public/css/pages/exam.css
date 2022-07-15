@@ -211,8 +211,7 @@ main {
 	display: flex;
 	align-items: center;
 	margin: .8rem;
-	background-color: var(--color-bg-alt);
-	border: solid 1px var(--color-bg-alt2);
+	background-color: var(--color-bg);
 	border-radius: .4rem;
 	overflow: hidden;
 }

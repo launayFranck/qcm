@@ -111,13 +111,14 @@ const buildExam = async (examId) => {
 				chapterHeader.appendChild(buttonContainer);
 				chapterBox.appendChild(chapterHeader);
 	
+				// Fetching all questions linked to this chapter
 				const questions = await getQuestionsByChapterId(chapter.id);
 				if (questions.error) throw new Error(questions.error);
-				// Looping on all questions and showing up all of them
+				const questionsContainer = document.createElement('div');
+				questionsContainer.classList.add('questions-container');
+
 				if (questions.questions.length > 0) {
-					const questionsContainer = document.createElement('div');
-					questionsContainer.classList.add('questions-container');
-		
+					// Looping on all questions and showing up all of them
 					for (let question of questions.questions) {
 						console.log(question);
 						const questionBox = document.createElement('div');
@@ -157,13 +158,14 @@ const buildExam = async (examId) => {
 						const hr = document.createElement('hr');
 						questionBox.appendChild(hr);
 		
+						// Fetching all responses linked to this question
 						const responses = await getResponsesByQuestionId(question.id);
 						if (responses.error) throw new Error(responses.error);
+
+						const responsesContainer = document.createElement('div');
+						responsesContainer.classList.add('responses-container');
 						if (responses.responses.length > 0) {
-							// Looping on all questions and showing up all of them
-							const responsesContainer = document.createElement('div');
-							responsesContainer.classList.add('questions-container');
-				
+							// Looping on all responses and showing up all of them
 							for (let response of responses.responses) {
 								console.log(response);
 								const responseBox = document.createElement('div');
