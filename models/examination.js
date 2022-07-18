@@ -24,6 +24,7 @@ const findAll = async () => {
 			JOIN "user" AS "creator" ON "examination".created_by = "creator".id
 			JOIN "user" AS "updator" ON "examination".created_by = "updator".id;
 		`);
+		console.log(result);
 		return result.rows;
 	} catch (err) {
 		throw err;

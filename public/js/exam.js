@@ -65,16 +65,29 @@ const buildExam = async (examId) => {
 		if (examination.error) throw new Error(examination.error);
 		// console.log(examination.examination);
 		const examContainer = document.querySelector('#exam-container');
-		examContainer.innerHTML = '';
-		examContainer.innerHTML += `
-			<div class="exam-info">
-				<h1>${examination.examination.title}</h1>
-				<p>${examination.examination.theme}</p>
-			</div>
-		`;
+
+		// Adding the exam info banner
+		const examInfo = document.createElement('div');
+		examInfo.classList.add('exam-info');
+		const examTitle = document.createElement('h1');
+		examTitle.textContent = examination.examination.title;
+		examInfo.appendChild(examTitle);
+
+		const examTheme = document.createElement('p');
+		examTheme.classList.add('exam-theme');
+		examTheme.textContent = examination.examination.theme;
+		examInfo.appendChild(examTheme);
+
+		examContainer.appendChild(examInfo);
+
+		// Adding the quick nav bar
+		const quickNav = document.createElement('ul');
+		quickNav.classList.add('quick-nav');
+		examContainer.appendChild(quickNav);
+
+		// Adding the chapters container
 		const chaptersContainer = document.createElement('div');
 		chaptersContainer.classList.add('chapters-container');
-
 		examContainer.appendChild(chaptersContainer);
 
 		// Fetching all chapters linked to this exam
@@ -85,29 +98,60 @@ const buildExam = async (examId) => {
 			for (let chapter of chapters.chapters) {
 				const chapterBox = document.createElement('div');
 				chapterBox.classList.add('chapter-box');
+				chapterBox.setAttribute('id', `chapter-${chapter.id}`);
+
+				// Creating the quickNav link
+				quickNav.innerHTML += `
+					<li>
+						<a href="#chapter-${chapter.id}">${chapter.position_number}. ${chapter.title}</a>
+					</li>
+				`;
+
+				// Defining chapter header (orange box)
 				const chapterHeader = document.createElement('div');
 				chapterHeader.classList.add('chapter-header');
-				chapterHeader.innerHTML = `
-					<span>${chapter.position_number}</span>
-					<h2>${chapter.title}</h2>
-				`;
+
+				const chapterPosition = document.createElement('span');
+				chapterPosition.classList.add('chapter-position');
+				chapterPosition.innerText = chapter.position_number;
+				chapterHeader.appendChild(chapterPosition);
+
+				const chapterTitle = document.createElement('h2');
+				chapterTitle.classList.add('chapter-title');
+				chapterTitle.innerText = chapter.title;
+				chapterHeader.appendChild(chapterTitle);
+
+				// The button container
 				const buttonContainer = document.createElement('div');
 				buttonContainer.classList.add('btn-container');
+
+				const insertQuestion = document.createElement('button');
+				insertQuestion.classList.add('insert-question');
+				insertQuestion.setAttribute('title', "Cliquez ici pour ajouter une question dans ce chapitre");
+				insertQuestion.addEventListener('click', () => {
+					console.log("Show insert question overlay here");
+					console.log(chapter.id);
+				});
+				buttonContainer.appendChild(insertQuestion);
 	
 				const editChapter = document.createElement('button');
 				editChapter.classList.add('edit-chapter');
+				editChapter.setAttribute('title', "Cliquez ici pour éditer ce chapitre");
 				editChapter.addEventListener('click', () => {
+					console.log("Show edit chapter overlay here");
 					console.log(chapter.id);
 				});
 				buttonContainer.appendChild(editChapter);
 	
 				const deleteChapter = document.createElement('button');
 				deleteChapter.classList.add('delete-chapter');
+				editChapter.setAttribute('title', "Cliquez ici pour supprimer ce chapitre");
 				deleteChapter.addEventListener('click', () => {
+					console.log("Show delete chapter overlay here");
 					console.log(chapter.id);
 				});
 				buttonContainer.appendChild(deleteChapter);
-	
+
 				chapterHeader.appendChild(buttonContainer);
 				chapterBox.appendChild(chapterHeader);
 	
@@ -150,8 +194,11 @@ const buildExam = async (examId) => {
 
 						// The question correction after the question header
 						const questionCorrection = document.createElement('div');
-						questionCorrection.classList.add('question-header');
-						questionCorrection.innerHTML = `<p>${question.correction}</p>`;
+						questionCorrection.classList.add('correction-row');
+						questionCorrection.innerHTML = `
+							<b>Correction :</b>
+							<p>${question.correction}</p>
+						`;
 						questionBox.appendChild(questionCorrection);
 
 						// The hr after the question correction
@@ -180,9 +227,37 @@ const buildExam = async (examId) => {
 
 							questionBox.appendChild(responsesContainer);
 						};
-
 						questionsContainer.appendChild(questionBox);
 					};
+					// Chapter content display arrow
+					const displayArrow = document.createElement('div');
+					displayArrow.classList.add('display-arrow');
+					chapterTitle.appendChild(displayArrow);
+
+					questionsContainer.style.setProperty('display', 'none');
+					chapterHeader.addEventListener('click', () => {
+						const toggleChapterContent = (display) => {
+							if (display != undefined) {
+								if (display) {
+									questionsContainer.style.setProperty('display', 'flex');
+									displayArrow.style.transform = 'rotate(180deg)';
+								} else {
+									questionsContainer.style.setProperty('display', 'none');
+									displayArrow.style.transform = 'rotate(0deg)';
+								};
+							} else {
+								if (questionsContainer.style.getPropertyValue('display') === 'none') {
+									questionsContainer.style.setProperty('display', 'flex');
+									displayArrow.style.transform = 'rotate(180deg)';
+								} else {
+									questionsContainer.style.setProperty('display', 'none');
+									displayArrow.style.transform = 'rotate(0deg)';
+								};
+							};
+						};
+						toggleChapterContent();
+					});
+
 					chapterBox.appendChild(questionsContainer);
 				};
 				chaptersContainer.appendChild(chapterBox);

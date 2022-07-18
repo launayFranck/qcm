@@ -31,6 +31,23 @@ main {
 	color: var(--color-bg);
 	
 }
+
+/* Quick nav bar */
+.quick-nav {
+	display: flex;
+	justify-content: center;
+	padding: .8rem;
+}
+.quick-nav a {
+	display: flex;
+	padding: .8rem;
+	color: var(--color-details);
+	text-underline-offset: .1rem;
+}
+.quick-nav a:hover {
+	text-decoration: underline .1rem;
+}
+
 #chapter-container {
 	display: flex;
 	flex: 1;
@@ -50,8 +67,9 @@ main {
 	align-items: center;
 	padding: .8rem 1.2rem;
 	background-color: var(--color-details-hover);
+	cursor: pointer;
 }
-.chapter-header span {
+.chapter-position {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -62,11 +80,22 @@ main {
 	color: var(--color-details-hover);
 	font-weight: bold;
 }
-.chapter-header h2 {
+.chapter-title {
 	display: flex;
 	align-items: center;
 	flex: 1;
 	margin: 0 .8rem;
+}
+.display-arrow {
+	display: flex;
+	width: 3.2rem;
+	align-self: stretch;
+	background-color: transparent;
+	background-image: url('/img/display-arrow.svg');
+	background-position: center;
+	background-size: 50%;
+	background-repeat: no-repeat;
+	transition: transform .1s ease-out;
 }
 	.chapter-header .btn-container {
 		display: flex;
@@ -81,18 +110,19 @@ main {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: 2.4rem;
-		width: 2.4rem;
+		height: 3.2rem;
+		width: 3.2rem;
 		margin: 0 .8rem;
-		background-position: center;
-		background-size: contain;
-		background-repeat: no-repeat;
-		opacity: .3;
 		border: none;
+		border-radius: .4rem;
+		background-color: var(--color-bg);
+		background-size: 50%;
+		background-position: center;
+		background-repeat: no-repeat;
 		transition: all .1s ease-out;
 	}
 	.chapter-header .btn-container button:hover {
-		opacity: .5;
+		transform: scale(1.1);
 	}
 
 	.chapter-header .btn-container button:active {
@@ -110,16 +140,29 @@ main {
 		}
 	}
 
+	.chapter-header .btn-container .insert-question {
+		background-image: url('/img/plus-green.svg');
+	}
+	/* .chapter-header .btn-container .insert-question:hover {
+		background-image: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), url('/img/plus-green.svg');
+	} */
 	.chapter-header .btn-container .edit-chapter {
-		background-image: url('/img/pen.svg');
+		background-image: url('/img/pen-blue.svg');
 	}
+	/* .chapter-header .btn-container .edit-chapter:hover {
+		background-image: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), url('/img/pen-blue.svg');
+	} */
 	.chapter-header .btn-container .delete-chapter {
-		background-color: var(--color-delete);
-		border-radius: 50%;
-		background-image: url('/img/plus.svg');
-		background-size: 50%;
-		transform: rotate(45deg);
+		background-image: url('/img/trash-red.svg');
 	}
+	/* .chapter-header .btn-container .delete-chapter:hover {
+		background-image: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), url('/img/trash-red.svg');
+	} */
+
+.questions-container {
+	display: flex;
+	flex-direction: column;
+}
 
 .question-box {
 	display: flex;
@@ -136,11 +179,11 @@ main {
 	align-items: center;
 	margin: .8rem;
 }
-.question-header > p {
-	display: flex;
-	align-items: center;
-	flex: 1;
-}
+	.question-header p {
+		display: flex;
+		align-items: center;
+		flex: 1;
+	}
 
 	.question-header .btn-container {
 		display: flex;
@@ -195,6 +238,23 @@ main {
 		transform: rotate(45deg);
 	}
 
+.correction-row {
+	display: flex;
+	margin: .8rem;
+}
+.correction-row b,
+.correction-row p {
+	color: var(--color-insert);
+}
+.correction-row b {
+	margin-right: .8rem;
+}
+.correction-row p {
+	display: flex;
+	align-items: center;
+	flex: 1;
+}
+
 .question-box hr {
 	margin: .8rem;
 	height: .1rem;
@@ -216,12 +276,14 @@ main {
 	overflow: hidden;
 }
 
-.response-box > div {
+.response-box .response-true,
+.response-box .response-false {
 	display: flex;
-	width: 4.8rem;
-	height: 4.8rem;
+	align-self: stretch;
+	width: 3.2rem;
+	/* height: 3.2rem; */
+	/* height: 100%; */
 	border-radius: .2rem;
-	margin-right: .8rem;
 	background-position: center;
 	background-size: 50%;
 	background-repeat: no-repeat;

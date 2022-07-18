@@ -535,7 +535,7 @@ const displayExaminations = async (examinations) => {
 
 		card.innerHTML = `
 			<div class="examination-title">
-				<h2>${examination.title}</h2>
+				<h2><a href="examinations/${examination.id}">${examination.title}</a></h2>
 			</div>
 			<div class="examination-stats">
 				<p>Créé le ${formatDate(examination.created_at, '$D/$M/$Y à $H:$m')} par ${examination.created_by}</p>

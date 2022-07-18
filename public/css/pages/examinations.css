@@ -226,6 +226,14 @@ main {
 .examination-title h2 {
 	color: var(--color-main);
 }
+.examination-title h2 a {
+	text-underline-offset: .1rem;
+	font-size: inherit;
+}
+.examination-title h2 a:hover {
+	color: var(--color-main-hover);
+	text-decoration: underline .2rem;
+}
 
 .examination-stats {
     color: var(--color-bg-alt3);
