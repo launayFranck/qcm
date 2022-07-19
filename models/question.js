@@ -49,7 +49,6 @@ const findById = async (id) => {
 			'question.created_by',
 			'question.updated_by'
 		).where('question.chapter_id', '=', id);
-        console.log(result);
 		return result;
 	} catch (err) {
 		throw err;

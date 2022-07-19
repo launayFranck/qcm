@@ -14,10 +14,26 @@ const setNavbarLinks = (token) => {
 	navLinks.innerHTML = '';
 	try {
 		navLinks.innerHTML += `
-			${checkRights(jwtDecoded, 'canViewAdminPage') ? `<li><a href="/admin">Admin</a></li>` : `<li><a href="/">Home</a></li>`}
-			${checkRights(jwtDecoded, 'canViewUsers') ? `<li><a href="/users">Utilisateurs</a></li>` : ``}
-			${checkRights(jwtDecoded, 'canViewThemes') ? `<li><a href="/themes">Thèmes</a></li>` : ``}
-			${checkRights(jwtDecoded, 'canViewExaminations') ? `<li><a href="/examinations">Examens</a></li>` : ``}
+			${checkRights(jwtDecoded, 'canViewAdminPage') ? `
+				<li><a href="/admin">
+					<img class="nav-icon" src="/img/home.svg" alt="Admin">
+					<p>Admin</p>
+				</a></li>` : `<li><a href="/">Home</a></li>`}
+			${checkRights(jwtDecoded, 'canViewUsers') ? `
+				<li><a href="/users">
+					<img class="nav-icon" src="/img/user-white.webp" alt="Utilisateurs">
+					<p>Utilisateurs</p>
+				</a></li>` : ``}
+			${checkRights(jwtDecoded, 'canViewThemes') ? `
+				<li><a href="/themes">
+					<img class="nav-icon" src="/img/palette.svg" alt="Thèmes">
+					<p>Thèmes</p>
+				</a></li>` : ``}
+			${checkRights(jwtDecoded, 'canViewExaminations') ? `
+				<li><a href="/examinations">
+					<img class="nav-icon" src="/img/student-hat.svg" alt="Examens">
+					<p>Examens</p>
+				</a></li>` : ``}
 		`;
 	} catch (err) {
 		console.error(err.message);
@@ -27,7 +43,11 @@ const setNavbarLinks = (token) => {
 	navOptions.innerHTML = '';
 	try {
 		navOptions.innerHTML += `
-			${checkRights(jwtDecoded, 'isAdmin') ? `<li><a href="/settings">Paramètres</a></li>` : ``}
+			${checkRights(jwtDecoded, 'isAdmin') ? `
+				<li><a href="/settings">
+					<img class="nav-icon" src="/img/cog-white.svg" alt="Paramètres">
+					<p>Paramètres</p>
+				</a></li>` : ``}
 		`;
 
 		// Logout button
@@ -36,7 +56,10 @@ const setNavbarLinks = (token) => {
 		const logoutBtn = document.createElement('a');
 		logoutBtn.setAttribute('href', '/logout');
 		logoutBtn.classList.add('logoutBtn');
-		logoutBtn.innerText = 'Déconnexion';
+		logoutBtn.innerHTML = `
+			<img class="nav-icon" src="/img/power-off.svg" alt="Déconnexion">
+			<p>Déconnexion</p>
+		`;
 		logoutBtn.addEventListener('click', logout);
 
 		li.appendChild(logoutBtn);

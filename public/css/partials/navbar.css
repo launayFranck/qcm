@@ -44,9 +44,36 @@
 	opacity: 1;
 	background-color: var(--color-main-hover);
 }
+#navbar .nav-icon {
+	height: 2rem;
+	width: 2rem;
+	margin-right: .8rem;
+	object-fit: contain;
+}
+
 main {
 	display: flex;
 	flex-direction: column;
 	min-height: calc(100vh - var(--navbar-size));
 	margin-left: calc(var(--navbar-size) * 4);
+}
+
+@media screen and (max-width: 680px) {
+	#navbar {
+		width: var(--navbar-size);
+	}
+	#navbar ul li a {
+		display: flex;
+		justify-content: center;
+		padding: 0;
+	}
+	#navbar ul li a:hover {
+		padding-left: 0;
+	}
+	#navbar ul li a p {
+		display: none;
+	}
+	main {
+		margin-left: var(--navbar-size);
+	}
 }
