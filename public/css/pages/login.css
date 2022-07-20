@@ -1,0 +1,118 @@
+@import url('../styles.css');
+@import url('../theme.css');
+@import url('../partials/message-overlay.css');
+@import url('../partials/footer.css');
+
+#message-overlay {
+    left: 0;
+    display: flex;
+    justify-content: center;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+form {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    border-radius: .4rem;
+    padding: .8rem;
+}
+.form-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 34rem;
+}
+form h1 {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    color: var(--color-text);
+    margin: .8rem 0;
+}
+
+form .msg {
+    text-align: center;
+}
+
+.form-col {
+    display: flex;
+    width: 100%;
+    flex-flow: column nowrap;
+    padding: .8rem;
+}
+
+.form-col label {
+    margin-bottom: .4rem;
+    margin-left: .2rem;
+    color: var(--color-text);
+}
+.form-col input {
+    padding: .8rem;
+    border: none;
+    border-radius: .2rem;
+    outline: none;
+}
+.form-col input.email {
+    border: solid .1rem var(--color-bg-alt2);
+}
+.form-col input:active,
+.form-col input:focus {
+    border: solid .1rem var(--color-main);
+}
+.password-field {
+    display: flex;
+    border: solid .1rem var(--color-bg-alt2);
+    border-radius: .2rem;
+    overflow: hidden;
+}
+.password-field input {
+    display: flex;
+    flex-grow: 1;
+    width: 1rem;
+}
+.password-field .view-password {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 4.3rem;
+    height: 4.3rem;
+    cursor: pointer;
+}
+.password-field .view-password:active {
+    transform: scale(0.75);
+}
+.password-field .view-password img {
+    text-align: center;
+    width: 55%;
+    height: 55%;
+    opacity: .5;
+    object-fit: contain;
+}
+
+.form-col input[type="submit"] {
+    border: none;
+    background-color: var(--color-main);
+    color: #fefefe;
+    margin-top: 3.2rem;
+    transition: background-color .3s ease-out;
+}
+.form-col input[type="submit"]:hover {
+    background-color: var(--color-details);
+}
+
+.form-box a {
+    color: var(--color-main);
+    margin: .4rem;
+}
+.form-box a:hover {
+    color: var(--color-details);
+    text-decoration: underline;
+}
