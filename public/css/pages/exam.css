@@ -302,3 +302,15 @@ main {
 	display: flex;
 	padding: .8rem 1.2rem;
 }
+
+@media screen and (max-width: 680px) {
+	.quick-nav {
+		flex-direction: column;
+	}
+	.chapter-header {
+		flex-direction: column;
+	}
+	.chapter-header h2 {
+		text-align: center;
+	}
+}

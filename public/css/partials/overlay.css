@@ -128,7 +128,7 @@ button.overlay-closer {
 }
 
 /* Specific design for details overlay */
-.details-box {
+.details-overlay {
 	display: flex;
 	flex-direction: column;
 	background-color: var(--color-bg);
@@ -137,38 +137,39 @@ button.overlay-closer {
 	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
 	overflow: hidden;
 }
-.details-box .container-header {
+.details-overlay .container-header {
 	display: flex;
 	justify-content: space-between;
 	padding: .8rem 1.2rem;
 	background-color: var(--color-details);
 }
-.details-box h1 {
+.details-overlay h1 {
 	text-align: center;
 	color: var(--color-bg);
 	margin-right: 2.4rem;
 }
-.details-container {
+.details-overlay .container-body {
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
+	padding: 0;
 }
-.details-container .details-row {
+.details-overlay .container-body .details-row {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	padding: .8rem .4rem;
 }
-.details-container .details-row.darkened {
+.details-overlay .container-body .details-row.darkened {
 	background-color: var(--color-bg-alt);
 }
 
-.details-container .details-row p,
-.details-container .details-row span {
+.details-overlay .container-body .details-row p,
+.details-overlay .container-body .details-row span {
 	color: var(--color-details);
 	padding: .8rem;
 }
-.details-container .details-row hr {
+.details-overlay .container-body .details-row hr {
 	background-color: none;
 	border: solid .8rem none dotted;
 	border-style: none none dotted;
@@ -361,4 +362,64 @@ button.overlay-closer {
 
 input:disabled {
 	opacity: .5;
+}
+
+@media screen and (max-width: 680px) {
+	.overlay {
+		left: var(--navbar-size);
+	}
+
+	.form-row {
+		flex-direction: column;
+	}
+	.overlay-box {
+		max-width: inherit;
+		height: 100%;
+		width: 100%;
+		border-radius: 0;
+		overflow-y: scroll;
+	}
+	.overlay-box .container-header h1 {
+		font-size: 2rem;
+	}
+
+	.charge-row {
+		width: 100%;
+	}
+	.charge-row .charge {
+		width: calc(100% - 6.4rem);
+	}
+
+	.insert-overlay form,
+	.edit-overlay form,
+	.delete-overlay form {
+		width: 100%;
+		flex-grow: 1;
+		justify-content: flex-start;
+	}
+	.insert-overlay .container-body,
+	.edit-overlay .container-body,
+	.delete-overlay .container-body {
+		flex-grow: 1;
+		justify-content: center;
+	}
+
+	.overlay-box form .container-body {
+		height: 100%;
+	}
+
+	.delete-query {
+		text-align: center;
+	}
+	.delete-overlay .delete-btn-box {
+		flex-direction: row;
+		justify-content: space-around;
+	}
+
+	.insert-overlay input[type="submit"],
+	.edit-overlay input[type="submit"],
+	.delete-overlay input[type="submit"] {
+		justify-content: center;
+		width: 100%;
+	}
 }

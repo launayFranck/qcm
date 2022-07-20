@@ -2,8 +2,8 @@ import { jwtDecode } from "./jwt-decode.js";
 
 const hostname = window.location.href.split(window.location.pathname)[0];
 
-const checkRights = (user, right) => {
-	// console.log(user, right);
+const checkRights = (token, right) => {
+	// console.log(token, right);
 	return true;
 };
 
@@ -41,6 +41,7 @@ const setNavbarLinks = (token) => {
 
 	const navOptions = document.querySelector('#navbar .nav-options');
 	navOptions.innerHTML = '';
+
 	try {
 		navOptions.innerHTML += `
 			${checkRights(jwtDecoded, 'isAdmin') ? `

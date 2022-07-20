@@ -1,5 +1,5 @@
 import { jwtDecode } from "./jwt-decode.js";
-import { capitalize, formatDate, formatPhone, sendMessageToPanel, sortByProperty } from './utils.js';
+import { capitalize, displayOverlay, formatDate, formatPhone, sendMessageToPanel, sortByProperty } from './utils.js';
 
 const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 
@@ -16,21 +16,6 @@ const insertUserBox = document.querySelector(".insert-overlay");
 const detailsUserBox = document.querySelector(".details-overlay");
 const editUserBox = document.querySelector(".edit-overlay");
 const deleteUserBox = document.querySelector(".delete-overlay");
-
-/**
- * Function displaying or hiding the overlay and its black blurred transparent background
- * @param {boolean} visible Specifies if the overlay must be visible or not
- * @param {*} boxName The name of the box we wish to display with the overlay
- */
-const displayOverlay = (visible = true, boxName) => {
-	// Checking if required overlay box is the one we requested
-	if (boxName) {
-		document.querySelectorAll('.overlay-box').forEach(box => {
-			box.style.setProperty('display', box == boxName ? "flex" : "none");
-		});
-	};
-	overlay.style.setProperty("display", visible ? "flex" : "none");
-};
 
 insertUserBtn.addEventListener('click', () => {
 	displayOverlay(true, insertUserBox);
@@ -270,7 +255,7 @@ const setDetails = async (users) => {
 			}
 		];
 		
-		const detailsContainer = document.querySelector('.details-container');
+		const detailsContainer = document.querySelector('.details-overlay .container-body');
 		detailsContainer.innerHTML = "";
 		stats.forEach((stat, i) => {
 			detailsContainer.innerHTML += `

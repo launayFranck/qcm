@@ -32,6 +32,23 @@ const convertToTimestamp = (dateVar = new Date()) => {
 };
 
 /**
+ * Function displaying or hiding the overlay and its black blurred transparent background
+ * @param {boolean} visible Specifies if the overlay must be visible or not
+ * @param {string} boxName The name of the box we wish to display with the overlay
+ */
+const displayOverlay = (visible = true, boxName) => {
+	// Checking if required overlay box is the one we requested
+	if (boxName != undefined) {
+		document.querySelectorAll('.overlay-box').forEach(box => {
+			box.style.setProperty('display', box == boxName ? "flex" : "none");
+		});
+	};
+	document.querySelector(".overlay").style.setProperty("display", visible ? "flex" : "none");
+
+	document.body.style.setProperty('overflow-y', visible === false ? "scroll" : "hidden");
+};
+
+/**
  * Turns a timestamp into a formatted date string
  * @param {date} timestamp The timestamp we wish to convert
  * @param {string} format The string to use as a template for the formatted date. Can include $Y (year), $M (month), $D (date), $d (day), $H (hours), $m (minutes), $s (seconds). E.g. : "$Y/$M/$D at $H/$m".
@@ -103,7 +120,7 @@ const formatDate = (timestamp, format = '$D/$M/$Y à $H:$m') => {
  * Turns an object containing hours, minutes and/or seconds properties into a string
  * E.g.: { hours: 1, minutes: 30 } => '01:30'
  * @param {object} interval The object containing hours, minutes or seconds properties. E.g.: { minutes : 50 }
- * @param {string} format The appearance of the returned string, can contain $H for hours, $m for minutes and/or $s for seconds. E.g.: '$H:$m:$s'
+ * @param {string} format The appearance of the returned string, can contain $H for hours, $m for minutes and/or $s for seconds, or $t for converting the entire interval into seconds. E.g.: '$H:$m:$s'
  * @returns {string} The formatted interval, now a string
  */
 const formatInterval = (interval, format = '$H:$m') => {
@@ -112,6 +129,14 @@ const formatInterval = (interval, format = '$H:$m') => {
 		tmp = tmp.includes('$H') ? tmp.replaceAll('$H', interval.hours ? formatNumber(interval.hours) : '00') : tmp;
 		tmp = tmp.includes('$m') ? tmp.replaceAll('$m', interval.minutes ? formatNumber(interval.minutes) : '00') : tmp;
 		tmp = tmp.includes('$s') ? tmp.replaceAll('$s', interval.seconds ? formatNumber(interval.seconds) : '00') : tmp;
+
+		tmp = tmp.includes('$t') ? tmp.replaceAll('$t', (() => {
+			let result = 0;
+			result += interval.hours ? parseInt(interval.hours) * 3600 : 0;
+			result += interval.minutes ? parseInt(interval.minutes) * 60 : 0;
+			result += interval.seconds ? parseInt(interval.seconds) * 60 : 0;
+			return result;
+		})()) : tmp;
 		return tmp;
 	} catch (err) {
 		console.error(err.message);
@@ -239,6 +264,7 @@ const validateEmail = (str) => str.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{
 export {
     capitalize,
 	convertToTimestamp,
+	displayOverlay,
     formatDate,
 	formatInterval,
 	formatNumber,

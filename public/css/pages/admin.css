@@ -149,3 +149,12 @@ main {
 	display: flex;
 	flex-grow: 1;
 }
+
+@media screen and (max-width: 680px) {
+	.user-row {
+		flex-direction: column;
+	}
+	.user-row > div {
+		margin: .8rem 0;
+	}
+}

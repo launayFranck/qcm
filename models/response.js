@@ -38,18 +38,17 @@ const findById = async (id) => {
  const findByQuestionId = async (id) => {
 	try {
 		const result = await knex('response').join('question', 'question.id', '=', 'response.question_id').select('response.title', 'response.correct', 'response.created_at', 'response.updated_at', 'response.created_by', 'response.updated_by').where('question.id','=', id);
-        console.log(result);
 		return result;
 	} catch (err) {
 		throw err;
 	};
 };
- 
+
 /**
  * Get a response by its name in the database and returns in an object
  * @async
  * @param {string} name
- * @returns {object} the wanted response 
+ * @returns {object} the wanted response
  */
 const findByName = async (name) => {
 	name = name.trim();

@@ -1,5 +1,5 @@
 import { jwtDecode } from "./jwt-decode.js";
-import { capitalize, formatDate, formatInterval, reverseFormatInterval, sendMessageToPanel, sortByProperty } from './utils.js';
+import { capitalize, displayOverlay, formatDate, formatInterval, reverseFormatInterval, sendMessageToPanel, sortByProperty } from './utils.js';
 
 const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 
@@ -10,7 +10,6 @@ const insertExaminationBtn = document.querySelector('#insert-overlay-btn');
 const detailsExaminationBtn = document.querySelector('#details-overlay-btn');
 
 // Overlay stuff
-const overlay = document.querySelector(".overlay");
 const overlayBg = document.querySelector(".overlay-bg");
 const insertExaminationBox = document.querySelector(".insert-overlay");
 const detailsExaminationBox = document.querySelector(".details-overlay");
@@ -54,21 +53,6 @@ const toggleAvailability = (overlay, bool) => {
 alwaysAvailable.addEventListener('click', () => {
 	toggleAvailability(insertExaminationBox);
 });
-
-/**
- * Function displaying or hiding the overlay and its black blurred transparent background
- * @param {boolean} visible Specifies if the overlay must be visible or not
- * @param {*} boxName The name of the box we wish to display with the overlay
- */
-const displayOverlay = (visible = true, boxName) => {
-	// Checking if required overlay box is the one we requested
-	if (boxName) {
-		document.querySelectorAll('.overlay-box').forEach(box => {
-			box.style.setProperty('display', box == boxName ? "flex" : "none");
-		});
-	};
-	overlay.style.setProperty("display", visible ? "flex" : "none");
-};
 
 insertExaminationBtn.addEventListener('click', () => {
 	displayOverlay(true, insertExaminationBox);
@@ -214,8 +198,6 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 		const insertDetails = await insertExamination(payload);
 		if (insertDetails.error) throw new Error(insertDetails.error);
 
-		console.log(insertDetails);
-
 		sendMessageToPanel(`L'examen "${insertDetails.examination.title}" a été créé`, 'var(--color-good-message)');
 		await setExaminations();
 		displayOverlay(false);
@@ -229,71 +211,33 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 
 /**
  * Set details about the themes
- * @param {array} themes 
+ * @param {array} examinations 
  */
- const setDetails = (themes) => {
+ const setDetails = async (examinations) => {
 	const stats = [
 		{
-			name : 'Nombre de thèmes',
-			value : themes.length
+			name : `Nombre d'examens`,
+			value : examinations.length
 		},
 		{
-			name : "Nombre min d'utilisateur",
-			value : themes.sort((a, b) => a.users.length > b.users.length ? 1 : -1)[0].users.length
+			name : "Examen le plus ancien",
+			value : examinations.sort((a, b) => a.created_at > b.created_at ? 1 : -1)[0].title
 		},
 		{
-			name : "Nombre max d'utilisateur",
-			value : themes.sort((a, b) => a.users.length < b.users.length ? 1 : -1)[0].users.length
+			name :  "Examen le plus récent",
+			value : examinations.sort((a, b) => a.created_at < b.created_at ? 1 : -1)[0].title
 		},
 		{
-			name : "Utilisateur gérant le moins de thèmes",
-			value : (() => {
-				const usersNb = {};
-				themes.forEach(theme => {
-					theme.users.forEach(user => {
-						if (usersNb[user.name]) {
-							usersNb[user.name] += 1;
-						} else {
-							usersNb[user.name] =1;
-						};
-					});
-				});
-
-				const users = Object.keys(usersNb).map(user => {
-					return {
-						name : user,
-						number : usersNb[user]
-					}
-				});
-				return users.sort((a, b) => a.number > b.number ? 1 : -1)[0].name
-			})()
+			name :  "Examen a la plus courte durée",
+			value : examinations.sort((a, b) => parseInt(formatInterval(a.duration, '$t')) > parseInt(formatInterval(b.duration, '$t')) ? 1 : -1)[0].title
 		},
 		{
-			name : "Utilisateur gérant le plus de thèmes",
-			value : (() => {
-				const usersNb = {};
-				themes.forEach(theme => {
-					theme.users.forEach(user => {
-						if (usersNb[user.name]) {
-							usersNb[user.name] += 1;
-						} else {
-							usersNb[user.name] =1;
-						};
-					});
-				});
-
-				const users = Object.keys(usersNb).map(user => {
-					return {
-						name : user,
-						number : usersNb[user]
-					}
-				});
-				return users.sort((a, b) => a.number < b.number ? 1 : -1)[0].name
-			})()
+			name :  "Examen a la plus longue durée",
+			value : examinations.sort((a, b) => parseInt(formatInterval(a.duration, '$t')) < parseInt(formatInterval(b.duration, '$t')) ? 1 : -1)[0].title
 		}
 	];
 
-	const detailsContainer = document.querySelector('.details-container');
+	const detailsContainer = document.querySelector('.details-overlay .container-body');
 	detailsContainer.innerHTML = "";
 	stats.forEach((stat, i) => {
 		detailsContainer.innerHTML += `
@@ -385,8 +329,6 @@ const setEditExaminationForm = async (examination) => {
 
 			const updateExaminationDetails = await updateExamination(examination.id, payload);
 			if (updateExaminationDetails.error) throw new Error(updateExaminationDetails.error);
-
-			// console.log(updateExaminationDetails);
 			
 			await setExaminations();
 			sendMessageToPanel(`L'examen "${examination.title}" a été modifié`, 'var(--color-good-message)');
@@ -415,7 +357,6 @@ const setDeleteExaminationForm = async (examination) => {
 
 		try {
 			const deleteDetails = await deleteExamination(examination.id);
-			// console.log(deleteDetails);
 
 			if (deleteDetails.error) throw new Error(deleteDetails.error);
 
@@ -443,6 +384,8 @@ setFormRowsFlexBasis(document.querySelectorAll('.insert-overlay .form-row'));
 
 const setExaminations = async () => {
 	const { examinations } = await getAllExaminations();
+
+	await setDetails(examinations);
 	
 	await addThemesInSelect(document.querySelector('.insert-overlay .theme'));
 	await displayExaminations(await filterExaminations(examinations));
@@ -553,10 +496,6 @@ const displayExaminations = async (examinations) => {
 			<div class="examination-availability">
 				
 				${(() => {
-					// console.log(examination.always_available);
-					// console.log(examination.starts_at);
-					// console.log(examination.ends_at);
-
 					if (examination.always_available) {
 						return `<p class="available">Éternellement disponible</p>`;
 					} else {

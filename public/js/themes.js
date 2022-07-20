@@ -1,5 +1,5 @@
 import { jwtDecode } from "./jwt-decode.js";
-import { capitalize, formatDate, sendMessageToPanel, sortByProperty } from './utils.js';
+import { capitalize, displayOverlay, formatDate, sendMessageToPanel, sortByProperty } from './utils.js';
 
 const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 
@@ -101,21 +101,6 @@ addChargedField(insertThemeBox);
 insertAddChargedBtn.addEventListener('click', () => {
 	addChargedField(insertThemeBox);
 });
-
-/**
- * Function displaying or hiding the overlay and its black blurred transparent background
- * @param {boolean} visible Specifies if the overlay must be visible or not
- * @param {*} boxName The name of the box we wish to display with the overlay
- */
-const displayOverlay = (visible = true, boxName) => {
-	// Checking if required overlay box is the one we requested
-	if (boxName) {
-		document.querySelectorAll('.overlay-box').forEach(box => {
-			box.style.setProperty('display', box == boxName ? "flex" : "none");
-		});
-	};
-	overlay.style.setProperty("display", visible ? "flex" : "none");
-};
 
 insertThemeBtn.addEventListener('click', () => {
 	displayOverlay(true, insertThemeBox);
@@ -313,7 +298,7 @@ const setDetails = (themes) => {
 		}
 	];
 
-	const detailsContainer = document.querySelector('.details-container');
+	const detailsContainer = document.querySelector('.details-overlay .container-body');
 	detailsContainer.innerHTML = "";
 	stats.forEach((stat, i) => {
 		detailsContainer.innerHTML += `
@@ -469,7 +454,7 @@ const displayUsersInSelect = async (select) => {
 displayUsersInSelect(document.querySelector('.order-user'));
 
 /**
- * Fetches all themes and display them
+ * Fetches all themes and displays them
  */
 const setThemes = async () => {
 	const { themes } = await getAllThemes();
