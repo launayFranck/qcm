@@ -191,7 +191,8 @@ main {
 	font-weight: bold;
 }
 .insert-chapter-btn:hover {
-
+	background-color: var(--color-bg-alt);
+}
 
 .questions-container {
 	display: flex;

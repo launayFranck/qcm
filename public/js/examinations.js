@@ -16,9 +16,6 @@ const detailsExaminationBox = document.querySelector(".details-overlay");
 const editExaminationBox = document.querySelector(".edit-overlay");
 const deleteExaminationBox = document.querySelector(".delete-overlay");
 
-const insertAddChargedBtn = document.querySelector('.insert-overlay .add-charged');
-const editAddChargedBtn = document.querySelector('.edit-overlay .add-charged');
-
 // Filter & order params
 const search = document.querySelector('.search');
 const orderProperty = document.querySelector('.order-property');
