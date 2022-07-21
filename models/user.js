@@ -151,7 +151,6 @@ const findByEmail = async (email, strict = true) => {
 				"created_at",
 				"updated_at"
 			).whereRaw("LOWER(email) = LOWER(?)", [email]);
-			console.log(result.length);
 			if (result.length < 1) throw new Error(`User not found with email ${email}`);
 
 			return result[0];
@@ -254,7 +253,6 @@ const destroy = async (id) => {
             throw new Error(`${id} is incorrect`);
         };
         const exists = await knex('user').select('id').where('id', '=', id);
-        console.log(exists);
         if (exists.length <= 0) {
             throw new Error(`${id} not found`);
         };

@@ -163,8 +163,6 @@ const create = async (payload, token) => {
 
 	try {
 		const verif = await knex('theme').select('title').where('title', '=', payload.title);
-		console.log(verif);
-		console.log(verif.length);
 		if (verif.length > 0) {
 			throw new Error(`Le thème ${payload.title} existe déjà`);
 		};
@@ -179,7 +177,6 @@ const create = async (payload, token) => {
 				updated_by : themeResult[0].updated_by
 			};
 		});
-		// console.log(usersPayload);
 		
 		const userResult = await knex('theme_user').insert(usersPayload).returning('*');
 
@@ -187,7 +184,6 @@ const create = async (payload, token) => {
 			content : `$1 a créé le thème ${payload.title}`,
 			created_by : token.id
 		});
-		console.log(logResult);
 		
 		return {
 			theme : themeResult[0],
@@ -206,7 +202,6 @@ const create = async (payload, token) => {
  */
 const update = async (id, payload, token) => {
 	try {
-		console.log(payload);
 		if (!payload.charges) throw new Error('Le thème doit être attribué à au moins un utilisateur.');
 		if (payload.charges.length < 1) throw new Error('Le thème doit être attribué à au moins un utilisateur.');
 
@@ -226,22 +221,15 @@ const update = async (id, payload, token) => {
 
 		// Getting all users in charge for the specified theme
 		const themeUsers = (await knex('theme_user').select().where({theme_id : id})).map(themeUser => themeUser.user_id);
-		// console.log("charges : ", charges);
-		// console.log("themeUsers : ", themeUsers);
 
 		// Filtering charged users depending on what action to do with them
 		const toUpdate = themeUsers.filter(x => charges.indexOf(x) === themeUsers.indexOf(x));
 		const toInsert = charges.filter(x => themeUsers.indexOf(x) === -1);
 		const toDestroy = themeUsers.filter(x => charges.indexOf(x) === -1);
 
-		// console.log("toUpdate : ", toUpdate);
-		// console.log("toInsert : ", toInsert);
-		// console.log("toDestroy : ", toDestroy);
-
 		// --- Requests
 		const result = {};
 
-		// console.log("To update : ", toUpdate);
 		if (toUpdate.length > 0) {
 			result.update = [];
 			try {
@@ -293,7 +281,6 @@ const update = async (id, payload, token) => {
 		if (themePayload) {
 			themePayload.updated_at = new Date();
 			themePayload.updated_by = token.id;
-			// console.log(themePayload);
 			try {
 				const themeQuery = await knex('theme').update(themePayload).where({id}).returning('*');
 				result.theme = themeQuery[0];
@@ -306,7 +293,6 @@ const update = async (id, payload, token) => {
 			content : `$1 a modifié le thème ${verif[0].title}`,
 			created_by : token.id
 		});
-		console.log(logResult);
 
 		return result;
 	} catch (err) {
@@ -333,13 +319,10 @@ const destroy = async (id, token) => {
 		const linkResponse = await knex('theme_user').delete().where('theme_id', '=', id).returning('*');
 		const response = await knex('theme').delete().where({id}).returning('*');
 
-		console.log(verif[0]);
-		console.log(verif[0].title);
 		const logResult = await log.create({
 			content : `$1 a supprimé le thème ${verif[0].title}`,
 			created_by : token.id
 		});
-		console.log(logResult);
 
 		return {
 			theme_user : linkResponse[0],

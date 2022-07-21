@@ -27,17 +27,18 @@ const findAll = async () => {
 };
 
 /**
- * Add a log in the database
+ * Adds a log in the database
  * @async
  * @param {string} content the payload containing the properties to insert
  * @param {object} content the payload containing the properties to insert
  */
 const create = async (payload) => {
-	console.log(payload);
 	try {
-		console.log('--- LOG :');
 		Object.keys(payload).forEach(property => {
-			console.log(`${property} : ${payload[property]}`);
+			if (!["content", "created_by"].includes(property)) {
+				console.log(`${property} : ${payload[property]}`);
+				delete payload[property];
+			};
 		});
 		const logResult = await knex('log').insert(payload).returning('*');
 		return logResult;

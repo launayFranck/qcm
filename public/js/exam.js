@@ -1,5 +1,5 @@
 import { jwtDecode } from "./jwt-decode.js";
-import { capitalize, formatDate, formatInterval, reverseFormatInterval, sendMessageToPanel, sortByProperty } from './utils.js';
+import { capitalize, displayOverlay, formatDate, formatInterval, reverseFormatInterval, sendMessageToPanel, sortByProperty } from './utils.js';
 
 const jwtDecoded = jwtDecode(localStorage.getItem('Authorization'));
 
@@ -125,14 +125,14 @@ const buildExam = async (examId) => {
 				const buttonContainer = document.createElement('div');
 				buttonContainer.classList.add('btn-container');
 
-				const insertQuestion = document.createElement('button');
-				insertQuestion.classList.add('insert-question');
-				insertQuestion.setAttribute('title', "Cliquez ici pour ajouter une question dans ce chapitre");
-				insertQuestion.addEventListener('click', () => {
-					console.log("Show insert question overlay here");
-					console.log(chapter.id);
-				});
-				buttonContainer.appendChild(insertQuestion);
+				// const insertQuestion = document.createElement('button');
+				// insertQuestion.classList.add('insert-question');
+				// insertQuestion.setAttribute('title', "Cliquez ici pour ajouter une question dans ce chapitre");
+				// insertQuestion.addEventListener('click', () => {
+				// 	console.log("Show insert question overlay here");
+				// 	console.log(chapter.id);
+				// });
+				// buttonContainer.appendChild(insertQuestion);
 	
 				const editChapter = document.createElement('button');
 				editChapter.classList.add('edit-chapter');
@@ -175,20 +175,20 @@ const buildExam = async (examId) => {
 						const buttonContainer = document.createElement('div');
 						buttonContainer.classList.add('btn-container');
 
-						const editQuestion = document.createElement('button');
-						editQuestion.classList.add('edit-question');
-						editQuestion.addEventListener('click', () => {
-							console.log(chapter.id);
-						});
-						buttonContainer.appendChild(editQuestion);
-			
+						// const editQuestion = document.createElement('button');
+						// editQuestion.classList.add('edit-question');
+						// editQuestion.addEventListener('click', () => {
+						// 	console.log(chapter.id);
+						// });
+						// buttonContainer.appendChild(editQuestion);
+
 						const deleteQuestion = document.createElement('button');
 						deleteQuestion.classList.add('delete-question');
 						deleteQuestion.addEventListener('click', () => {
 							console.log(chapter.id);
 						});
 						buttonContainer.appendChild(deleteQuestion);
-			
+
 						questionHeader.appendChild(buttonContainer);
 						questionBox.appendChild(questionHeader);
 
@@ -204,7 +204,7 @@ const buildExam = async (examId) => {
 						// The hr after the question correction
 						const hr = document.createElement('hr');
 						questionBox.appendChild(hr);
-		
+
 						// Fetching all responses linked to this question
 						const responses = await getResponsesByQuestionId(question.id);
 						if (responses.error) throw new Error(responses.error);
@@ -225,6 +225,14 @@ const buildExam = async (examId) => {
 								responsesContainer.appendChild(responseBox);
 							};
 
+							questionBox.appendChild(responsesContainer);
+						} else {
+							responsesContainer.innerHTML = `
+								<div class="empty-content-message">
+									<div class="warning-sign"></div>
+									<p>Cette question ne contient pas de réponses.</p>
+								</div>
+							`;
 							questionBox.appendChild(responsesContainer);
 						};
 						questionsContainer.appendChild(questionBox);
@@ -263,6 +271,13 @@ const buildExam = async (examId) => {
 				chaptersContainer.appendChild(chapterBox);
 			};
 		};
+		const insertChapterBtn = document.createElement('button');
+		insertChapterBtn.classList.add('insert-chapter-btn');
+		insertChapterBtn.classList.add('dotted-btn');
+		insertChapterBtn.innerText = '+';
+
+		chaptersContainer.appendChild(insertChapterBtn);
+
 	} catch (err) {
 		console.log(err.message);
 	};

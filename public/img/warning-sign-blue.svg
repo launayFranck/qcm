@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   id="Layer_3"
+   xml:space="preserve"
+   height="532.96802"
+   width="607.83887"
+   version="1.0"
+   viewBox="0 0 607.83788 532.96801"
+   sodipodi:docname="warning-sign-blue.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs9" /><sodipodi:namedview
+   id="namedview7"
+   pagecolor="#ffffff"
+   bordercolor="#999999"
+   borderopacity="1"
+   inkscape:pageshadow="0"
+   inkscape:pageopacity="0"
+   inkscape:pagecheckerboard="0"
+   showgrid="false"
+   inkscape:zoom="0.73757833"
+   inkscape:cx="237.26294"
+   inkscape:cy="321.9997"
+   inkscape:window-width="1920"
+   inkscape:window-height="1001"
+   inkscape:window-x="-9"
+   inkscape:window-y="-9"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_3" />
+<path
+   id="path2231"
+   style="fill:#337ab7;fill-opacity:1"
+   d="M 303.91992 0 C 295.15992 0 287.07141 4.6738124 282.69141 12.257812 L 3.28125 496.19727 C -1.0937501 503.77727 -1.0947969 513.12875 3.2832031 520.71875 C 7.6622032 528.29875 15.755672 532.96875 24.513672 532.96875 L 583.32422 532.96875 C 592.08422 532.96875 600.18469 528.29875 604.55469 520.71875 C 608.93469 513.12875 608.93469 503.77727 604.55469 496.19727 L 604.55078 496.20117 L 325.15039 12.261719 C 320.77039 4.6737186 312.67992 -1.1842379e-15 303.91992 0 z "
+   transform="translate(-4.892724e-4)" />
+
+
+<g
+   id="g926"><path
+     id="path2235"
+     d="m 281.85037,334.622 c 1.21,11.49 3.21,20.04 6.02,25.66 2.81,5.63 7.82,8.43 15.04,8.43 h 2.01 c 7.22,0 12.24,-2.8 15.04,-8.43 2.81,-5.62 4.82,-14.17 6.02,-25.66 l 6.42,-88.75 c 1.21,-17.3 1.81,-29.71 1.81,-37.25 0,-10.25 -2.91,-18.25 -8.73,-23.99 -5.53,-5.46 -13.38,-8.59 -21.56,-8.59 -8.18,0 -16.04,3.13 -21.57,8.59 -5.81,5.74 -8.72,13.74 -8.72,23.99 0,7.54 0.6,19.95 1.8,37.25 z"
+     style="fill:#ffffff" /><circle
+     id="circle2237"
+     cy="422.052"
+     cx="303.92038"
+     r="30.747"
+     style="fill:#ffffff" /></g>
+</svg>

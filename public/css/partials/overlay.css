@@ -340,7 +340,7 @@ button.overlay-closer {
 	background-color: var(--color-delete-hover)
 }
 
-.overlay-box .add-charged {
+.overlay-box .dotted-btn {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -350,13 +350,13 @@ button.overlay-closer {
 	cursor: pointer;
 	transition: background-color .1s ease-out;
 }
-.overlay-box .add-charged:hover {
+.overlay-box .dotted-btn:hover {
 	background-color: var(--color-bg-alt);
 }
-.insert-overlay .add-charged {
+.insert-overlay .dotted-btn {
 	border: dotted 2px var(--color-insert);
 }
-.edit-overlay .add-charged {
+.edit-overlay .dotted-btn {
 	border: dotted 2px var(--color-edit);
 }
 
