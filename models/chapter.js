@@ -49,10 +49,12 @@ const findById = async (id) => {
  * @async
  * @param {object} payload the payload containing the properties to insert
  */
-const create = async (payload) => {
+const create = async (payload, token) => {
 	try {
+		payload.created_by = token.id;
+		payload.updated_by = token.id;
 		const result = await knex('chapter').insert(payload).returning('*');
-		return result;
+		return result[0];
 	} catch (err) {
 		throw err;
 	};

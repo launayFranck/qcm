@@ -54,6 +54,7 @@ router.get('/:id', async (req, res) => {
 
 // • Creating new chapter
 router.post("/", async (req, res) => {
+	console.log(req.body);
 	try {
 		const authorization = req.headers['authorization'].split(' ')[1];
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
