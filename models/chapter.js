@@ -70,10 +70,16 @@ const update = async (id, payload) => {
 	try {
 		const verif = await knex('chapter').select().where({id});
 		if (verif.length <= 0) {
-			throw new Error(`id ${id} not found`);
+			throw new Error(`Le chapitre avec l'ID ${id} n'existe pas`);
 		};
-		const result = await knex('chapter').update(payload).where({id}).returning('*');
-		return result[0];
+
+		const verifPosition = await knex('chapter').select().where({position_number : payload.position_number});
+		if (verifPosition.length <= 0) {
+			const result = await knex('chapter').update(payload).where({id}).returning('*');
+			return result[0];
+		} else {
+			throw new Error(`L'emplacement ${payload.position_number} est déjà pris`);
+		};
 	} catch (err) {
 		throw err;
 	};
@@ -82,7 +88,7 @@ const update = async (id, payload) => {
 /**
  * Deleting a chapter
  * @async
- * @param {number} id 
+ * @param {number} id
  * @returns {} deleted chapter
  */
 const destroy = async (id) => {

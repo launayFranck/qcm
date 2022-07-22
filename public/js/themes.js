@@ -131,13 +131,14 @@ const orderUser = document.querySelector('.order-user');
  * @async
  * @returns themes
  */
- const getAllThemes = async () => {
+const getAllThemes = async () => {
 	const res = await fetch(`${hostname}/api/themes`, {
 		method: 'GET',
-		credentials:'include',
-		cache:'no-cache',
+		credentials: 'include',
+		cache: 'no-cache',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
 		}
 	});
 	return await res.json();
@@ -154,7 +155,8 @@ const insertTheme = async (data) => {
 		credentials:'include',
 		cache:'no-cache',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
 		},
 		body: JSON.stringify(data)
 	});
@@ -173,7 +175,8 @@ const updateTheme = async (id, payload) => {
 		credentials:'include',
 		cache:'no-cache',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
 		},
 		body: JSON.stringify(payload)
 	});
@@ -191,7 +194,8 @@ const deleteTheme = async (id) => {
 		credentials:'include',
 		cache:'no-cache',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
 		}
 	});
 	return await res.json();
@@ -223,7 +227,7 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 
 		console.log(insertDetails);
 
-		sendMessageToPanel(`Le thème "${insertDetails.theme.title}" a été créé`, 'var(--color-good-message)');
+		sendMessageToPanel(`Le thème "${insertDetails.theme.theme.title}" a été créé`, 'var(--color-good-message)');
 		await setThemes();
 		displayOverlay(false);
 		e.target.reset();

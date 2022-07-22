@@ -61,6 +61,25 @@ const insertChapter = async (payload) => {
 };
 
 /**
+ * Edits a chapter into the DB
+ * @param {object} payload An object containing the properties to insert
+ * @returns {object} The created chapter
+ */
+const updateChapter = async (id, payload) => {
+	const res = await fetch(`${hostname}/api/chapters/${id}`, {
+		method: 'PUT',
+		credentials: 'include',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+		},
+		body: JSON.stringify(payload)
+	});
+	return await res.json();
+};
+
+/**
  * Fetches chapters linked to a specific examination
  * @param {number} id The id of the examination from which to get all chapters
  * @returns {Array{object}} The chapters linked to the specified exam
@@ -68,6 +87,24 @@ const insertChapter = async (payload) => {
 const getChaptersByExamId = async (id) => {
 	const res = await fetch(`${hostname}/api/chapters/examination/${id}`, {
 		method: 'GET',
+		credentials: 'include',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+		}
+	});
+	return await res.json();
+};
+
+/**
+ * Deletes a chapter from the DB
+ * @param {object} id the chapter to delete
+ * @returns {object} The deleted chapter
+ */
+ const deleteChapter = async (id) => {
+	const res = await fetch(`${hostname}/api/chapters/${id}`, {
+		method: 'DELETE',
 		credentials: 'include',
 		cache: 'no-cache',
 		headers: {
@@ -119,10 +156,10 @@ document.querySelector('.insert-overlay.chapter-overlay form').addEventListener(
 	e.preventDefault();
 	try {
 		const payload = {
-			title : document.querySelector('.insert-overlay.chapter-overlay .title').value,
-			description : document.querySelector('.insert-overlay.chapter-overlay .description').value,
+			title : document.querySelector('.insert-overlay.chapter-overlay .title').value.trim(),
+			description : (document.querySelector('.insert-overlay.chapter-overlay .description').value.trim()).replace(/(\r\n|\r|\n)/g, '<br>'),
 			examination_id : examId,
-			position_number : parseInt(document.querySelector('.insert-overlay.chapter-overlay .position-number').value)
+			position_number : parseInt(document.querySelector('.insert-overlay.chapter-overlay .position-number').value.trim())
 		};
 
 		// Content checking
@@ -140,7 +177,6 @@ document.querySelector('.insert-overlay.chapter-overlay form').addEventListener(
 
 		// console.log(payload);
 		const insertDetails = await insertChapter(payload);
-		console.log(insertDetails);
 		if (insertDetails.error) throw new Error(insertDetails.error);
 
 		sendMessageToPanel(`Le chapitre "${insertDetails.chapter.title}" a été créé`, 'var(--color-good-message)');
@@ -197,7 +233,7 @@ const setDetails = async (examinations) => {
  * Sets the edit-overlay form so it depends on which examination we're editing
  * @param {object} examination The examination on which to base the edit form depending on what we're editing
  */
-const setEditExaminationForm = async (examination) => {
+const setEditChapterForm = async (chapter) => {
 	// Getting form and emptying charged users list
 	const form = document.querySelector('.edit-overlay form');
 
@@ -207,113 +243,68 @@ const setEditExaminationForm = async (examination) => {
 	// Replacing the previous form with the freshly created clone
 	form.parentNode.replaceChild(formClone, form);
 
-	const allowedProperties = ["title", "theme_id", "description", "duration", "always_available", "starts_at", "ends_at", "required_score"];
+	const allowedProperties = ["position_number", "title", "description"];
 
-	formClone.querySelector(`.title`).value = examination.title;
-	await addThemesInSelect(formClone.querySelector(`.theme-id`), examination.theme_id);
-	formClone.querySelector(`.description`).value = examination.description;
-
-	formClone.querySelector(`.duration`).value = formatInterval(examination.duration);
-	formClone.querySelector(`.always-available`).checked = examination.always_available;
-	formClone.querySelector(`.always-available`).addEventListener('click', () => {
-		toggleAvailability(editExaminationBox);
-	});
-	// Setting the starts_at and ends_at input boxes disabled status on form load
-	toggleAvailability(editExaminationBox, !examination.always_available);
-
-	const startsAt = examination.starts_at ? formatDate(examination.starts_at, `$Y-$M-$D $H:$m`)  : null;
-	const endsAt = examination.ends_at ? formatDate(examination.ends_at, `$Y-$M-$D $H:$m`) : null;
-
-	formClone.querySelector(`.starts-at`).value = startsAt ? startsAt : '';
-	formClone.querySelector(`.ends-at`).value = endsAt ? endsAt : '';
-	formClone.querySelector(`.required-score`).value = examination.required_score;
+	formClone.querySelector(`.position-number`).value = chapter.position_number;
+	formClone.querySelector(`.title`).value = chapter.title;
+	formClone.querySelector(`.description`).value = chapter.description;
 
 	formClone.addEventListener('submit', async (e) => {
 		e.preventDefault();
 		try {
-			const startsAt = document.querySelector('.edit-overlay .starts-at').value;
-			const endsAt = document.querySelector('.edit-overlay .ends-at').value;
-
 			let payload = {
+				position_number : document.querySelector('.edit-overlay .position-number').value,
 				title : document.querySelector('.edit-overlay .title').value,
-				theme_id : document.querySelector('.edit-overlay .theme-id').value,
 				description : document.querySelector('.edit-overlay .description').value,
-				duration : document.querySelector('.edit-overlay .duration').value,
-				always_available : document.querySelector('.edit-overlay .always-available').checked,
-				starts_at : startsAt ? formatDate(startsAt, `$Y-$M-$DT$H:$m:00.000Z`) : null,
-				ends_at : endsAt ? formatDate(endsAt, `$Y-$M-$DT$H:$m:00.000Z`) : null,
-				required_score : document.querySelector('.edit-overlay .required-score').value
 			};
-
-			// Forbidding null start and end dates if not always available
-			if (!payload.always_available) {
-				if (payload.starts_at === null) throw new Error('Veuillez spécifier la date de début !');
-				if (payload.ends_at === null) throw new Error('Veuillez spécifier la date de fin !');
-			};
-
-			Object.keys(payload).forEach(property => {
-				if (!allowedProperties.includes(property)) {
-					throw new Error(`Property ${property} is not allowed`);
-				};
-				if (payload[property] === null) {
-					delete payload[property];
-					return;
-				};
-				if (payload[property] == examination[property]) {
-					delete payload[property];
-					return;
-				};
-			});
-
-			if (payload.duration == formatInterval(examination.duration)) delete payload.duration;
 
 			// Not updating if nothing to change
-			if (Object.keys(payload).length < 1) throw new Error(`L'examen "${examination.title}" n'a pas été modifié`);
-
-			const updateExaminationDetails = await updateExamination(examination.id, payload);
-			if (updateExaminationDetails.error) throw new Error(updateExaminationDetails.error);
+			if (Object.keys(payload).length < 1) throw new Error(`Le chapitre "${chapter.title}" n'a pas été modifié`);
+			const updateChapterDetails = await updateChapter(chapter.id, payload);
+			if (updateChapterDetails.error) throw new Error(updateChapterDetails.error);
 			
-			await setExaminations();
-			sendMessageToPanel(`L'examen "${examination.title}" a été modifié`, 'var(--color-good-message)');
+			await buildExam();
+			sendMessageToPanel(`Le chapitre "${chapter.title}" a été modifié`, 'var(--color-good-message)');
 			displayOverlay(false);
+
 
 		} catch (err) {
 			sendMessageToPanel(err.message, 'var(--color-bad-message)');
 		};
 	});
 
-	displayOverlay(true, editExaminationBox);
+	displayOverlay(true, editChapterBox);
 };
 
 /**
- * Creates a form on which we'd base a examination to set up the deletion depending on it
- * @param {object} examination The examination on which we'll base the delete examination form
+ * Creates a form on which we'd base on a chapter to set up the deletion depending on it
+ * @param {object} chapter The chapter to delete
  */
-const setDeleteExaminationForm = async (examination) => {
-	document.querySelector('.delete-query').innerText = `Souhaitez-vous vraiment supprimer ${examination.title} ?`;
+const setDeleteChapterForm = async (chapter) => {
+	document.querySelector('.delete-query').innerText = `Souhaitez-vous vraiment supprimer ${chapter.title} ?`;
 
-	const deleteExaminationBtn = document.querySelector('.delete-overlay .delete-btn');
-	const deleteExaminationBtnClone = deleteExaminationBtn.cloneNode(true);
+	const deleteChapterBtn = document.querySelector('.delete-overlay .delete-btn');
+	const deleteChapterBtnClone = deleteChapterBtn.cloneNode(true);
 
-	deleteExaminationBtnClone.addEventListener('click', async (e) => {
+	deleteChapterBtnClone.addEventListener('click', async (e) => {
 		e.preventDefault;
 
 		try {
-			const deleteDetails = await deleteExamination(examination.id);
+			const deleteDetails = await deleteChapter(chapter.id);
 
 			if (deleteDetails.error) throw new Error(deleteDetails.error);
 
-			await setExaminations();
-			sendMessageToPanel(`L'examen "${examination.title}" a été supprimé`, 'var(--color-good-message)');
+			await buildExam();
+			sendMessageToPanel(`Le chapitre "${chapter.title}" a été supprimé`, 'var(--color-good-message)');
 			displayOverlay(false);
 		} catch (err) {
 			sendMessageToPanel(err.message, 'var(--color-bad-message)');
 		};
 	});
 
-	deleteExaminationBtn.parentElement.replaceChild(deleteExaminationBtnClone, deleteExaminationBtn);
+	deleteChapterBtn.parentElement.replaceChild(deleteChapterBtnClone, deleteChapterBtn);
 
-	displayOverlay(true, deleteExaminationBox);
+	displayOverlay(true, deleteChapterBox);
 };
 
 /**
@@ -354,7 +345,7 @@ const buildExam = async (examId) => {
 		chaptersContainer.classList.add('chapters-container');
 		examContainer.appendChild(chaptersContainer);
 
-		// Fetching all chapters linked to this exam
+		// --- Chapters part
 		const chapters = await getChaptersByExamId(examId);
 		if (chapters.error) throw new Error(chapters.error);
 		if (chapters.chapters.length > 0) {
@@ -403,29 +394,46 @@ const buildExam = async (examId) => {
 				editChapterBtn.setAttribute('title', "Cliquez ici pour éditer ce chapitre");
 				editChapterBtn.addEventListener('click', (e) => {
 					e.stopPropagation();
-					console.log(chapter.id);
+					setEditChapterForm(chapter);
 					displayOverlay(true, editChapterBox);
 				});
 				buttonContainer.appendChild(editChapterBtn);
-	
+
 				const deleteChapterBtn = document.createElement('button');
 				deleteChapterBtn.classList.add('delete-chapter');
 				editChapterBtn.setAttribute('title', "Cliquez ici pour supprimer ce chapitre");
 				deleteChapterBtn.addEventListener('click', (e) => {
 					e.stopPropagation();
-					console.log(chapter.id);
+					setDeleteChapterForm(chapter);
 					displayOverlay(true, deleteChapterBox);
 				});
 				buttonContainer.appendChild(deleteChapterBtn);
 
 				chapterHeader.appendChild(buttonContainer);
 				chapterBox.appendChild(chapterHeader);
+
+				const chapterBody = document.createElement('div');
+				chapterBody.classList.add('chapter-body');
+
+				// Chapter description part
+				if (chapter.description) {
+					const chapterDescription = document.createElement('div');
+					chapterDescription.classList.add('description');
+					chapterDescription.innerHTML = `
+						${((chapter.description.split('<br>')).map(txt => `<p>${txt.trim()}</p>`)).join('')}
+					`;
+					chapterBody.appendChild(chapterDescription);
+
+					const hr = document.createElement('hr');
+					chapterBody.appendChild(hr);
+				}
 	
-				// Fetching all questions linked to this chapter
-				const questions = await getQuestionsByChapterId(chapter.id);
-				if (questions.error) throw new Error(questions.error);
+				// --- Questions part
 				const questionsContainer = document.createElement('div');
 				questionsContainer.classList.add('questions-container');
+
+				const questions = await getQuestionsByChapterId(chapter.id);
+				if (questions.error) throw new Error(questions.error);
 
 				if (questions.questions.length > 0) {
 					// Looping on all questions and showing up all of them
@@ -436,7 +444,10 @@ const buildExam = async (examId) => {
 						// The question header (question + buttons)
 						const questionHeader = document.createElement('div');
 						questionHeader.classList.add('question-header');
-						questionHeader.innerHTML = `<p>${question.title}</p>`;
+						questionHeader.innerHTML = `
+							<div class="question-title">
+								${((question.title.split('<br>')).map(txt => `<p>${txt.trim()}</p>`)).join('')}
+							</div>`;
 						
 						const buttonContainer = document.createElement('div');
 						buttonContainer.classList.add('btn-container');
@@ -444,7 +455,7 @@ const buildExam = async (examId) => {
 						const deleteQuestion = document.createElement('button');
 						deleteQuestion.classList.add('delete-question');
 						deleteQuestion.addEventListener('click', () => {
-							console.log(chapter.id);
+							// console.log(chapter.id);
 						});
 						buttonContainer.appendChild(deleteQuestion);
 
@@ -464,12 +475,13 @@ const buildExam = async (examId) => {
 						const hr = document.createElement('hr');
 						questionBox.appendChild(hr);
 
-						// Fetching all responses linked to this question
+						// --- Responses part
+						const responsesContainer = document.createElement('div');
+						responsesContainer.classList.add('responses-container');
+
 						const responses = await getResponsesByQuestionId(question.id);
 						if (responses.error) throw new Error(responses.error);
 
-						const responsesContainer = document.createElement('div');
-						responsesContainer.classList.add('responses-container');
 						if (responses.responses.length > 0) {
 							// Looping on all responses and showing up all of them
 							for (let response of responses.responses) {
@@ -496,37 +508,46 @@ const buildExam = async (examId) => {
 						};
 						questionsContainer.appendChild(questionBox);
 					};
-					// Chapter content display arrow
-					const displayArrow = document.createElement('div');
-					displayArrow.classList.add('display-arrow');
-					chapterTitle.appendChild(displayArrow);
+					chapterBody.appendChild(questionsContainer);
+				} else {
+					questionsContainer.innerHTML = `
+						<div class="empty-content-message">
+							<div class="warning-sign"></div>
+							<p>Ce chapitre ne contient pas de questions.</p>
+						</div>
+					`;
+					chapterBody.appendChild(questionsContainer);
+				};
 
-					questionsContainer.style.setProperty('display', 'none');
-					chapterHeader.addEventListener('click', () => {
-						const toggleChapterContent = (display) => {
-							if (display != undefined) {
-								if (display) {
-									questionsContainer.style.setProperty('display', 'flex');
-									displayArrow.style.transform = 'rotate(180deg)';
-								} else {
-									questionsContainer.style.setProperty('display', 'none');
-									displayArrow.style.transform = 'rotate(0deg)';
-								};
+				// Chapter content display arrow
+				const displayArrow = document.createElement('div');
+				displayArrow.classList.add('display-arrow');
+				chapterTitle.appendChild(displayArrow);
+
+				chapterBody.style.setProperty('display', 'none');
+				chapterHeader.addEventListener('click', () => {
+					const toggleChapterContent = (display) => {
+						if (display != undefined) {
+							if (display) {
+								chapterBody.style.setProperty('display', 'flex');
+								displayArrow.style.transform = 'rotate(180deg)';
 							} else {
-								if (questionsContainer.style.getPropertyValue('display') === 'none') {
-									questionsContainer.style.setProperty('display', 'flex');
-									displayArrow.style.transform = 'rotate(180deg)';
-								} else {
-									questionsContainer.style.setProperty('display', 'none');
-									displayArrow.style.transform = 'rotate(0deg)';
-								};
+								chapterBody.style.setProperty('display', 'none');
+								displayArrow.style.transform = 'rotate(0deg)';
+							};
+						} else {
+							if (chapterBody.style.getPropertyValue('display') === 'none') {
+								chapterBody.style.setProperty('display', 'flex');
+								displayArrow.style.transform = 'rotate(180deg)';
+							} else {
+								chapterBody.style.setProperty('display', 'none');
+								displayArrow.style.transform = 'rotate(0deg)';
 							};
 						};
-						toggleChapterContent();
-					});
-
-					chapterBox.appendChild(questionsContainer);
-				};
+					};
+					toggleChapterContent();
+				});
+				chapterBox.appendChild(chapterBody);
 				chaptersContainer.appendChild(chapterBox);
 			};
 		};

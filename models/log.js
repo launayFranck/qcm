@@ -36,7 +36,7 @@ const create = async (payload) => {
 	try {
 		Object.keys(payload).forEach(property => {
 			if (!["content", "created_by"].includes(property)) {
-				console.log(`${property} : ${payload[property]}`);
+				// console.log(`${property} : ${payload[property]}`);
 				delete payload[property];
 			};
 		});
