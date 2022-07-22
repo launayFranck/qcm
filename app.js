@@ -192,6 +192,31 @@ app.get('/examinations/:id', (req, res) => {
 	};
 });
 
+app.get('/questions', (req, res) => {
+	if (req.cookies.access_token) {
+		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+			if (err) {
+				// console.error(err.message);
+				res.redirect('/login');
+				return;
+			};
+
+			if (!user) {
+				res.redirect('/login');
+				return;
+			}
+			if (user.role !== 1) {
+				res.redirect('/');
+				return;
+			}
+	
+			res.render('pages/questions.ejs');
+		});
+	} else {
+		res.redirect('/login');
+	};
+});
+
 app.get('/admin', (req, res) => {
 	if (req.cookies.access_token) {
 		jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {

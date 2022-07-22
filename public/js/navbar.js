@@ -34,6 +34,11 @@ const setNavbarLinks = (token) => {
 					<img class="nav-icon" src="/img/student-hat.svg" alt="Examens">
 					<p>Examens</p>
 				</a></li>` : ``}
+			${checkRights(jwtDecoded, 'canViewExamQuestions') ? `
+				<li><a href="/questions">
+					<img class="nav-icon" src="/img/question-mark.svg" alt="Questions">
+					<p>Questions</p>
+				</a></li>` : ``}
 		`;
 	} catch (err) {
 		console.error(err.message);

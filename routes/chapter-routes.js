@@ -13,9 +13,12 @@ router.get('/', async (req, res) => {
 		const authorization = req.headers['authorization'].split(' ')[1];
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
 			if (err) throw err;
-
-			const result = await chapter.findAll();
-			res.status(200).json({chapters : result});
+			try {
+				const result = await chapter.findAll();
+				res.status(200).json({chapters : result});
+			} catch (err) {
+				res.status(400).json({error : err.message});
+			};
 		});
 	} catch (err) {
 		res.status(500).json({error : err.message});
@@ -28,9 +31,12 @@ router.get('/examination/:id', async (req, res) => {
 		const authorization = req.headers['authorization'].split(' ')[1];
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
 			if (err) throw err;
-
-			const result = await chapter.findByExaminationId(req.params.id);
-			res.status(200).json({chapters : result});
+			try {
+				const result = await chapter.findByExaminationId(req.params.id);
+				res.status(200).json({chapters : result});
+			} catch (err) {
+				res.status(400).json({error : err.message});
+			};
 		});
 	} catch (err) {
 		res.status(500).json({error : err.message});
@@ -43,9 +49,12 @@ router.get('/:id', async (req, res) => {
 		const authorization = req.headers['authorization'].split(' ')[1];
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
 			if (err) throw err;
-
-			const result = await chapter.findById(req.params.id);
-			res.status(200).json({chapter : result});
+			try {
+				const result = await chapter.findById(req.params.id);
+				res.status(200).json({chapter : result});
+			} catch (err) {
+				res.status(400).json({error : err.message});
+			};
 		});
 	} catch (err) {
 		res.status(500).json({error : err.message});
@@ -54,14 +63,17 @@ router.get('/:id', async (req, res) => {
 
 // • Creating new chapter
 router.post("/", async (req, res) => {
-	console.log(req.body);
+	// console.log(req.body);
 	try {
 		const authorization = req.headers['authorization'].split(' ')[1];
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
 			if (err) throw err;
-
-			const result = await chapter.create(req.body, user);
-			res.status(200).json({chapter : result});
+			try {
+				const result = await chapter.create(req.body, user);
+				res.status(200).json({chapter : result});
+			} catch (err) {
+				res.status(400).json({error : err.message});
+			};
 		});
 	} catch (err) {
 		res.status(500).json({error : err.message});
@@ -74,24 +86,30 @@ router.put('/:id', async (req, res) => {
 		const authorization = req.headers['authorization'].split(' ')[1];
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
 			if (err) throw err;
-
-			const response = await chapter.update(req.params.id, req.body);
-			res.status(200).json(response);
+			try {
+				const response = await chapter.update(req.params.id, req.body);
+				res.status(200).json({chapter : response});
+			} catch (err) {
+				res.status(400).json({error : err.message});
+			};
 		});
 	} catch (err) {
 		res.status(400).json({error : err.message});
 	};
 });
 
-// • Deleting an chapter
+// • Deleting a chapter
 router.delete('/:id', async (req, res) => {
 	try {
 		const authorization = req.headers['authorization'].split(' ')[1];
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
 			if (err) throw err;
-
-			const response = await chapter.destroy(req.params.id, user);
-			res.status(200).json(response);
+			try {
+				const response = await chapter.destroy(req.params.id, user);
+				res.status(200).json({chapter : response});
+			} catch (err) {
+				res.status(400).json({error : err.message});
+			};
 		});
 	} catch (err) {
 		res.status(400).json({error: err.message});
