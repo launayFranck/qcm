@@ -9,9 +9,14 @@ const router = express.Router();
 
 // • Fetching all questions
 router.get('/', async (req, res) => {
+
 	try {
+		console.log("coucou")
+
 		const authorization = req.headers['authorization'].split(' ')[1];
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+		console.log("coucou1")
+
 			if (err) throw err;
 			try {
 				const result = await question.findAll();
@@ -20,6 +25,8 @@ router.get('/', async (req, res) => {
 				res.status(400).json({error : err.message});
 			};
 		});
+		console.log("coucou2")
+
 	} catch (err) {
 		res.status(500).json({error : err.message});
 	};
