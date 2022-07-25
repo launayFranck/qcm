@@ -26,7 +26,8 @@ const getUsersWithThemeRights = async () => {
 		credentials:'include',
 		cache:'no-cache',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
 		}
 	});
 	return await res.json();
