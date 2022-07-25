@@ -10,7 +10,6 @@ const router = express.Router();
 
 // • Fetching all themes
 router.get('/', async (req, res) => {
-	console.log("Hello world!");
 	try {
 		const authorization = req.headers['authorization'].split(' ')[1];
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
