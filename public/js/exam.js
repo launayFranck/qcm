@@ -345,6 +345,25 @@ const buildExam = async (examId) => {
 		chaptersContainer.classList.add('chapters-container');
 		examContainer.appendChild(chaptersContainer);
 
+		const insertChapterBtn = document.createElement('button');
+		insertChapterBtn.classList.add('insert-chapter-btn');
+		insertChapterBtn.classList.add('dotted-btn');
+		insertChapterBtn.innerText = '+';
+		insertChapterBtn.addEventListener('click', () => {
+			const setDefaultPositionNumber = (i = 1) => {
+				const existingPositionNumbers = Array.from(document.querySelectorAll('.chapter-position')).map(position => parseInt(position.innerText));
+				while (existingPositionNumbers.includes(i)) {
+					i++;
+				};
+				document.querySelector('.insert-overlay.chapter-overlay .position-number').value = i;
+			};
+			setDefaultPositionNumber();
+			displayOverlay(true, insertChapterBox);
+		});
+
+		// The button to insert a new chapter (top)
+		chaptersContainer.appendChild(insertChapterBtn);
+
 		// --- Chapters part
 		const chapters = await getChaptersByExamId(examId);
 		if (chapters.error) throw new Error(chapters.error);
@@ -426,11 +445,23 @@ const buildExam = async (examId) => {
 
 					const hr = document.createElement('hr');
 					chapterBody.appendChild(hr);
-				}
-	
+				};
+
 				// --- Questions part
 				const questionsContainer = document.createElement('div');
 				questionsContainer.classList.add('questions-container');
+
+				// The insert question box
+				const insertQuestionBox = document.createElement('div');
+				insertQuestionBox.classList.add('insert-question-box');
+				const insertQuestionBtn = document.createElement('button');
+				insertQuestionBtn.innerHTML = `
+					<img src="/img/plus.svg" alt="+">
+					Ajouter une question
+				`;
+
+				insertQuestionBox.appendChild(insertQuestionBtn);
+				questionsContainer.appendChild(insertQuestionBox);
 
 				const questions = await getQuestionsByChapterId(chapter.id);
 				if (questions.error) throw new Error(questions.error);
@@ -551,24 +582,9 @@ const buildExam = async (examId) => {
 				chaptersContainer.appendChild(chapterBox);
 			};
 		};
-		const insertChapterBtn = document.createElement('button');
-		insertChapterBtn.classList.add('insert-chapter-btn');
-		insertChapterBtn.classList.add('dotted-btn');
-		insertChapterBtn.innerText = '+';
-		insertChapterBtn.addEventListener('click', () => {
-			const setDefaultPositionNumber = (i = 1) => {
-				const existingPositionNumbers = Array.from(document.querySelectorAll('.chapter-position')).map(position => parseInt(position.innerText));
-				while (existingPositionNumbers.includes(i)) {
-					i++;
-				};
-				document.querySelector('.insert-overlay.chapter-overlay .position-number').value = i;
-			};
-			setDefaultPositionNumber();
-			displayOverlay(true, insertChapterBox);
-		});
-
-		chaptersContainer.appendChild(insertChapterBtn);
-
+		// The button to insert a new chapter (bottom)
+		// const bottomInsertChapterBtn = insertChapterBtn;
+		// chaptersContainer.appendChild(bottomInsertChapterBtn);
 	} catch (err) {
 		console.log(err.message);
 	};

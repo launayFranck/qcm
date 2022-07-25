@@ -78,7 +78,16 @@ const update = async (id, payload) => {
 			const result = await knex('chapter').update(payload).where({id}).returning('*');
 			return result[0];
 		} else {
-			throw new Error(`L'emplacement ${payload.position_number} est déjà pris`);
+			const wantedPosition = verifPosition.position_number;
+
+			// Exchanging position number
+			const temp = await knex('chapter').update({position_number : -1}).where({position_number : payload.position_number});
+			const defaultPosition = (await knex('chapter').select('position_number').where({id}).first()).position_number;
+			const result = await knex('chapter').update({position_number : payload.position_number}).where({id});
+			const exchanged = await knex('chapter').update({position_number : defaultPosition}).where({position_number : -1});
+
+			return {result, exchanged};
+			// throw new Error(`L'emplacement ${payload.position_number} est déjà pris`);
 		};
 	} catch (err) {
 		throw err;
