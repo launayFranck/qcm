@@ -1,5 +1,5 @@
 @import url('../styles.css');
-@import url('../theme.css');
+@import url('../appearance.css');
 @import url('../partials/navbar.css');
 @import url('../partials/overlay.css');
 @import url('../partials/message-overlay.css');
@@ -203,7 +203,7 @@ main {
 	}
 }
 
-.theme-card {
+.question-card {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -215,45 +215,45 @@ main {
 	border-radius: .8rem;
 	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
 }
-.theme-card div {
+.question-card div {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
-.theme-card .theme-title h2 {
+.question-card .question-title h2 {
 	color: var(--color-main);
 }
 
-.theme-stats {
+.question-stats {
 	color: var(--color-bg-alt3);
 	margin: .8rem 0;
 }
-.theme-description {
+.question-description {
 	margin: .8rem 0;
 }
 
-.theme-users {
+.question-users {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
 	width: 100%;
 	margin: .8rem 0;
 }
-.theme-users li {
+.question-users li {
 	display: flex;
 	align-items: center;
 }
-.theme-users img {
+.question-users img {
 	width: 1.6rem;
 	height: 1.6rem;
 	margin-right: .8rem;
 	opacity: .3;
 }
-.theme-users p {
+.question-users p {
 	color: #848484;
 }
 
-.theme-card .btn-container {
+.question-card .btn-container {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
@@ -264,7 +264,7 @@ main {
 	width: 100%;
 }
 
-.theme-card .btn-container button {
+.question-card .btn-container button {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -278,11 +278,11 @@ main {
 	border: none;
 	transition: all .1s ease-out;
 }
-.theme-card .btn-container button:hover {
+.question-card .btn-container button:hover {
 	opacity: .5;
 }
 
-.theme-card .btn-container button:active {
+.question-card .btn-container button:active {
 	animation: buttonClicked .1s ease-out;
 }
 @keyframes buttonClicked {
@@ -297,9 +297,9 @@ main {
 	}
 }
 
-.theme-card .btn-container .edit {
+.question-card .btn-container .edit {
 	background-image: url('/img/pen.svg');
 }
-.theme-card .btn-container .destroy {
+.question-card .btn-container .destroy {
 	background-image: url('/img/trash.svg');
 }

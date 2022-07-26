@@ -1,5 +1,5 @@
 @import url('../styles.css');
-@import url('../theme.css');
+@import url('../appearance.css');
 @import url('../partials/navbar.css');
 @import url('../partials/message-overlay.css');
 @import url('../partials/footer.css');
