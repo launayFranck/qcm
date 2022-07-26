@@ -21,105 +21,11 @@ const insertAddChargedBtn = document.querySelector('.insert-overlay .add-charged
 const editAddChargedBtn = document.querySelector('.edit-overlay .add-charged');
 
 /**
- * Adding charged fields to a charged list
- * @param {htmlnode} node The html node in which adding the charged user's field
- * @param {number} userId The id of the user we want to select by default (optional)
- */
-const addChargedField = async (node, userId) => {
-	try {
-		// Fetching users who have the rights to add or update roles
-		const getUsersDetails = await getUsersWithQuestionRights();
-		if (getUsersDetails.error) throw new Error(getUsersDetails.error);
-
-		const { users } = getUsersDetails; // Extracting users from getUsersDetails
-
-		// Adding a new field for a new charged user
-		const parent = node.querySelector('.charged-list');
-
-		const chargeRow = document.createElement('div');
-		chargeRow.classList.add('charge-row');
-
-		const select = document.createElement('select');
-		select.classList.add('charge');
-
-		// Getting all unique roles' names
-		const roles = {};
-		users.forEach(user => {
-			roles[user.role_name] = 1;
-		});
-
-		Object.keys(roles).forEach(role => {
-			const filteredUsers = users.filter(user => user.role_name == role);
-
-			const optGroup = document.createElement('optgroup');
-			optGroup.setAttribute('label', `-- ${capitalize(role)}`);
-			
-			// Adding all users as options inside the optgroup for the previously created select
-			for (let user of filteredUsers) {
-				const option = document.createElement('option');
-				option.setAttribute('value', user.id);
-				if (userId) if (userId == user.id) option.setAttribute('selected', true);
-				option.innerText = `${user.username} (${user.firstname} ${user.lastname})`;
-
-				optGroup.appendChild(option);
-			};
-
-			select.appendChild(optGroup);
-		});
-	
-		// "Button" (div) for removing a user in charge for a Question
-		const removeCharged = document.createElement('div');
-		removeCharged.classList.add('remove-charged');
-		removeCharged.innerText = '-';
-		removeCharged.addEventListener('click', (e) => {
-			parent.removeChild(chargeRow);
-		});
-
-		chargeRow.appendChild(select);
-		chargeRow.appendChild(removeCharged);
-
-		parent.insertBefore(chargeRow, node.querySelector('.add-charged'));
-	} catch (err) {
-		console.error(err.message);
-	};
-};
-
-addChargedField(insertQuestionBox);
-
-insertAddChargedBtn.addEventListener('click', () => {
-	addChargedField(insertQuestionBox);
-});
-
-insertQuestionBtn.addEventListener('click', () => {
-	displayOverlay(true, insertQuestionBox);
-});
-
-detailsQuestionBtn.addEventListener('click', () => {
-	displayOverlay(true, detailsQuestionBox);
-});
-
-overlayBg.addEventListener('click', () => {
-	displayOverlay(false);
-});
-
-document.querySelectorAll('.overlay-closer').forEach(overlayCloser => {
-	overlayCloser.addEventListener('click', () => {
-		displayOverlay(false);
-	});
-});
-
-// Filter & order params
-const search = document.querySelector('.search');
-const orderProperty = document.querySelector('.order-property');
-const orderAscending = document.querySelector('.order-ascending');
-const orderUser = document.querySelector('.order-user');
-
-/**
- * Get all Questions
+ * Get all questions
  * @async
- * @returns Questions
+ * @returns {Array<object>} Questions
  */
-const getAllQuestions = async () => {
+const getQuestions = async (filters) => {
 	const res = await fetch(`${hostname}/api/questions`, {
 		method: 'GET',
 		credentials: 'include',
@@ -127,7 +33,8 @@ const getAllQuestions = async () => {
 		headers: {
 			'Content-Type': 'application/json',
 			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
-		}
+		},
+		body: JSON.stringify(filters)
 	});
 	return await res.json();
 };
@@ -190,6 +97,112 @@ const deleteQuestion = async (id) => {
 };
 
 /**
+ * Get all responses linked to a specific question
+ * @async
+ * @returns {Array<object>} Responses linked to the specified question
+ */
+ const getResponsesByQuestionId = async (id) => {
+	const res = await fetch(`${hostname}/api/responses/question/${id}`, {
+		method: 'GET',
+		credentials: 'include',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+		}
+	});
+	return await res.json();
+};
+
+/**
+ * Adding response field in a question creation / edition overlay
+ * @param {htmlnode} node The html node in which adding the charged user's field
+ * @param {number} responseId The id of the response we want to set by default (optional)
+ */
+const addResponseField = async (node, responseId) => {
+	try {
+		// Adding a new field for a new charged user
+		const parent = node.querySelector('.charged-list');
+
+		const chargeRow = document.createElement('div');
+		chargeRow.classList.add('charge-row');
+
+		const select = document.createElement('select');
+		select.classList.add('charge');
+
+		// Getting all unique roles' names
+		const roles = {};
+		users.forEach(user => {
+			roles[user.role_name] = 1;
+		});
+
+		Object.keys(roles).forEach(role => {
+			const filteredUsers = users.filter(user => user.role_name == role);
+
+			const optGroup = document.createElement('optgroup');
+			optGroup.setAttribute('label', `-- ${capitalize(role)}`);
+			
+			// Adding all users as options inside the optgroup for the previously created select
+			for (let user of filteredUsers) {
+				const option = document.createElement('option');
+				option.setAttribute('value', user.id);
+				if (responseId) if (responseId == user.id) option.setAttribute('selected', true);
+				option.innerText = `${user.username} (${user.firstname} ${user.lastname})`;
+
+				optGroup.appendChild(option);
+			};
+
+			select.appendChild(optGroup);
+		});
+	
+		// "Button" (div) for removing a user in charge for a Question
+		const removeCharged = document.createElement('div');
+		removeCharged.classList.add('remove-charged');
+		removeCharged.innerText = '-';
+		removeCharged.addEventListener('click', (e) => {
+			parent.removeChild(chargeRow);
+		});
+
+		chargeRow.appendChild(select);
+		chargeRow.appendChild(removeCharged);
+
+		parent.insertBefore(chargeRow, node.querySelector('.add-charged'));
+	} catch (err) {
+		console.error(err.message);
+	};
+};
+
+// addResponseField(insertQuestionBox);
+
+insertAddChargedBtn.addEventListener('click', () => {
+	addResponseField(insertQuestionBox);
+});
+
+insertQuestionBtn.addEventListener('click', () => {
+	displayOverlay(true, insertQuestionBox);
+});
+
+detailsQuestionBtn.addEventListener('click', () => {
+	displayOverlay(true, detailsQuestionBox);
+});
+
+overlayBg.addEventListener('click', () => {
+	displayOverlay(false);
+});
+
+document.querySelectorAll('.overlay-closer').forEach(overlayCloser => {
+	overlayCloser.addEventListener('click', () => {
+		displayOverlay(false);
+	});
+});
+
+// Filter & order params
+const search = document.querySelector('.search');
+const orderProperty = document.querySelector('.order-property');
+const orderAscending = document.querySelector('.order-ascending');
+const orderUser = document.querySelector('.order-user');
+
+/**
  * Remove duplicated values from an array
  * @param {array} array The array to filter
  */
@@ -215,7 +228,7 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 
 		console.log(insertDetails);
 
-		sendMessageToPanel(`Le thème "${insertDetails.Question.Question.title}" a été créé`, 'var(--color-good-message)');
+		sendMessageToPanel(`La question "${insertDetails.Question.Question.title}" a été créée`, 'var(--color-good-message)');
 		await setQuestions();
 		displayOverlay(false);
 		e.target.reset();
@@ -231,7 +244,7 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 const setDetails = (Questions) => {
 	const stats = [
 		{
-			name : 'Nombre de thèmes',
+			name : 'Nombre de questions',
 			value : Questions.length
 		},
 		{
@@ -243,7 +256,7 @@ const setDetails = (Questions) => {
 			value : Questions.sort((a, b) => a.users.length < b.users.length ? 1 : -1)[0].users.length
 		},
 		{
-			name : "Utilisateur gérant le moins de thèmes",
+			name : "Utilisateur gérant le moins de questions",
 			value : (() => {
 				const usersNb = {};
 				Questions.forEach(Question => {
@@ -266,7 +279,7 @@ const setDetails = (Questions) => {
 			})()
 		},
 		{
-			name : "Utilisateur gérant le plus de thèmes",
+			name : "Utilisateur gérant le plus de questions",
 			value : (() => {
 				const usersNb = {};
 				Questions.forEach(Question => {
@@ -319,10 +332,10 @@ const setEditQuestionForm = async (Question) => {
 	// Cloning the form to remove all the event listeners
 	const formClone = form.cloneNode(true);
 	Question.users.forEach(user => {
-		addChargedField(editQuestionBox, user.id);
+		addResponseField(editQuestionBox, user.id);
 	});
 	formClone.querySelector('.add-charged').addEventListener('click', () => {
-		addChargedField(editQuestionBox);
+		addResponseField(editQuestionBox);
 	});
 
 	// Replacing the previous form with the freshly created clone
@@ -353,7 +366,7 @@ const setEditQuestionForm = async (Question) => {
 
 		try {
 			// Not updating if nothing to change
-			if (Object.keys(payload).length < 1) throw new Error(`Le thème "${Question.title}" n'a pas été modifié`);
+			if (Object.keys(payload).length < 1) throw new Error(`La question "${Question.title}" n'a pas été modifiée`);
 
 			const updateQuestionDetails = await updateQuestion(Question.id, payload);
 			if (updateQuestionDetails.error) throw new Error(updateQuestionDetails.error);
@@ -361,7 +374,7 @@ const setEditQuestionForm = async (Question) => {
 			console.log(updateQuestionDetails);
 			
 			await setQuestions();
-			sendMessageToPanel(`Le thème "${Question.title}" a été modifié`, 'var(--color-good-message)');
+			sendMessageToPanel(`La question "${Question.title}" a été modifiée`, 'var(--color-good-message)');
 			displayOverlay(false);
 
 		} catch (err) {
@@ -395,7 +408,7 @@ const setDeleteQuestionForm = async (Question) => {
 			if (deleteDetails.error) throw new Error(deleteDetails.error);
 
 			await setQuestions();
-			sendMessageToPanel(`Le thème "${Question.title}" a été supprimé`, 'var(--color-good-message)');
+			sendMessageToPanel(`La question "${Question.title}" a été supprimée`, 'var(--color-good-message)');
 			displayOverlay(false);
 		} catch (err) {
 			sendMessageToPanel(err.message, 'var(--color-bad-message)');
@@ -408,63 +421,25 @@ const setDeleteQuestionForm = async (Question) => {
 };
 
 /**
- * @async Adds all users with Question rights into a select box
- * @param {htmlnode} select The select tag inside which we want to add the users
- */
-const displayUsersInSelect = async (select) => {
-	try {
-		const { users } = await getUsersWithQuestionRights();
-
-		let roles = {};
-		users.forEach(user => {
-			roles[user.role_name] = 1; // Define a property with the role_name value
-		});
-		// Object.keys(roles) : Array with role properties
-		Object.keys(roles).forEach(role => {
-			const optgroup = document.createElement('optgroup');
-			optgroup.setAttribute('label', role);
-
-			const filteredUsers = users.filter(user => user.role_name == role);
-
-			if (filteredUsers.length > 0) {
-				filteredUsers.forEach(user => {
-					const option = document.createElement('option');
-					option.setAttribute('value', user.username);
-					option.innerText = user.username;
-	
-					optgroup.appendChild(option);
-				});
-			};
-			
-			select.appendChild(optgroup);
-		});
-
-	} catch (err) {
-		console.error(err.message);
-	};
-};
-displayUsersInSelect(document.querySelector('.order-user'));
-
-/**
  * Fetches all questions and displays them
  */
 const setQuestions = async () => {
-	const { questions } = await getAllQuestions();
+	const { questions } = await getQuestions();
 
 	search.addEventListener('input', async () => {
-		await displayQuestions(await filterQuestions(Questions));
+		await displayQuestions(await filterQuestions(questions));
 	});
 	orderProperty.addEventListener('change', async () => {
-		await displayQuestions(await filterQuestions(Questions));
+		await displayQuestions(await filterQuestions(questions));
 	});
 	orderAscending.addEventListener('change', async () => {
-		await displayQuestions(await filterQuestions(Questions));
+		await displayQuestions(await filterQuestions(questions));
 	});
 	orderUser.addEventListener('change', async () => {
-		await displayQuestions(await filterQuestions(Questions));
+		await displayQuestions(await filterQuestions(questions));
 	});
 
-	await displayQuestions(await filterQuestions(Questions));
+	await displayQuestions(await filterQuestions(questions));
 };
 
 /**
@@ -472,103 +447,93 @@ const setQuestions = async () => {
  * @param {array<Object>} questions 
  * @returns {array<Object>} questions
  */
-const filterQuestions = async (Questions) => {
-	if (!Questions) return {message : "Aucun thème ne correspond à ces critères"};
-	if (Questions.length < 1) return {message : "Aucun thème ne correspond à ces critères"};
+const filterQuestions = async (questions) => {
+	if (!questions) return {message : "Aucune question ne correspond à ces critères"};
+	if (questions.length < 1) return {message : "Aucune question ne correspond à ces critères"};
 
 	// If search input is set
 	let tmp = search.value ?
-		Questions.filter(Question => {
+		questions.filter(question => {
 			// Checking if the search query contains any of the following values
 			const res = [
-				Question.title.toLowerCase(),
-				Question.description.toLowerCase(),
-				formatDate(Question.created_at),
-				formatDate(Question.updated_at),
-				Question.created_by.toLowerCase(),
-				Question.updated_by.toLowerCase()
+				question.title.toLowerCase(),
+				formatDate(question.created_at),
+				formatDate(question.updated_at),
+				question.created_by.toLowerCase(),
+				question.updated_by.toLowerCase()
 			].map(element => element.includes(search.value.toLowerCase()));
 			return res.includes(true);
 		})
 		:
-		Questions
+		questions
 	;
-	if (tmp.length < 1) return {message : "Aucun thème ne correspond à ces critères"};
+	if (tmp.length < 1) return {message : "Aucune question ne correspond à ces critères"};
 
 	tmp = orderUser.value ?
-		tmp.filter(Question => Question.users.map(user => user.name).includes(orderUser.value))
+		tmp.filter(question => question.users.map(user => user.name).includes(orderUser.value))
 		:
 		tmp
 	;
 
-	if (tmp.length < 1) return {message : "Aucun thème ne correspond à ces critères"};
+	if (tmp.length < 1) return {message : "Aucune question ne correspond à ces critères"};
 
 	return tmp;
 };
 
 /**
  * Displays all Questions passed as arguments
- * @param {Array<object>} Questions 
+ * @param {Array<object>} questions 
  */
-const displayQuestions = async (Questions) => {
-	const container = document.querySelector('#Questions-container'); 
+const displayQuestions = async (questions) => {
+	const container = document.querySelector('#questions-container'); 
 	const cardsBox = document.createElement('div');
 	cardsBox.classList.add('cards-box');
 
-	setDetails(Questions);
+	// setDetails(questions);
 
 	// Emptying Questions container
 	container.innerHTML = '';
 
-	if (Questions.message) {
+	if (questions.message) {
 		container.innerHTML = `
-			<div class="Questions-message">
+			<div class="questions-message">
 				<h1>:(</h1>
-				<p>${Questions.message}</p>
+				<p>${questions.message}</p>
 			</div>
 		`;
 		return;
 	};
-	// Looping on all sorted Questions to add Question one by one
-	const sortedQuestions = sortByProperty(Questions, orderProperty.value, JSON.parse(orderAscending.value));
-	sortedQuestions.forEach(Question => {
-		const title = Question.title;
-		const description = Question.description;
-		const createdAt = formatDate(Question.created_at);
-		const updatedAt = formatDate(Question.updated_at);
-		const createdBy = Question.created_by;
-		const updatedBy = Question.updated_by;
-		const users = Question.users;
-
+	// Looping on all sorted questions to add them one by one
+	const sortedQuestions = sortByProperty(questions, orderProperty.value, JSON.parse(orderAscending.value));
+	sortedQuestions.forEach(question => {
 		const cardContainer = document.createElement('div');
 		cardContainer.classList.add('card-container');
 
 		const card = document.createElement('article');
-		card.classList.add('Question-card');
+		card.classList.add('question-card');
+
+		console.log(question.responses);
 
 		card.innerHTML = `
-			<div class="Question-title">
-				<h2>${title}</h2>
+			<div class="question-id">
+				<h2>#Q${question.id}</h2>
 			</div>
-			<div class="Question-stats">
-				<p>Créé le ${createdAt} par ${createdBy}</p>
-				<p>Modifié le ${updatedAt} par ${updatedBy}</p>
+			<div class="question-stats">
+				<p>Créée le ${formatDate(question.created_at)} par ${question.created_by}</p>
+				<p>Modifiée le ${formatDate(question.updated_at)} par ${question.updated_by}</p>
 			</div>
-			<div class="Question-description">
-				<p>${description}</p>
+			<div class="question-text">
+				<div class="question-title">
+					${((question.title.split('<br>')).map(txt => `<p>${txt.trim()}</p>`)).join('')}
+				</div>
+				<hr>
+				<div class="question-correction">
+					${((question.correction.split('<br>')).map(txt => `<p>${txt.trim()}</p>`)).join('')}
+				</div>
 			</div>
-			<ul class="Question-users">
-				${(() => {
-					return users.map(user => {
-						return `
-							<li>
-								<img src="/img/user.webp" alt="•">
-								<p>${user.name}</p>
-							</li>
-						`;
-					}).join('');
-				})()}
-			</ul>
+			<div class="question-responses">
+				<p>${question.responses}</p>
+			</div>
 		`;
 
 		const btnContainer = document.createElement('div');
@@ -580,14 +545,14 @@ const displayQuestions = async (Questions) => {
 		const editBtn = document.createElement('button');
 		editBtn.classList.add('edit');
 		editBtn.addEventListener('click', async () => {
-			await setEditQuestionForm(Question, users);
+			await setEditQuestionForm(question, users);
 		});
 
 		// Delete button
 		const deleteBtn = document.createElement('button');
 		deleteBtn.classList.add('destroy');
 		deleteBtn.addEventListener('click', async () => {
-			await setDeleteQuestionForm(Question);
+			await setDeleteQuestionForm(question);
 		});
 
 		btnContainer.appendChild(editBtn);

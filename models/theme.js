@@ -23,12 +23,12 @@ const findAll = async () => {
 				"link_creator".username AS link_created_by,
 				"link_updator".username AS link_updated_by
 			FROM "theme_user"
-			JOIN "theme" ON theme_user.theme_id = "theme".id
-			JOIN "user" ON theme_user.user_id = "user".id
-			JOIN "user" AS "creator" ON theme.created_by = "creator".id
-			JOIN "user" AS "updator" ON theme.updated_by = "updator".id
-			JOIN "user" AS "link_creator" ON theme_user.created_by = "link_creator".id
-			JOIN "user" AS "link_updator" ON theme_user.updated_by = "link_updator".id
+			JOIN "theme" ON "theme_user".theme_id = "theme".id
+			JOIN "user" ON "theme_user".user_id = "user".id
+			JOIN "user" AS "creator" ON "theme".created_by = "creator".id
+			JOIN "user" AS "updator" ON "theme".updated_by = "updator".id
+			JOIN "user" AS "link_creator" ON "theme_user".created_by = "link_creator".id
+			JOIN "user" AS "link_updator" ON "theme_user".updated_by = "link_updator".id
 		`);
 
 		// Regrouper par propriété

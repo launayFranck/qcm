@@ -220,8 +220,32 @@ main {
     flex-direction: column;
     width: 100%;
 }
-.question-card .question-title h2 {
+.question-card .question-id h2 {
 	color: var(--color-main);
+}
+
+.question-card .question-text {
+	margin: .8rem 0;
+	background-color: var(--color-bg-alt);
+	border-radius: .4rem;
+}
+.question-card .question-text .question-title {
+	padding: .8rem;
+}
+.question-card .question-text hr {
+	margin: .8rem;
+	height: .1rem;
+	background-color: var(--color-bg-alt2);
+	border: none;
+}
+.question-card .question-text .question-correction {
+	color: var(--color-insert);
+	padding: .8rem;
+}
+
+.question-card .question-responses {
+	display: flex;
+	flex-direction: column;
 }
 
 .question-stats {

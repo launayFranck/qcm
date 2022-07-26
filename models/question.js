@@ -7,8 +7,31 @@ import knex from './knexClient.js';
  */
 const findAll = async () => {
 	try {
-		const result = await knex('question').select().orderBy('id');
-		return result;
+		// const result = await knex('question').select().orderBy('id');
+		const result = await knex.raw(`
+			SELECT
+				"question".id,
+				"question".title,
+				"question".chapter_id,
+				"question".theme_id,
+				"question".score,
+				"question".correction,
+				"question".active,
+				"question".created_at,
+				"question".updated_at,
+				"creator".username AS "created_by",
+				"updator".username AS "updated_by"
+			FROM "question"
+			JOIN "user" AS "creator" ON "question".created_by = "creator".id
+			JOIN "user" as "updator" ON "question".updated_by = "updator".id
+			ORDER BY "created_at";
+		`);
+		for (const [i, question] of result.rows.entries()) {
+			const responses = await knex('response').select().where('question_id', '=', question.id);
+			result.rows[i].responses = responses;
+		};
+
+		return result.rows;
 	} catch (err) {
 		throw err;
 	};
