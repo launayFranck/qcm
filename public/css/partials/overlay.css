@@ -69,9 +69,15 @@
 	backdrop-filter: blur(8px);
 }
 
-.overlay-box{
+.overlay-box {
 	position: absolute;
 	display: flex;
+	max-height: 100%;
+	overflow-y: hidden;
+}
+
+.overlay-box > form {
+	overflow-y: hidden;
 }
 
 .insert-overlay form {
@@ -221,11 +227,13 @@ button.overlay-closer {
 	background-color: var(--color-delete-hover);
 }
 
+
 .container-body {
 	display: flex;
 	flex-direction: column;
 	background-color: var(--color-bg);
 	padding: .8rem;
+	overflow-y: scroll;
 }
 
 /* - - - Form content styling - - - */
@@ -305,22 +313,22 @@ button.overlay-closer {
 	min-height: 2.4rem;
 }
 
-.overlay-box .charge-row {
+.overlay-box .removable-row {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: .8rem;
 }
-.overlay-box .charge-row select {
+.overlay-box .removable-row select {
 	display: flex;
 	flex-grow: 1;
 }
-.insert-overlay .charge-row select,
-.insert-overlay .charge-row select option {
+.insert-overlay .removable-row select,
+.insert-overlay .removable-row select option {
 	color: var(--color-insert);
 }
 
-.overlay-box .charge-row .remove-charged {
+.overlay-box .remove-removable {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -336,7 +344,7 @@ button.overlay-closer {
 	cursor: pointer;
 	transition: background-color .1s ease-out;
 }
-.overlay-box .charge-row .remove-charged:hover {
+.overlay-box .removable-row .remove-charged:hover {
 	background-color: var(--color-delete-hover)
 }
 
@@ -383,10 +391,10 @@ input:disabled {
 		font-size: 2rem;
 	}
 
-	.charge-row {
+	.removable-row {
 		width: 100%;
 	}
-	.charge-row .charge {
+	.removable-row .charge {
 		width: calc(100% - 6.4rem);
 	}
 

@@ -7,7 +7,7 @@
    viewBox="0 0 99.948769 57.474388"
    version="1.1"
    id="svg5"
-   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    sodipodi:docname="display-arrow.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -27,13 +27,11 @@
      inkscape:cx="171.55369"
      inkscape:cy="102.39458"
      inkscape:window-width="1920"
-     inkscape:window-height="991"
+     inkscape:window-height="1001"
      inkscape:window-x="-9"
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1"
-     inkscape:showpageshadow="2"
-     inkscape:deskcolor="#d1d1d1" />
+     inkscape:current-layer="layer1" />
   <defs
      id="defs2" />
   <g
@@ -43,7 +41,7 @@
      transform="translate(-50.244828,-86.58171)">
     <path
        id="path1150-8"
-       style="fill:#000000;stroke:#000000;stroke-width:15;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:15;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 100.21921,136.5561 57.744828,94.08171 m 84.948772,0 -42.47439,42.47439" />
   </g>
 </svg>

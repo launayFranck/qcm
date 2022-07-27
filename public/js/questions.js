@@ -17,8 +17,8 @@ const detailsQuestionBox = document.querySelector(".details-overlay");
 const editQuestionBox = document.querySelector(".edit-overlay");
 const deleteQuestionBox = document.querySelector(".delete-overlay");
 
-const insertAddChargedBtn = document.querySelector('.insert-overlay .add-charged');
-const editAddChargedBtn = document.querySelector('.edit-overlay .add-charged');
+const insertResponseBtn = document.querySelector('.insert-overlay .add-removable');
+const editAddChargedBtn = document.querySelector('.edit-overlay .add-removable');
 
 /**
  * Get all questions
@@ -116,57 +116,36 @@ const deleteQuestion = async (id) => {
 
 /**
  * Adding response field in a question creation / edition overlay
- * @param {htmlnode} node The html node in which adding the charged user's field
+ * @param {htmlnode} node The html node in which adding the response field
  * @param {number} responseId The id of the response we want to set by default (optional)
  */
 const addResponseField = async (node, responseId) => {
 	try {
-		// Adding a new field for a new charged user
-		const parent = node.querySelector('.charged-list');
+		// Adding a new field for a new response
+		const parent = node.querySelector('.removable-list');
 
-		const chargeRow = document.createElement('div');
-		chargeRow.classList.add('charge-row');
+		const responseRow = document.createElement('div');
+		responseRow.classList.add('removable-row');
 
-		const select = document.createElement('select');
-		select.classList.add('charge');
+		const input = document.createElement('input');
+		input.type = 'text';
 
-		// Getting all unique roles' names
-		const roles = {};
-		users.forEach(user => {
-			roles[user.role_name] = 1;
-		});
+		if (responseId !== undefined) {
 
-		Object.keys(roles).forEach(role => {
-			const filteredUsers = users.filter(user => user.role_name == role);
-
-			const optGroup = document.createElement('optgroup');
-			optGroup.setAttribute('label', `-- ${capitalize(role)}`);
-			
-			// Adding all users as options inside the optgroup for the previously created select
-			for (let user of filteredUsers) {
-				const option = document.createElement('option');
-				option.setAttribute('value', user.id);
-				if (responseId) if (responseId == user.id) option.setAttribute('selected', true);
-				option.innerText = `${user.username} (${user.firstname} ${user.lastname})`;
-
-				optGroup.appendChild(option);
-			};
-
-			select.appendChild(optGroup);
-		});
+		}
 	
-		// "Button" (div) for removing a user in charge for a Question
-		const removeCharged = document.createElement('div');
-		removeCharged.classList.add('remove-charged');
-		removeCharged.innerText = '-';
-		removeCharged.addEventListener('click', (e) => {
-			parent.removeChild(chargeRow);
+		// "Button" (div) for removing a response linked to a question
+		const removeResponse = document.createElement('div');
+		removeResponse.classList.add('remove-removable');
+		removeResponse.innerText = '-';
+		removeResponse.addEventListener('click', (e) => {
+			parent.removeChild(responseRow);
 		});
 
-		chargeRow.appendChild(select);
-		chargeRow.appendChild(removeCharged);
+		responseRow.appendChild(input);
+		responseRow.appendChild(removeResponse);
 
-		parent.insertBefore(chargeRow, node.querySelector('.add-charged'));
+		parent.insertBefore(responseRow, node.querySelector('.add-removable'));
 	} catch (err) {
 		console.error(err.message);
 	};
@@ -174,7 +153,7 @@ const addResponseField = async (node, responseId) => {
 
 // addResponseField(insertQuestionBox);
 
-insertAddChargedBtn.addEventListener('click', () => {
+insertResponseBtn.addEventListener('click', () => {
 	addResponseField(insertQuestionBox);
 });
 
@@ -323,7 +302,7 @@ const setDetails = (Questions) => {
 const setEditQuestionForm = async (Question) => {
 	const properties = ["title", "description"];
 
-	// Getting form and emptying charged users list
+	// Getting form and emptying response list
 	const form = document.querySelector('.edit-overlay form');
 	form.querySelectorAll('.charge-row').forEach(chargeRow => {
 		chargeRow.parentElement.removeChild(chargeRow);
@@ -334,7 +313,7 @@ const setEditQuestionForm = async (Question) => {
 	Question.users.forEach(user => {
 		addResponseField(editQuestionBox, user.id);
 	});
-	formClone.querySelector('.add-charged').addEventListener('click', () => {
+	formClone.querySelector('.add-removable').addEventListener('click', () => {
 		addResponseField(editQuestionBox);
 	});
 
@@ -514,27 +493,89 @@ const displayQuestions = async (questions) => {
 
 		console.log(question.responses);
 
-		card.innerHTML = `
-			<div class="question-id">
-				<h2>#Q${question.id}</h2>
-			</div>
-			<div class="question-stats">
-				<p>Créée le ${formatDate(question.created_at)} par ${question.created_by}</p>
-				<p>Modifiée le ${formatDate(question.updated_at)} par ${question.updated_by}</p>
+		const questionId = document.createElement('div');
+		questionId.classList.add('question-id');
+		questionId.innerHTML = `<h2>#Q${question.id}</h2>`;
+		card.appendChild(questionId);
+
+		const questionStats = document.createElement('div');
+		questionStats.classList.add('question-stats');
+		questionStats.innerHTML = `
+			<p>Créé le ${formatDate(question.created_at)} par ${question.created_by}</p>
+			<p>Modifié le ${formatDate(question.updated_at)} par ${question.updated_by}</p>
+		`;
+		card.appendChild(questionStats);
+
+		const questionText = document.createElement('div');
+		questionText.classList.add('question-text');
+		
+		const questionTitle = document.createElement('div');
+		questionTitle.classList.add('question-title');
+		questionTitle.innerHTML = (question.title.split('<br>')).map(txt => `<p>${txt.trim()}</p>`).join('');
+		questionText.appendChild(questionTitle);
+		card.appendChild(questionText);
+
+		const showContentBtn = document.createElement('div');
+		showContentBtn.classList.add('show-content-btn');
+		card.appendChild(showContentBtn);
+
+		const showQuestionText = document.createElement('p');
+		showQuestionText.innerText = question.responses.length > 1 ?
+			`Afficher les ${question.responses.length} réponses`
+			:
+			question.responses.length === 1 ?
+				`Afficher la réponse`
+				:
+				`Afficher le contenu`
+		;
+		showContentBtn.appendChild(showQuestionText);
+
+		const displayArrow = document.createElement('div');
+		displayArrow.classList.add('display-arrow');
+		displayArrow.style.setProperty('transform', 'rotate(0)');
+		showContentBtn.appendChild(displayArrow);
+
+		const questionContent = document.createElement('div');
+		questionContent.classList.add('question-content');
+		questionContent.style.setProperty('display', 'none');
+		questionContent.innerHTML = `
+			<div class="question-responses">
+				${question.responses.length > 0 ?
+					question.responses.map(response => `<p class="response response-${JSON.stringify(response.correct)}">${response.title.trim()}</p>`).join('')
+					:
+					`<div class="empty-content-message">
+						<div class="warning-sign"></div>
+						<p>Cette question ne contient pas de réponses.</p>
+					</div>`
+				}
 			</div>
 			<div class="question-text">
-				<div class="question-title">
-					${((question.title.split('<br>')).map(txt => `<p>${txt.trim()}</p>`)).join('')}
-				</div>
 				<hr>
 				<div class="question-correction">
+					<b>Correction :</b>
 					${((question.correction.split('<br>')).map(txt => `<p>${txt.trim()}</p>`)).join('')}
 				</div>
 			</div>
-			<div class="question-responses">
-				<p>${question.responses}</p>
-			</div>
 		`;
+		card.appendChild(questionContent);
+
+		showContentBtn.addEventListener('click', () => {
+			questionContent.style.setProperty('display', questionContent.style.getPropertyValue('display') === 'none' ? 'flex' : 'none');
+			displayArrow.style.setProperty('transform', `rotate(${questionContent.style.getPropertyValue('display') === 'none' ? '0' : '180deg'})`)
+			showQuestionText.innerText = questionContent.style.getPropertyValue('display') === 'none' ? 
+				(question.responses.length > 1 ?
+					`Afficher les ${question.responses.length} réponses`
+					:
+					`Afficher le contenu`
+				)
+				:
+				(question.responses.length > 1 ?
+					`Masquer les ${question.responses.length} réponses`
+					:
+					`Masquer le contenu`
+				)
+			;
+		});
 
 		const btnContainer = document.createElement('div');
 		btnContainer.classList.add('btn-container');
