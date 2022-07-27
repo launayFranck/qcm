@@ -33,7 +33,6 @@ main {
 
 /* Overlay boxes */
 
-
 .insert-overlay input[type="submit"],
 .edit-overlay input[type="submit"] {
 	border: none;
@@ -101,11 +100,6 @@ main {
 	background-color: var(--color-main);
 	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
 	color: var(--color-bg);
-}
-@media screen and (max-width: 1240px) {
-	.filter-params {
-		flex-direction: column;
-	}
 }
 
 /* Search section */
@@ -193,6 +187,16 @@ main {
 	padding: .8rem;
 }
 @media screen and (max-width: 1200px) {
+	.filter-params {
+		flex-direction: column;
+	}
+	.search-box input {
+		width: 100%;
+	}
+	.order-select {
+		flex-grow: 1;
+	}
+	
 	.card-container {
 		flex-basis: 50%;
 	}

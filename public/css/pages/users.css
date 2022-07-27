@@ -36,11 +36,6 @@ main {
 	box-shadow: .4rem .4rem .8rem #29292933;
 	color: var(--color-bg);
 }
-@media screen and (max-width: 1140px) {
-	.filter-params {
-		flex-direction: column;
-	}
-}
 
 /* Search section */
 .search-box {
@@ -92,8 +87,8 @@ main {
 	border-radius: .4rem;
 	cursor: pointer;
 }
-.show-actives:checked:after {
-	background-color: var(--color-insert);
+.show-actives-box label {
+	word-wrap: break-word;
 }
 
 /* Quick bar */
@@ -102,13 +97,6 @@ main {
 	flex-grow: 1;
 	justify-content: center;
 	padding: .4rem;
-}
-@media screen and (max-width: 800px) {
-	.quick-nav {
-		flex-direction: column;
-		align-items: center;
-		justify-content: flex-start;
-	}
 }
 .quick-nav a {
 	display: flex;
@@ -158,11 +146,42 @@ main {
 	padding: .8rem;
 }
 @media screen and (max-width: 1200px) {
+	.filter-params {
+		flex-direction: column;
+		max-width: calc(100vw - var(--navbar-size) - (.8rem * 2));
+	}
+	.search-box input {
+		width: 100%;
+	}
+	.order-select {
+		flex-grow: 1;
+	}
+
+	.role-box {
+		max-width: calc(100vw - var(--navbar-size));
+	}
+	.role-box .role-header {
+		margin: 0 .8rem;
+		overflow: hidden;
+	}
+	.role-header h2 {
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
 	.card-container {
 		flex-basis: 50%;
 	}
 }
+
 @media screen and (max-width: 800px) {
+	.quick-nav {
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-start;
+	}
+
 	.card-container {
 		flex-basis: 100%;
 	}

@@ -483,7 +483,7 @@ const filterUsers = (users) => {
 		newRoleBox.classList.add('role-box');
 		newRoleBox.innerHTML = `
 			<div class="role-header">
-				<h1>${capitalize((() => {
+				<h2>${capitalize((() => {
 					// Traduction des roles anglais en français
 					switch (roles[roleId]) {
 						case "admin" :
@@ -497,7 +497,7 @@ const filterUsers = (users) => {
 						default :
 							return "utilisateurs";
 					}
-				})())}</h1>
+				})())}</h2>
 			</div>
 		`;
 

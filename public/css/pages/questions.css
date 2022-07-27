@@ -22,6 +22,7 @@ main {
 	flex: 1;
 	margin: .8rem;
 	max-width: 120rem;
+	overflow: hidden;
 }
 
 .questions-panel {
@@ -95,17 +96,14 @@ main {
 }
 .filter-params {
 	display: flex;
+	flex-grow: 1;
 	padding: .8rem;
-	width: 100%;
+	/* width: 100%; */
 	border-radius: .4rem;
 	background-color: var(--color-main);
 	box-shadow: .4rem .4rem .8rem var(--color-box-shadow);
 	color: var(--color-bg);
-}
-@media screen and (max-width: 1240px) {
-	.filter-params {
-		flex-direction: column;
-	}
+	overflow: hidden;
 }
 
 /* Search section */
@@ -192,7 +190,19 @@ main {
 	flex-basis: 33.333333%;
 	padding: .8rem;
 }
+
 @media screen and (max-width: 1200px) {
+	.filter-params {
+		flex-direction: column;
+	}
+
+	.search-box input {
+		width: 100%;
+	}
+	.order-select {
+		flex-grow: 1;
+	}
+	
 	.card-container {
 		flex-basis: 50%;
 	}
