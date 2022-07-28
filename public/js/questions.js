@@ -45,7 +45,7 @@ const getQuestions = async (filters) => {
  * @returns {object} The new Question
  */
 const insertQuestion = async (data) => {
-	const res = await fetch(`${hostname}/api/Questions`, {
+	const res = await fetch(`${hostname}/api/questions`, {
 		method: 'POST',
 		credentials:'include',
 		cache:'no-cache',
@@ -114,6 +114,27 @@ const deleteQuestion = async (id) => {
 	return await res.json();
 };
 
+const getAllThemes = async () => {
+	const res = await fetch(`${hostname}/api/themes`, {
+		method: 'GET',
+		credentials: 'include',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+		}
+	});
+	return await res.json();
+};
+
+const addThemesInSelect = async (select, id) => {
+	const { themes } = await getAllThemes();
+
+	select.innerHTML = `<option value="" disabled ${id ? '' : 'selected'}>-- Sélectionnez un thème</option>`;
+	select.innerHTML += sortByProperty(themes, 'title').map((theme) => `<option value="${theme.id}" ${id ? theme.id == id ? 'selected' : '' : ''}>${theme.title}</option>`).join('');
+};
+
+let addResponseFieldCalls = 0;
 /**
  * Adding response field in a question creation / edition overlay
  * @param {htmlnode} node The html node in which adding the response field
@@ -127,25 +148,48 @@ const addResponseField = async (node, responseId) => {
 		const removableRow = document.createElement('div');
 		removableRow.classList.add('removable-row');
 
+		// "Button" (input type radio) to select the correct response
+		const responseTag = `resp-${(new Date()).getTime()}`;
+
+		const correct = document.createElement('input');
+		correct.type = "radio";
+		correct.classList.add('correct-btn');
+		correct.setAttribute('name', 'correct');
+		correct.setAttribute('id', responseTag);
+		if (addResponseFieldCalls === 0) {
+			correct.setAttribute('checked', '');
+		}
+		removableRow.appendChild(correct);
+
+		const correctLabel = document.createElement('label');
+		correctLabel.classList.add('correct-label');
+		correctLabel.setAttribute('title', 'Cliquez ici pour définir cette réponse comme étant la bonne réponse');
+		correctLabel.setAttribute('for', responseTag);
+		removableRow.appendChild(correctLabel);
+
 		const input = document.createElement('input');
+		input.classList.add('response');
 		input.type = 'text';
+		input.setAttribute('id', responseTag);
+		removableRow.appendChild(input);
 
 		if (responseId !== undefined) {
 
-		}
+		};
 	
 		// "Button" (div) for removing a response linked to a question
 		const removeRemovable = document.createElement('div');
 		removeRemovable.classList.add('remove-removable');
 		removeRemovable.innerText = '-';
+		removeRemovable.setAttribute('title', 'Cliquez ici pour supprimer cette réponse de la liste des réponses disponibles');
+
 		removeRemovable.addEventListener('click', (e) => {
 			parent.removeChild(removableRow);
 		});
-
-		removableRow.appendChild(input);
 		removableRow.appendChild(removeRemovable);
 
 		parent.insertBefore(removableRow, node.querySelector('.add-removable'));
+		addResponseFieldCalls += 1;
 	} catch (err) {
 		console.error(err.message);
 	};
@@ -181,33 +225,40 @@ const orderProperty = document.querySelector('.order-property');
 const orderAscending = document.querySelector('.order-ascending');
 const orderUser = document.querySelector('.order-user');
 
-/**
- * Remove duplicated values from an array
- * @param {array} array The array to filter
- */
-const removeDuplicates = async (array) => {
-	let tmp = {};
-	array.forEach(async (value) => {
-		tmp[value] = 1;
-	});
-	return Object.keys(tmp);
-};
-
 // The listener for the insert Question form's submit event
 document.querySelector('.insert-overlay form').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	try {
-		const title = document.querySelector('.insert-overlay .title').value;
-		const description = document.querySelector('.insert-overlay .description').value;
+		const title = document.querySelector('.insert-overlay .title').value.trim();
+		if (title.length < 1) throw new Error(`L'intitulé de la question ne peut être vide`);
 
-		const users = await removeDuplicates(Array.from(document.querySelectorAll('.insert-overlay .charge')).map(user => user.value));
+		const correction = document.querySelector('.insert-overlay .correction').value.trim();
+		if (correction.length < 1) throw new Error(`La correction ne peut être vide`);
 
-		const insertDetails = await insertQuestion({title, description, users});
+		const theme = document.querySelector('.insert-overlay .theme').value.trim();
+		if (theme.length < 1) throw new Error(`Le thème ne peut être vide`);
+		console.log('theme', theme);
+
+		const responses = Array.from(document.querySelectorAll('.insert-overlay .removable-row')).map(row => {
+			if ((row.querySelector('.response').value.trim()).length < 1) throw new Error('Veuillez compléter les champs des réponses');
+			return {
+				title : row.querySelector('.response').value,
+				correct : row.querySelector('.correct-btn').checked
+			};
+		});
+		if (responses.length < 1) throw new Error(`Veuillez fournir au moins une réponse`);
+
+		const insertDetails = await insertQuestion({
+			title,
+			correction,
+			theme_id : parseInt(theme),
+			responses
+		});
 		if (insertDetails.error) throw new Error(insertDetails.error);
 
-		console.log(insertDetails);
-
-		sendMessageToPanel(`La question "${insertDetails.Question.Question.title}" a été créée`, 'var(--color-good-message)');
+		// console.log(insertDetails);
+		addResponseFieldCalls = 0;
+		// sendMessageToPanel(`La question "${insertDetails.question.question.title}" a été créée`, 'var(--color-good-message)');
 		await setQuestions();
 		displayOverlay(false);
 		e.target.reset();
@@ -404,6 +455,7 @@ const setDeleteQuestionForm = async (Question) => {
  */
 const setQuestions = async () => {
 	const { questions } = await getQuestions();
+	await addThemesInSelect(document.querySelector('.insert-overlay .theme'));
 
 	search.addEventListener('input', async () => {
 		await displayQuestions(await filterQuestions(questions));
@@ -491,8 +543,6 @@ const displayQuestions = async (questions) => {
 		const card = document.createElement('article');
 		card.classList.add('question-card');
 
-		console.log(question.responses);
-
 		const questionId = document.createElement('div');
 		questionId.classList.add('question-id');
 		questionId.innerHTML = `<h2>#Q${question.id}</h2>`;
@@ -541,7 +591,12 @@ const displayQuestions = async (questions) => {
 		questionContent.innerHTML = `
 			<div class="question-responses">
 				${question.responses.length > 0 ?
-					question.responses.map(response => `<p class="response response-${JSON.stringify(response.correct)}">${response.title.trim()}</p>`).join('')
+					question.responses.map(response => `
+						<div class="response-box response-${JSON.stringify(response.correct)}">
+							<div class="response-img"></div>
+							<p class="response-title">${response.title.trim()}</p>
+						</div>
+					`).join('')
 					:
 					`<div class="empty-content-message">
 						<div class="warning-sign"></div>

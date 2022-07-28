@@ -236,7 +236,6 @@ button.overlay-closer {
 }
 
 /* - - - Form content styling - - - */
-
 .form-row {
 	display: flex;
 	width: 100%;
@@ -247,7 +246,7 @@ button.overlay-closer {
 	flex-grow: 1;
 	padding: .8rem;
 }
-.input-box label {
+.input-box > label {
 	margin-bottom: .4rem;
 	width: max-content;
 }
@@ -260,9 +259,66 @@ button.overlay-closer {
 	border-radius: .4rem;
 	padding: .8rem;
 }
-.input-box input {
-	width: 100%;
+.input-box input[type="text"] {
+	flex: 1;
 }
+
+/* .input-box .correct-btn {
+	appearance: none;
+	display: none;
+}
+.input-box .correct-label {
+	display: flex;
+	width: 3.2rem;
+	height: 3.2rem;
+	padding: .8rem;
+	border-radius: .4rem;
+	margin-right: .8rem;
+	background-color: var(--color-bg-alt2);
+	background-image: url('/img/cross.svg');
+	background-color: inherit;
+	background-size: 50%;
+	background-position: center;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	transition: background-color .1s ease-out;
+}
+.input-box input[type="radio"]:checked + label {
+	background-color: var(--color-insert);
+	background-image: url('/img/checked.svg');
+	transition: 0.3s;
+} */
+
+.input-box input[type="radio"] {
+	appearance: none;
+	display: none;
+}
+
+.input-box .correct-label {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 3.2rem;
+	height: 3.2rem;
+	padding: .8rem;
+	border: none;
+	border-radius: .4rem;
+	margin-right: .8rem;
+	background-color: var(--color-bg-alt);
+	mask: url('/img/checked.svg') no-repeat center / contain;
+	color: var(--color-bg);
+	font-weight: bolder;
+	cursor: pointer;
+	transition: background-color .1s ease-out;
+}
+
+.input-box input[type="radio"]:checked + label {
+	background-color: var(--color-insert);
+	mask: url('/img/checked.svg') no-repeat center / contain;
+	font-weight: 900;
+	transition: 0.3s;
+}
+
 .input-box select {
 	transition: background-color .1s ease-out;
 	cursor: pointer;
@@ -393,8 +449,13 @@ input:disabled {
 	.removable-row {
 		width: 100%;
 	}
-	.removable-row .charge {
+	.removable-row .removable {
 		width: calc(100% - 6.4rem);
+	}
+
+	.removable input[type="text"] {
+		display: flex;
+		flex: 1;
 	}
 
 	.insert-overlay form,

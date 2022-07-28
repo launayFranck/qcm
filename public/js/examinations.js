@@ -383,7 +383,7 @@ const setExaminations = async () => {
 	const { examinations } = await getAllExaminations();
 
 	await setDetails(examinations);
-	
+
 	await addThemesInSelect(document.querySelector('.insert-overlay .theme'));
 	await displayExaminations(await filterExaminations(examinations));
 };

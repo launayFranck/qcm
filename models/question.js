@@ -1,4 +1,5 @@
 import knex from './knexClient.js';
+import log from './log.js';
 
 /**
  * Getting all questions in a array
@@ -101,11 +102,54 @@ const findByName = async (name) => {
  * Add a question in the database
  * @async
  * @param {object} payload the payload containing the properties to insert
+ * @param {object} token the token containing the logged user's infos
  */
-const create = async (payload) => {
+const create = async (payload, token) => {
+	payload.created_by = token.id;
+	payload.updated_by = token.id;
+
+	const { responses } = payload;
+
+	// Removing unallowed properties from payload
+	Object.keys(payload).forEach(property => {
+		if (!['title', 'correction', 'theme_id', 'created_by', 'updated_by'].includes(property)) {
+			delete payload[property];
+		};
+	});
+
+	// Delete empty string properties
+	Object.keys(payload).forEach(property => {
+		console.log(payload[property]);
+		if (payload[property].length < 1) {
+			delete payload[property];
+		};
+	});
+	console.log(payload);
+
 	try {
-		const result = await knex('question').insert(payload).returning('*');
-		return result;
+		const questionResult = await knex('question').insert(payload).returning('*');
+
+		const responsesPayload = responses.map(response => {
+			return {
+				title : response.title,
+				correct : response.correct,
+				question_id : questionResult[0].id,
+				created_by : questionResult[0].created_by,
+				updated_by : questionResult[0].updated_by
+			};
+		});
+		
+		const responsesResult = await knex('response').insert(responsesPayload).returning('*');
+
+		const logResult = await log.create({
+			content : `$1 a créé la question ${payload.title}`,
+			created_by : token.id
+		});
+		
+		return {
+			question : questionResult[0],
+			responses : responsesResult
+		};
 	} catch (err) {
 		throw err;
 	};

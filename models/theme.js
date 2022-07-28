@@ -140,6 +140,7 @@ const findByName = async (name) => {
  * Add a theme in the database
  * @async
  * @param {object} payload the payload containing the properties to insert
+ * @param {object} token the token containing the logged user's infos
  */
 const create = async (payload, token) => {
 	payload.created_by = token.id;

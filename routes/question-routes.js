@@ -86,7 +86,7 @@ router.post("/", async (req, res) => {
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
 			if (err) throw err;
 			try {
-				const response = await question.create(req.body);
+				const response = await question.create(req.body, user);
 				res.status(201).json(response);
 			} catch (err) {
 				res.status(400).json({error : err.message});
