@@ -17,8 +17,8 @@ const detailsThemeBox = document.querySelector(".details-overlay");
 const editThemeBox = document.querySelector(".edit-overlay");
 const deleteThemeBox = document.querySelector(".delete-overlay");
 
-const insertAddChargedBtn = document.querySelector('.insert-overlay .add-charged');
-const editAddChargedBtn = document.querySelector('.edit-overlay .add-charged');
+const insertAddRemovableBtn = document.querySelector('.insert-overlay .add-removable');
+const editAddRemovableBtn = document.querySelector('.edit-overlay .add-removable');
 
 const getUsersWithThemeRights = async () => {
 	const res = await fetch(`${hostname}/api/users/theme_rights`, {
@@ -34,7 +34,7 @@ const getUsersWithThemeRights = async () => {
 };
 
 /**
- * Adding charged fields to a charged list
+ * Adding removable fields to a charged users list
  * @param {htmlnode} node The html node in which adding the charged user's field
  * @param {number} userId The id of the user we want to select by default (optional)
  */
@@ -47,13 +47,13 @@ const addChargedField = async (node, userId) => {
 		const { users } = getUsersDetails; // Extracting users from getUsersDetails
 
 		// Adding a new field for a new charged user
-		const parent = node.querySelector('.charged-list');
+		const parent = node.querySelector('.removable-list');
 
-		const chargeRow = document.createElement('div');
-		chargeRow.classList.add('charge-row');
+		const removableRow = document.createElement('div');
+		removableRow.classList.add('removable-row');
 
 		const select = document.createElement('select');
-		select.classList.add('charge');
+		select.classList.add('removable');
 
 		// Getting all unique roles' names
 		const roles = {};
@@ -72,7 +72,7 @@ const addChargedField = async (node, userId) => {
 				const option = document.createElement('option');
 				option.setAttribute('value', user.id);
 				if (userId) if (userId == user.id) option.setAttribute('selected', true);
-				option.innerText = `${user.username} (${user.firstname} ${user.lastname})`;
+				option.innerHTML = `${user.username} <span class="fullname">(${user.firstname} ${user.lastname})</span>`;
 
 				optGroup.appendChild(option);
 			};
@@ -81,17 +81,17 @@ const addChargedField = async (node, userId) => {
 		});
 	
 		// "Button" (div) for removing a user in charge for a theme
-		const removeCharged = document.createElement('div');
-		removeCharged.classList.add('remove-charged');
-		removeCharged.innerText = '-';
-		removeCharged.addEventListener('click', (e) => {
-			parent.removeChild(chargeRow);
+		const removeRemovable = document.createElement('div');
+		removeRemovable.classList.add('remove-removable');
+		removeRemovable.innerText = '-';
+		removeRemovable.addEventListener('click', (e) => {
+			parent.removeChild(removableRow);
 		});
 
-		chargeRow.appendChild(select);
-		chargeRow.appendChild(removeCharged);
+		removableRow.appendChild(select);
+		removableRow.appendChild(removeRemovable);
 
-		parent.insertBefore(chargeRow, node.querySelector('.add-charged'));
+		parent.insertBefore(removableRow, node.querySelector('.add-removable'));
 	} catch (err) {
 		console.error(err.message);
 	};
@@ -99,7 +99,7 @@ const addChargedField = async (node, userId) => {
 
 addChargedField(insertThemeBox);
 
-insertAddChargedBtn.addEventListener('click', () => {
+insertAddRemovableBtn.addEventListener('click', () => {
 	addChargedField(insertThemeBox);
 });
 

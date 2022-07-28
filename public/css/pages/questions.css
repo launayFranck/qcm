@@ -245,7 +245,8 @@ main {
 	/* border-radius: .4rem; */
 	/* overflow: hidden; */
 }
-.question-card .question-text .question-title {
+.question-card .question-text .question-title p {
+	line-height: 2rem;
 	/* padding: .8rem 1.2rem; */
 }
 .show-content-btn {

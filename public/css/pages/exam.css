@@ -390,4 +390,11 @@ main {
 	.chapter-header h2 {
 		text-align: center;
 	}
+
+	.correction-row {
+		flex-direction: column;
+	}
+	.correction-row b {
+		font-weight: bold;
+	}
 }

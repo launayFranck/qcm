@@ -189,30 +189,6 @@ main {
 	flex-basis: 33.333333%;
 	padding: .8rem;
 }
-@media screen and (max-width: 1200px) {
-	.filter-params {
-		flex-direction: column;
-		max-width: calc(100vw - var(--navbar-size) - (.8rem * 2));
-	}
-	.search-box input {
-		width: 100%;
-	}
-	.order-select {
-		flex-grow: 1;
-	}
-
-	.card-container {
-		flex-basis: 50%;
-	}
-}
-
-@media screen and (max-width: 800px) {
-	.card-container {
-		flex-basis: 100%;
-		word-wrap: break-word;
-		overflow: hidden;
-	}
-}
 
 .examination-card {
 	display: flex;
@@ -369,4 +345,49 @@ main {
 }
 .examination-card .btn-container .destroy {
 	background-image: url('/img/trash.svg');
+}
+
+@media screen and (max-width: 1200px) {
+	.filter-params {
+		flex-direction: column;
+		max-width: calc(100vw - var(--navbar-size) - (.8rem * 2));
+	}
+	.search-box input {
+		width: 100%;
+	}
+	.order-select {
+		flex-grow: 1;
+	}
+
+	.card-container {
+		flex-basis: 50%;
+	}
+
+	.cards-box {
+		width: 100%;
+	}
+
+	.examination-card .btn-container {
+		flex-wrap: wrap;
+	}
+	.examination-card .btn-container .btn,
+	.examination-card .btn-container .toggle-switch {
+		display: flex;
+		flex-basis: 50%;
+		margin: .8rem 0;
+	}
+	.examination-card .btn-container .toggle-switch {
+		justify-content: center;
+	}
+	.examination-card .btn-container .toggle-switch .switch {
+		margin: 0;
+	}
+}
+
+@media screen and (max-width: 800px) {
+	.card-container {
+		flex-basis: 100%;
+		word-wrap: break-word;
+		overflow: hidden;
+	}
 }

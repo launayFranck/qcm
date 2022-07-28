@@ -124,8 +124,8 @@ const addResponseField = async (node, responseId) => {
 		// Adding a new field for a new response
 		const parent = node.querySelector('.removable-list');
 
-		const responseRow = document.createElement('div');
-		responseRow.classList.add('removable-row');
+		const removableRow = document.createElement('div');
+		removableRow.classList.add('removable-row');
 
 		const input = document.createElement('input');
 		input.type = 'text';
@@ -135,17 +135,17 @@ const addResponseField = async (node, responseId) => {
 		}
 	
 		// "Button" (div) for removing a response linked to a question
-		const removeResponse = document.createElement('div');
-		removeResponse.classList.add('remove-removable');
-		removeResponse.innerText = '-';
-		removeResponse.addEventListener('click', (e) => {
-			parent.removeChild(responseRow);
+		const removeRemovable = document.createElement('div');
+		removeRemovable.classList.add('remove-removable');
+		removeRemovable.innerText = '-';
+		removeRemovable.addEventListener('click', (e) => {
+			parent.removeChild(removableRow);
 		});
 
-		responseRow.appendChild(input);
-		responseRow.appendChild(removeResponse);
+		removableRow.appendChild(input);
+		removableRow.appendChild(removeRemovable);
 
-		parent.insertBefore(responseRow, node.querySelector('.add-removable'));
+		parent.insertBefore(removableRow, node.querySelector('.add-removable'));
 	} catch (err) {
 		console.error(err.message);
 	};

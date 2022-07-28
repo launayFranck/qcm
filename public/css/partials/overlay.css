@@ -77,7 +77,7 @@
 }
 
 .overlay-box > form {
-	overflow-y: hidden;
+	overflow: hidden;
 }
 
 .insert-overlay form {
@@ -226,7 +226,6 @@ button.overlay-closer {
 .delete-overlay .delete-btn:hover {
 	background-color: var(--color-delete-hover);
 }
-
 
 .container-body {
 	display: flex;
@@ -409,11 +408,12 @@ input:disabled {
 	.edit-overlay .container-body,
 	.delete-overlay .container-body {
 		flex-grow: 1;
-		justify-content: center;
+		justify-content: flex-start;
 	}
 
-	.overlay-box form .container-body {
-		height: 100%;
+	.removable-row .fullname {
+		display: none;
+		visibility: hidden;
 	}
 
 	.delete-query {
