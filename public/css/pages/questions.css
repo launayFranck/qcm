@@ -240,15 +240,15 @@ main {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
-	margin: .8rem 0;
-	/* background-color: var(--color-bg-alt); */
-	/* border-radius: .4rem; */
-	/* overflow: hidden; */
+	/* margin: .8rem 0; */
 }
 .question-card .question-text .question-title p {
 	line-height: 2rem;
-	/* padding: .8rem 1.2rem; */
 }
+.question-card .question-text .question-theme {
+	margin: .8rem 0;
+}
+
 .show-content-btn {
 	display: flex;
 	width: 100%;

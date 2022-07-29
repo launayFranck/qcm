@@ -17,8 +17,8 @@ const detailsQuestionBox = document.querySelector(".details-overlay");
 const editQuestionBox = document.querySelector(".edit-overlay");
 const deleteQuestionBox = document.querySelector(".delete-overlay");
 
-const insertResponseBtn = document.querySelector('.insert-overlay .add-removable');
-const editAddChargedBtn = document.querySelector('.edit-overlay .add-removable');
+const insertAddResponseBtn = document.querySelector('.insert-overlay .add-removable');
+const editAddResponseBtn = document.querySelector('.edit-overlay .add-removable');
 
 /**
  * Get all questions
@@ -65,7 +65,7 @@ const insertQuestion = async (data) => {
  * @returns {object} The updated question
  */
 const updateQuestion = async (id, payload) => {
-	const res = await fetch(`${hostname}/api/Questions/${id}`, {
+	const res = await fetch(`${hostname}/api/questions/${id}`, {
 		method: 'PUT',
 		credentials:'include',
 		cache:'no-cache',
@@ -138,9 +138,9 @@ let addResponseFieldCalls = 0;
 /**
  * Adding response field in a question creation / edition overlay
  * @param {htmlnode} node The html node in which adding the response field
- * @param {number} responseId The id of the response we want to set by default (optional)
+ * @param {object} response The response we want to set by default (optional)
  */
-const addResponseField = async (node, responseId) => {
+const addResponseField = async (node, response) => {
 	try {
 		// Adding a new field for a new response
 		const parent = node.querySelector('.removable-list');
@@ -156,9 +156,9 @@ const addResponseField = async (node, responseId) => {
 		correct.classList.add('correct-btn');
 		correct.setAttribute('name', 'correct');
 		correct.setAttribute('id', responseTag);
-		if (addResponseFieldCalls === 0) {
-			correct.setAttribute('checked', '');
-		}
+		if (response) {
+			if (response.correct) correct.setAttribute('checked', '');
+		} else if (addResponseFieldCalls === 0) correct.setAttribute('checked', '');
 		removableRow.appendChild(correct);
 
 		const correctLabel = document.createElement('label');
@@ -171,11 +171,8 @@ const addResponseField = async (node, responseId) => {
 		input.classList.add('response');
 		input.type = 'text';
 		input.setAttribute('id', responseTag);
+		if (response) input.value = response.title;
 		removableRow.appendChild(input);
-
-		if (responseId !== undefined) {
-
-		};
 	
 		// "Button" (div) for removing a response linked to a question
 		const removeRemovable = document.createElement('div');
@@ -197,7 +194,7 @@ const addResponseField = async (node, responseId) => {
 
 // addResponseField(insertQuestionBox);
 
-insertResponseBtn.addEventListener('click', () => {
+insertAddResponseBtn.addEventListener('click', () => {
 	addResponseField(insertQuestionBox);
 });
 
@@ -351,19 +348,14 @@ const setDetails = (questions) => {
  * @param {object} question The question on which to base the edit form depending on what we're editing
  */
 const setEditQuestionForm = async (question) => {
-	const properties = ["title", "description"];
-
 	// Getting form and emptying response list
 	const form = document.querySelector('.edit-overlay form');
-	form.querySelectorAll('.charge-row').forEach(chargeRow => {
-		chargeRow.parentElement.removeChild(chargeRow);
+	form.querySelectorAll('.removable-row').forEach(responseRow => {
+		responseRow.parentElement.removeChild(responseRow);
 	});
 
 	// Cloning the form to remove all the event listeners
 	const formClone = form.cloneNode(true);
-	question.users.forEach(user => {
-		addResponseField(editQuestionBox, user.id);
-	});
 	formClone.querySelector('.add-removable').addEventListener('click', () => {
 		addResponseField(editQuestionBox);
 	});
@@ -371,51 +363,59 @@ const setEditQuestionForm = async (question) => {
 	// Replacing the previous form with the freshly created clone
 	form.parentNode.replaceChild(formClone, form);
 
+	formClone.querySelector(`.title`).value = question.title;
+	formClone.querySelector(`.correction`).value = question.correction;
+	formClone.querySelector(`.theme`).value = question.theme_id;
+	question.responses.forEach(response => {
+		addResponseField(formClone, response);
+	});
+
 	formClone.addEventListener('submit', async (e) => {
 		e.preventDefault();
-
-		const title = document.querySelector('.edit-overlay .title');
-		const description = document.querySelector('.edit-overlay .description');
-
-		const charges = await removeDuplicates(Array.from(document.querySelectorAll('.edit-overlay .charge')).map(charge => {
-			return charge.value;
-		}));
-
-		const values = {
-			title : title.value.toString(),
-			description : description.value.toString(),
-			charges
-		};
-		
-		let payload = {};
-		Object.keys(values).forEach(property => {
-			if (values[property] != question[property] && values[property] != "") {
-				payload[property] = values[property];
-			};
-		});
-
 		try {
-			// Not updating if nothing to change
-			if (Object.keys(payload).length < 1) throw new Error(`La question "${question.title}" n'a pas été modifiée`);
+			const title = formClone.querySelector('.title').value.trim();
+			if (title.length < 1) throw new Error(`L'intitulé de la question ne peut être vide`);
+			console.log((title.replace(/(?:\r\n|\r|\n)/g, '<br>')));
 
-			const updateQuestionDetails = await updateQuestion(question.id, payload);
-			if (updateQuestionDetails.error) throw new Error(updateQuestionDetails.error);
+			const correction = formClone.querySelector('.correction').value.trim();
+			if (correction.length < 1) throw new Error(`La correction ne peut être vide`);
 
-			console.log(updateQuestionDetails);
-			
+			const theme = formClone.querySelector('.theme').value.trim();
+			if (theme.length < 1) throw new Error(`Le thème ne peut être vide`);
+			console.log('theme', theme);
+
+			const responses = Array.from(formClone.querySelectorAll('.removable-row')).map(row => {
+				if ((row.querySelector('.response').value.trim()).length < 1) throw new Error('Veuillez compléter les champs des réponses');
+				return {
+					title : row.querySelector('.response').value,
+					correct : row.querySelector('.correct-btn').checked
+				};
+			});
+			if (responses.length < 1) throw new Error(`Veuillez fournir au moins une réponse`);
+
+			const editDetails = await updateQuestion(question.id, {
+				title : (title.split(/\n/)).join('<br>'),
+				correction,
+				theme_id : parseInt(theme),
+				responses
+			});
+			if (editDetails.error) throw new Error(editDetails.error);
+
+			console.log(editDetails);
+			addResponseFieldCalls = 0;
+			sendMessageToPanel(`La question "${editDetails.question.title}" a été mise à jour`, 'var(--color-good-message)');
 			await setQuestions();
-			sendMessageToPanel(`La question "${question.title}" a été modifiée`, 'var(--color-good-message)');
 			displayOverlay(false);
-
+			e.target.reset();
 		} catch (err) {
 			sendMessageToPanel(err.message, 'var(--color-bad-message)');
 		};
 	});
 
-	properties.forEach(prop => {
-		const input = document.querySelector(`.edit-overlay .${prop}`);
-		input.value = question[prop] ? question[prop] : "";
-	});
+	// properties.forEach(prop => {
+	// 	const input = document.querySelector(`.edit-overlay .${prop}`);
+	// 	input.value = question[prop] ? question[prop] : "";
+	// });
 
 	displayOverlay(true, editQuestionBox);
 };
@@ -456,6 +456,7 @@ const setDeleteQuestionForm = async (question) => {
 const setQuestions = async () => {
 	const { questions } = await getQuestions();
 	await addThemesInSelect(document.querySelector('.insert-overlay .theme'));
+	await addThemesInSelect(document.querySelector('.edit-overlay .theme'));
 
 	search.addEventListener('input', async () => {
 		await displayQuestions(await filterQuestions(questions));
@@ -556,15 +557,23 @@ const displayQuestions = async (questions) => {
 		`;
 		card.appendChild(questionStats);
 
+		// The textual part before the show content button
 		const questionText = document.createElement('div');
 		questionText.classList.add('question-text');
+
+		const questionTheme = document.createElement('div');
+		questionTheme.classList.add('question-theme');
+		questionTheme.innerText = question.theme_title;
+		questionText.appendChild(questionTheme);
 		
 		const questionTitle = document.createElement('div');
 		questionTitle.classList.add('question-title');
 		questionTitle.innerHTML = (question.title.split('<br>')).map(txt => `<p>${txt.trim()}</p>`).join('');
 		questionText.appendChild(questionTitle);
+
 		card.appendChild(questionText);
 
+		// The show content button
 		const showContentBtn = document.createElement('div');
 		showContentBtn.classList.add('show-content-btn');
 		card.appendChild(showContentBtn);
@@ -641,7 +650,7 @@ const displayQuestions = async (questions) => {
 		const editBtn = document.createElement('button');
 		editBtn.classList.add('edit');
 		editBtn.addEventListener('click', async () => {
-			await setEditQuestionForm(question, users);
+			await setEditQuestionForm(question);
 		});
 
 		// Delete button

@@ -562,6 +562,7 @@ const displayThemes = async (themes) => {
 		const card = document.createElement('article');
 		card.classList.add('theme-card');
 
+		console.log(title, theme.created_at);
 		card.innerHTML = `
 			<div class="theme-title">
 				<h2>${title}</h2>

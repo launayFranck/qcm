@@ -399,14 +399,14 @@ const buildExam = async (examId) => {
 				const buttonContainer = document.createElement('div');
 				buttonContainer.classList.add('btn-container');
 
-				// const insertQuestion = document.createElement('button');
-				// insertQuestion.classList.add('insert-question');
-				// insertQuestion.setAttribute('title', "Cliquez ici pour ajouter une question dans ce chapitre");
-				// insertQuestion.addEventListener('click', () => {
-				// 	console.log("Show insert question overlay here");
-				// 	console.log(chapter.id);
-				// });
-				// buttonContainer.appendChild(insertQuestion);
+				const insertQuestion = document.createElement('button');
+				insertQuestion.classList.add('insert-question');
+				insertQuestion.setAttribute('title', "Cliquez ici pour ajouter une question dans ce chapitre");
+				insertQuestion.addEventListener('click', () => {
+					console.log("Show insert question overlay here");
+					console.log(chapter.id);
+				});
+				buttonContainer.appendChild(insertQuestion);
 	
 				const editChapterBtn = document.createElement('button');
 				editChapterBtn.classList.add('edit-chapter');

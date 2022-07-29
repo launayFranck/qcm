@@ -15,6 +15,7 @@ const findAll = async () => {
 				"question".title,
 				"question".chapter_id,
 				"question".theme_id,
+				"theme".title AS theme_title,
 				"question".score,
 				"question".correction,
 				"question".active,
@@ -23,6 +24,7 @@ const findAll = async () => {
 				"creator".username AS "created_by",
 				"updator".username AS "updated_by"
 			FROM "question"
+			JOIN "theme" ON "question".theme_id = "theme".id
 			JOIN "user" AS "creator" ON "question".created_by = "creator".id
 			JOIN "user" as "updator" ON "question".updated_by = "updator".id
 			ORDER BY "created_at";
@@ -161,14 +163,38 @@ const create = async (payload, token) => {
  * @param {number} id of a question
  * @param {object} payload with the new informations
  */
-const update = async (id, payload) => {
+const update = async (id, payload, token) => {
 	try {
+		payload.updated_by = token.id;
+
+		const { responses } = payload;
+		delete payload["responses"];
+
 		const verif = await knex('question').select().where({id});
 		if (verif.length <= 0) {
 			throw new Error(`id ${id} not found`);
 		};
-		const result = await knex('question').update(payload).where({id}).returning('*');
-		return result[0];
+		console.log(payload);
+		const questionResult = await knex('question').update(payload).where({id}).returning('*');
+
+		const responsesPayload = responses.map(response => {
+			return {
+				title : response.title,
+				correct : response.correct,
+				question_id : id,
+				created_by : token.id,
+				updated_by : token.id
+			};
+		});
+
+		const deletingResponses = await knex('response').delete().where('question_id', '=', id);
+		const responsesResult = await knex('response').insert(responsesPayload).where('question_id', '=', id);
+
+		return {
+			question : questionResult[0],
+			oldResponses : deletingResponses,
+			responses : responsesResult
+		};
 	} catch (err) {
 		throw err;
 	};
