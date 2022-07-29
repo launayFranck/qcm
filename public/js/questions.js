@@ -23,7 +23,7 @@ const editAddChargedBtn = document.querySelector('.edit-overlay .add-removable')
 /**
  * Get all questions
  * @async
- * @returns {Array<object>} Questions
+ * @returns {Array<object>} questions
  */
 const getQuestions = async (filters) => {
 	const res = await fetch(`${hostname}/api/questions`, {
@@ -40,9 +40,9 @@ const getQuestions = async (filters) => {
 };
 
 /**
- * Insert a new Question in the DB
+ * Insert a new question in the DB
  * @param {object} data
- * @returns {object} The new Question
+ * @returns {object} The new question
  */
 const insertQuestion = async (data) => {
 	const res = await fetch(`${hostname}/api/questions`, {
@@ -59,10 +59,10 @@ const insertQuestion = async (data) => {
 };
 
 /**
- * Updates a Question from the DB
- * @param {number} id Integer referring to a Question's id
+ * Updates a question from the DB
+ * @param {number} id Integer referring to a question's id
  * @param {object} payload An object containing the properties to modify
- * @returns {object} The updated Question
+ * @returns {object} The updated question
  */
 const updateQuestion = async (id, payload) => {
 	const res = await fetch(`${hostname}/api/Questions/${id}`, {
@@ -79,9 +79,9 @@ const updateQuestion = async (id, payload) => {
 };
 
 /**
- * Deletes a Question from the DB
- * @param {number} id Integer referring to a Question's id
- * @returns {object} The deleted Question
+ * Deletes a question from the DB
+ * @param {number} id Integer referring to a question's id
+ * @returns {object} The deleted question
  */
 const deleteQuestion = async (id) => {
 	const res = await fetch(`${hostname}/api/Questions/${id}`, {
@@ -225,7 +225,7 @@ const orderProperty = document.querySelector('.order-property');
 const orderAscending = document.querySelector('.order-ascending');
 const orderUser = document.querySelector('.order-user');
 
-// The listener for the insert Question form's submit event
+// The listener for the insert question form's submit event
 document.querySelector('.insert-overlay form').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	try {
@@ -268,29 +268,29 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 });
 
 /**
- * Set details about the Questions
- * @param {array} Questions 
+ * Set details about the questions
+ * @param {array} questions 
  */
-const setDetails = (Questions) => {
+const setDetails = (questions) => {
 	const stats = [
 		{
 			name : 'Nombre de questions',
-			value : Questions.length
+			value : questions.length
 		},
 		{
 			name : "Nombre min d'utilisateur",
-			value : Questions.sort((a, b) => a.users.length > b.users.length ? 1 : -1)[0].users.length
+			value : questions.sort((a, b) => a.users.length > b.users.length ? 1 : -1)[0].users.length
 		},
 		{
 			name : "Nombre max d'utilisateur",
-			value : Questions.sort((a, b) => a.users.length < b.users.length ? 1 : -1)[0].users.length
+			value : questions.sort((a, b) => a.users.length < b.users.length ? 1 : -1)[0].users.length
 		},
 		{
 			name : "Utilisateur gérant le moins de questions",
 			value : (() => {
 				const usersNb = {};
-				Questions.forEach(Question => {
-					Question.users.forEach(user => {
+				questions.forEach(question => {
+					question.users.forEach(user => {
 						if (usersNb[user.name]) {
 							usersNb[user.name] += 1;
 						} else {
@@ -312,8 +312,8 @@ const setDetails = (Questions) => {
 			name : "Utilisateur gérant le plus de questions",
 			value : (() => {
 				const usersNb = {};
-				Questions.forEach(Question => {
-					Question.users.forEach(user => {
+				questions.forEach(question => {
+					question.users.forEach(user => {
 						if (usersNb[user.name]) {
 							usersNb[user.name] += 1;
 						} else {
@@ -348,9 +348,9 @@ const setDetails = (Questions) => {
 
 /**
  * Sets the edit-overlay form so it depends on which user we're editing
- * @param {object} Question The Question on which to base the edit form depending on what we're editing
+ * @param {object} question The question on which to base the edit form depending on what we're editing
  */
-const setEditQuestionForm = async (Question) => {
+const setEditQuestionForm = async (question) => {
 	const properties = ["title", "description"];
 
 	// Getting form and emptying response list
@@ -361,7 +361,7 @@ const setEditQuestionForm = async (Question) => {
 
 	// Cloning the form to remove all the event listeners
 	const formClone = form.cloneNode(true);
-	Question.users.forEach(user => {
+	question.users.forEach(user => {
 		addResponseField(editQuestionBox, user.id);
 	});
 	formClone.querySelector('.add-removable').addEventListener('click', () => {
@@ -389,22 +389,22 @@ const setEditQuestionForm = async (Question) => {
 		
 		let payload = {};
 		Object.keys(values).forEach(property => {
-			if (values[property] != Question[property] && values[property] != "") {
+			if (values[property] != question[property] && values[property] != "") {
 				payload[property] = values[property];
 			};
 		});
 
 		try {
 			// Not updating if nothing to change
-			if (Object.keys(payload).length < 1) throw new Error(`La question "${Question.title}" n'a pas été modifiée`);
+			if (Object.keys(payload).length < 1) throw new Error(`La question "${question.title}" n'a pas été modifiée`);
 
-			const updateQuestionDetails = await updateQuestion(Question.id, payload);
+			const updateQuestionDetails = await updateQuestion(question.id, payload);
 			if (updateQuestionDetails.error) throw new Error(updateQuestionDetails.error);
 
 			console.log(updateQuestionDetails);
 			
 			await setQuestions();
-			sendMessageToPanel(`La question "${Question.title}" a été modifiée`, 'var(--color-good-message)');
+			sendMessageToPanel(`La question "${question.title}" a été modifiée`, 'var(--color-good-message)');
 			displayOverlay(false);
 
 		} catch (err) {
@@ -414,18 +414,18 @@ const setEditQuestionForm = async (Question) => {
 
 	properties.forEach(prop => {
 		const input = document.querySelector(`.edit-overlay .${prop}`);
-		input.value = Question[prop] ? Question[prop] : "";
+		input.value = question[prop] ? question[prop] : "";
 	});
 
 	displayOverlay(true, editQuestionBox);
 };
 
 /**
- * Creates a form on which we'd base a Question to set up the deletion depending on it
- * @param {object} Question The Question on which we'll base the delete Question form
+ * Creates a form on which we'd base a question to set up the deletion depending on it
+ * @param {object} question The question on which we'll base the delete question form
  */
-const setDeleteQuestionForm = async (Question) => {
-	document.querySelector('.delete-query').innerText = `Souhaitez-vous vraiment supprimer ${Question.title} ?`;
+const setDeleteQuestionForm = async (question) => {
+	document.querySelector('.delete-query').innerText = `Souhaitez-vous vraiment supprimer la question #Q${question.id} ?`;
 
 	const deleteQuestionBtn = document.querySelector('.delete-overlay .delete-btn');
 	const deleteQuestionBtnClone = deleteQuestionBtn.cloneNode(true);
@@ -434,11 +434,11 @@ const setDeleteQuestionForm = async (Question) => {
 		e.preventDefault;
 
 		try {
-			const deleteDetails = await deleteQuestion(Question.id);
+			const deleteDetails = await deleteQuestion(question.id);
 			if (deleteDetails.error) throw new Error(deleteDetails.error);
 
 			await setQuestions();
-			sendMessageToPanel(`La question "${Question.title}" a été supprimée`, 'var(--color-good-message)');
+			sendMessageToPanel(`La question "${question.title}" a été supprimée`, 'var(--color-good-message)');
 			displayOverlay(false);
 		} catch (err) {
 			sendMessageToPanel(err.message, 'var(--color-bad-message)');
@@ -512,7 +512,7 @@ const filterQuestions = async (questions) => {
 };
 
 /**
- * Displays all Questions passed as arguments
+ * Displays all questions passed as arguments
  * @param {Array<object>} questions 
  */
 const displayQuestions = async (questions) => {
@@ -522,7 +522,7 @@ const displayQuestions = async (questions) => {
 
 	// setDetails(questions);
 
-	// Emptying Questions container
+	// Emptying questions container
 	container.innerHTML = '';
 
 	if (questions.message) {

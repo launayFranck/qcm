@@ -190,8 +190,13 @@ const destroy = async (id) => {
 			throw new Error(`${id} not found`);
 		};
 
-		const response = await knex('question').delete().where({id}).returning('*');
-		return response[0];
+		const responseResult = await knex('response').delete().where({question_id : id}).returning('*');
+		const questionResult = await knex('question').delete().where({id}).returning('*');
+
+		return {
+			question: questionResult[0],
+			responses: responseResult
+		}
 	} catch (err) {
 		throw err;
 	};

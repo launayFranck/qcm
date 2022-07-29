@@ -217,6 +217,11 @@ button.overlay-closer {
 	padding: .8rem 1.2rem;
 	color: var(--color-delete);
 }
+.delete-overlay .delete-info {
+	padding: .8rem 1.2rem;
+	color: var(--color-delete);
+	font-weight: bold;
+}
 .delete-overlay .container-header,
 .delete-overlay .delete-btn {
 	color: var(--color-bg);
@@ -480,6 +485,10 @@ input:disabled {
 	.delete-query {
 		text-align: center;
 	}
+	.delete-info {
+		text-align: center;
+	}
+
 	.delete-overlay .delete-btn-box {
 		flex-direction: row;
 		justify-content: space-around;

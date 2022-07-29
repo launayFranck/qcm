@@ -92,16 +92,16 @@ const findById = async (id) => {
 	try {
 		const result = await knex.raw(`
 			SELECT
-			"theme".title,
-			"user".username AS "managed_by",
-			"theme".created_at,
-			"theme".updated_at,
-			"user2".username AS "created_by",
-			"user3".username AS "updated_by",
-			"theme_user".created_at AS "link_created_at",
-			"theme_user".updated_at AS "link_updated_at",
-			"user4".username AS "link_created_by",
-			"user5".username AS "link_updated_by"
+				"theme".title,
+				"user".username AS "managed_by",
+				"theme".created_at,
+				"theme".updated_at,
+				"user2".username AS "created_by",
+				"user3".username AS "updated_by",
+				"theme_user".created_at AS "link_created_at",
+				"theme_user".updated_at AS "link_updated_at",
+				"user4".username AS "link_created_by",
+				"user5".username AS "link_updated_by"
 			FROM "theme"
 			JOIN "theme_user" ON "theme_user".theme_id = "theme".id
 			JOIN "user" ON "theme_user".user_id = "user".id
@@ -164,9 +164,7 @@ const create = async (payload, token) => {
 
 	try {
 		const verif = await knex('theme').select('title').where('title', '=', payload.title);
-		if (verif.length > 0) {
-			throw new Error(`Le thème ${payload.title} existe déjà`);
-		};
+		if (verif.length > 0) throw new Error(`Le thème ${payload.title} existe déjà`);
 
 		const themeResult = await knex('theme').insert(payload).returning('*');
 
@@ -178,14 +176,14 @@ const create = async (payload, token) => {
 				updated_by : themeResult[0].updated_by
 			};
 		});
-		
+
 		const userResult = await knex('theme_user').insert(usersPayload).returning('*');
 
 		const logResult = await log.create({
 			content : `$1 a créé le thème ${payload.title}`,
 			created_by : token.id
 		});
-		
+
 		return {
 			theme : themeResult[0],
 			users : userResult
@@ -316,6 +314,12 @@ const destroy = async (id, token) => {
 		// Checking the existence of the requested theme
 		const verif = await knex('theme').select('id', 'title').where({id});
 		if (verif.length <= 0) throw new Error(`${id} not found`);
+
+		const relatedQuestions = await knex('question').select().where('theme_id', '=', id);
+		for (let question of relatedQuestions) {
+			const responseResponse = await knex('response').delete().where('question_id', '=', question.id).returning('*');
+			const questionResponse = await knex('question').delete().where('id', '=', question.id).returning('*');
+		};
 
 		const linkResponse = await knex('theme_user').delete().where('theme_id', '=', id).returning('*');
 		const response = await knex('theme').delete().where({id}).returning('*');

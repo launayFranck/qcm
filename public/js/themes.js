@@ -218,10 +218,13 @@ const removeDuplicates = async (array) => {
 document.querySelector('.insert-overlay form').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	try {
-		const title = document.querySelector('.insert-overlay .title').value;
-		const description = document.querySelector('.insert-overlay .description').value;
+		const title = document.querySelector('.insert-overlay .title').value.trim();
+		if (title.length < 1) throw new Error(`Le titre du thème ne peut être vide`);
 
-		const users = await removeDuplicates(Array.from(document.querySelectorAll('.insert-overlay .charge')).map(user => user.value));
+		const description = document.querySelector('.insert-overlay .description').value.trim();
+
+		const users = await removeDuplicates(Array.from(document.querySelectorAll('.insert-overlay .removable')).map(user => user.value));
+		if (users.length < 1) throw new Error(`Veuillez attribuer au moins un utilisateur au thème ${title}`);
 
 		const insertDetails = await insertTheme({title, description, users});
 		if (insertDetails.error) throw new Error(insertDetails.error);
@@ -325,7 +328,7 @@ const setEditThemeForm = async (theme) => {
 
 	// Getting form and emptying charged users list
 	const form = document.querySelector('.edit-overlay form');
-	form.querySelectorAll('.charge-row').forEach(chargeRow => {
+	form.querySelectorAll('.removable-row').forEach(chargeRow => {
 		chargeRow.parentElement.removeChild(chargeRow);
 	});
 
@@ -334,7 +337,7 @@ const setEditThemeForm = async (theme) => {
 	theme.users.forEach(user => {
 		addChargedField(editThemeBox, user.id);
 	});
-	formClone.querySelector('.add-charged').addEventListener('click', () => {
+	formClone.querySelector('.add-removable').addEventListener('click', () => {
 		addChargedField(editThemeBox);
 	});
 
@@ -347,7 +350,7 @@ const setEditThemeForm = async (theme) => {
 		const title = document.querySelector('.edit-overlay .title');
 		const description = document.querySelector('.edit-overlay .description');
 
-		const charges = await removeDuplicates(Array.from(document.querySelectorAll('.edit-overlay .charge')).map(charge => {
+		const charges = await removeDuplicates(Array.from(document.querySelectorAll('.edit-overlay .removable')).map(charge => {
 			return charge.value;
 		}));
 
