@@ -127,11 +127,19 @@ const getAllThemes = async () => {
 	return await res.json();
 };
 
-const addThemesInSelect = async (select, id) => {
+/**
+ * 
+ * @param {*} select 
+ * @param {object} params An object inside which will be stored the id and defaultText
+ */
+const addThemesInSelect = async (select, params = {id: undefined, defaultText: "-- Sélectionnez un thème", hasHeaderOption: true}) => {
+	if (params.defaultText === undefined) params.defaultText = "-- Sélectionnez un thème";
+	if (params.hasHeaderOption === undefined) params.hasHeaderOption = true;
+
 	const { themes } = await getAllThemes();
 
-	select.innerHTML = `<option value="" disabled ${id ? '' : 'selected'}>-- Sélectionnez un thème</option>`;
-	select.innerHTML += sortByProperty(themes, 'title').map((theme) => `<option value="${theme.id}" ${id ? theme.id == id ? 'selected' : '' : ''}>${theme.title}</option>`).join('');
+	select.innerHTML = `${params.hasHeaderOption ? `<option value="" disabled ${params.id ? '' : 'selected'}>${params.defaultText}</option>` : ``}`;
+	select.innerHTML += sortByProperty(themes, 'title').map((theme) => `<option value="${theme.id}" ${params.id ? theme.id == params.id ? 'selected' : '' : ''}>${theme.title}</option>`).join('');
 };
 
 let addResponseFieldCalls = 0;
@@ -227,7 +235,7 @@ document.querySelectorAll('.overlay-closer').forEach(overlayCloser => {
 const search = document.querySelector('.search');
 const orderProperty = document.querySelector('.order-property');
 const orderAscending = document.querySelector('.order-ascending');
-const orderUser = document.querySelector('.order-user');
+const orderTheme = document.querySelector('.order-theme');
 
 // The listener for the insert question form's submit event
 document.querySelector('.insert-overlay form').addEventListener('submit', async (e) => {
@@ -468,6 +476,8 @@ const setQuestions = async () => {
 	await addThemesInSelect(document.querySelector('.insert-overlay .theme'));
 	await addThemesInSelect(document.querySelector('.edit-overlay .theme'));
 
+	await addThemesInSelect(document.querySelector('.filter-params .order-theme'), {defaultText: "Tous les thèmes"});
+
 	search.addEventListener('input', async () => {
 		await displayQuestions(await filterQuestions(questions));
 	});
@@ -477,9 +487,9 @@ const setQuestions = async () => {
 	orderAscending.addEventListener('change', async () => {
 		await displayQuestions(await filterQuestions(questions));
 	});
-	// orderUser.addEventListener('change', async () => {
-	// 	await displayQuestions(await filterQuestions(questions));
-	// });
+	orderTheme.addEventListener('change', async () => {
+		await displayQuestions(await filterQuestions(questions));
+	});
 
 	await displayQuestions(await filterQuestions(questions));
 };
@@ -513,11 +523,11 @@ const filterQuestions = async (questions) => {
 	;
 	if (tmp.length < 1) return {message : "Aucune question ne correspond à ces critères"};
 
-	// tmp = orderUser.value ?
-	// 	tmp.filter(question => question.users.map(user => user.name).includes(orderUser.value))
-	// 	:
-	// 	tmp
-	// ;
+	tmp = orderTheme.value ?
+		tmp.filter(question => question.theme_id == orderTheme.value)
+		:
+		tmp
+	;
 
 	if (tmp.length < 1) return {message : "Aucune question ne correspond à ces critères"};
 
@@ -549,7 +559,6 @@ const displayQuestions = async (questions) => {
 	};
 	// Looping on all sorted questions to add them one by one
 	const sortedQuestions = sortByProperty(questions, orderProperty.value, JSON.parse(orderAscending.value));
-	console.log(sortedQuestions);
 	sortedQuestions.forEach(question => {
 		const cardContainer = document.createElement('div');
 		cardContainer.classList.add('card-container');
