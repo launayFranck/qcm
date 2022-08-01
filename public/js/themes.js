@@ -229,7 +229,7 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 		const insertDetails = await insertTheme({title, description, users});
 		if (insertDetails.error) throw new Error(insertDetails.error);
 
-		console.log(insertDetails);
+		// console.log(insertDetails);
 
 		sendMessageToPanel(`Le thème "${insertDetails.theme.theme.title}" a été créé`, 'var(--color-good-message)');
 		await setThemes();
@@ -374,7 +374,7 @@ const setEditThemeForm = async (theme) => {
 			const updateThemeDetails = await updateTheme(theme.id, payload);
 			if (updateThemeDetails.error) throw new Error(updateThemeDetails.error);
 
-			console.log(updateThemeDetails);
+			// console.log(updateThemeDetails);
 			
 			await setThemes();
 			sendMessageToPanel(`Le thème "${theme.title}" a été modifié`, 'var(--color-good-message)');
@@ -562,7 +562,6 @@ const displayThemes = async (themes) => {
 		const card = document.createElement('article');
 		card.classList.add('theme-card');
 
-		console.log(title, theme.created_at);
 		card.innerHTML = `
 			<div class="theme-title">
 				<h2>${title}</h2>

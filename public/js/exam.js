@@ -13,6 +13,9 @@ const detailsChapterBox = document.querySelector(".details-overlay.chapter-overl
 const editChapterBox = document.querySelector(".edit-overlay.chapter-overlay");
 const deleteChapterBox = document.querySelector(".delete-overlay.chapter-overlay");
 
+const insertQuestionBox = document.querySelector(".insert-overlay.question-overlay");
+const deleteQuestionBox = document.querySelector(".insert-overlay.question-overlay");
+
 overlayBg.addEventListener('click', () => {
 	displayOverlay(false);
 });
@@ -133,6 +136,19 @@ const getQuestionsByChapterId = async (id) => {
 	return await res.json();
 };
 
+const getQuestionsByThemeId = async (themeId) => {
+	const res = await fetch(`${hostname}/api/questions/theme/${themeId}`, {
+		method: 'GET',
+		credentials: 'include',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+		}
+	});
+	return await res.json();
+};
+
 /**
  * Fetches all responses linked to a specific question
  * @param {number} id The id of the question from which to get all responses
@@ -149,7 +165,16 @@ const getResponsesByQuestionId = async (id) => {
 		}
 	});
 	return await res.json();
-}
+};
+
+const addQuestionsInSelect = async (select, themeId) => {
+	console.log(themeId);
+	const { questions } = await getQuestionsByThemeId(themeId);
+	console.log(questions);
+
+	select.innerHTML = `<option value="" disabled ${themeId ? '' : 'selected'}>-- Sélectionnez un thème</option>`;
+	select.innerHTML += sortByProperty(questions, 'title').map((question) => `<option value="${question.id}" ${themeId ? question.theme_id == themeId ? 'selected' : '' : ''}>${question.title}</option>`).join('');
+};
 
 // The listener for the insert examination form's submit event
 document.querySelector('.insert-overlay.chapter-overlay form').addEventListener('submit', async (e) => {
@@ -235,7 +260,7 @@ const setDetails = async (examinations) => {
  */
 const setEditChapterForm = async (chapter) => {
 	// Getting form and emptying charged users list
-	const form = document.querySelector('.edit-overlay form');
+	const form = document.querySelector('.edit-overlay.chapter-overlay form');
 
 	// Cloning the form to remove all the event listeners
 	const formClone = form.cloneNode(true);
@@ -307,6 +332,12 @@ const setDeleteChapterForm = async (chapter) => {
 	displayOverlay(true, deleteChapterBox);
 };
 
+const setInsertQuestionForm = async (id) => {
+	console.log("setInsertQuestionForm");
+	console.log(id);
+	// const formClone = insertQuestionBox.querySelector('form');
+};
+
 /**
  * Builds the exam section depending on an examination's id
  * @param {number} examId The id of the exam on which to base the page's content
@@ -321,6 +352,10 @@ const buildExam = async (examId) => {
 		const examContainer = document.querySelector('#exam-container');
 		examContainer.innerHTML = '';
 
+		console.log(insertQuestionBox.querySelector('select'));
+		console.log(examination.examination);
+		await addQuestionsInSelect(insertQuestionBox.querySelector('select'), examination.examination.theme_id);
+
 		// Adding the exam info banner
 		const examInfo = document.createElement('div');
 		examInfo.classList.add('exam-info');
@@ -330,7 +365,7 @@ const buildExam = async (examId) => {
 
 		const examTheme = document.createElement('p');
 		examTheme.classList.add('exam-theme');
-		examTheme.textContent = examination.examination.theme;
+		examTheme.textContent = examination.examination.theme_title;
 		examInfo.appendChild(examTheme);
 
 		examContainer.appendChild(examInfo);
@@ -402,9 +437,10 @@ const buildExam = async (examId) => {
 				const insertQuestion = document.createElement('button');
 				insertQuestion.classList.add('insert-question');
 				insertQuestion.setAttribute('title', "Cliquez ici pour ajouter une question dans ce chapitre");
-				insertQuestion.addEventListener('click', () => {
-					console.log("Show insert question overlay here");
-					console.log(chapter.id);
+				insertQuestion.addEventListener('click', (e) => {
+					e.stopPropagation();
+					setInsertQuestionForm(chapter.id);
+					displayOverlay(true, insertQuestionBox);
 				});
 				buttonContainer.appendChild(insertQuestion);
 	
@@ -450,18 +486,6 @@ const buildExam = async (examId) => {
 				// --- Questions part
 				const questionsContainer = document.createElement('div');
 				questionsContainer.classList.add('questions-container');
-
-				// The insert question box
-				const insertQuestionBox = document.createElement('div');
-				insertQuestionBox.classList.add('insert-question-box');
-				const insertQuestionBtn = document.createElement('button');
-				insertQuestionBtn.innerHTML = `
-					<img src="/img/plus.svg" alt="+">
-					Ajouter une question
-				`;
-
-				insertQuestionBox.appendChild(insertQuestionBtn);
-				questionsContainer.appendChild(insertQuestionBox);
 
 				const questions = await getQuestionsByChapterId(chapter.id);
 				if (questions.error) throw new Error(questions.error);

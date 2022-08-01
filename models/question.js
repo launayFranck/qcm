@@ -61,7 +61,7 @@ const findById = async (id) => {
  * @param {number} id the wanted id
  * @returns {question} the question
  */
- const findByChapterId = async (id) => {
+const findByChapterId = async (id) => {
 	try {
 		const result = await knex('question').join('chapter', 'chapter.id', '=', 'question.chapter_id').select(
 			'question.id',
@@ -70,6 +70,7 @@ const findById = async (id) => {
 			'question.correction',
 			'question.active',
 			'question.chapter_id',
+			'question.theme_id',
 			'question.created_at',
 			'question.updated_at',
 			'question.created_by',
@@ -80,7 +81,37 @@ const findById = async (id) => {
 		throw err;
 	};
 };
- 
+
+/**
+ * Getting all the questions by theme id
+ * @async
+ * @param {number} id the wanted theme id
+ * @returns {question} the question
+ */
+const findByThemeId = async (id) => {
+	try {
+		const result = await knex.raw(`
+			SELECT
+				question.id,
+				question.title,
+				question.score,
+				question.correction,
+				question.active,
+				question.chapter_id,
+				question.theme_id,
+				question.created_at,
+				question.updated_at,
+				question.created_by,
+				question.updated_by'
+			FROM question
+			WHERE question.theme_id = ?
+		`, [id]);
+		return result.rows;
+	} catch (err) {
+		throw err;
+	};
+};
+
 /**
  * Get a question by its name in the database and returns in an object
  * @async
@@ -232,7 +263,7 @@ export default {
 	findAll,
 	findById,
     findByChapterId,
-	findByName,
+	findByThemeId,
 	create,
 	update,
 	destroy

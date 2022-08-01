@@ -44,7 +44,8 @@ const findById = async (id) => {
 			'examination.created_by',
 			'examination.updated_by',
 			'examination.title',
-			'theme.title AS theme',
+			'examination.theme_id',
+			'theme.title AS theme_title',
 			'examination.description',
 			'examination.always_available',
 		).where('examination.id', '=', id).first();
