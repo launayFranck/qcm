@@ -232,7 +232,7 @@ const sendMessageToPanel = async (msg, color) => {
  * @param {boolean} asc Specifies the order of the required informations
  * @returns {Array<object>} The sorted array
  */
- const sortByProperty = (array, property, asc = true) => {
+const sortByProperty = (array, property, asc = true) => {
 	try {
 		/**
 		 * Turns a value into an easy sortable value
@@ -240,7 +240,14 @@ const sendMessageToPanel = async (msg, color) => {
 		 * @returns {any} The converted value
 		 */
 		const makeSortable = (el) => {
-			return Array.isArray(el) ? el.length : el.toLowerCase();
+			return Array.isArray(el) ?
+				el.length
+				:
+				Number.isInteger(el) ?
+					el
+					:
+					el.toLowerCase()
+			;
 		};
 		
 		const res = array.sort((a, b) => makeSortable(a[property]) > makeSortable(b[property]) ?

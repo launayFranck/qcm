@@ -317,7 +317,9 @@ main {
 }
 
 .response-box .response-img {
+	min-width: 3.2rem;
 	width: 3.2rem;
+	min-height: 3.2rem;
 	height: 3.2rem;
 	margin-right: .8rem;
 	mask: url('/img/checked.svg') no-repeat center / contain;

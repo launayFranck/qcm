@@ -477,9 +477,9 @@ const setQuestions = async () => {
 	orderAscending.addEventListener('change', async () => {
 		await displayQuestions(await filterQuestions(questions));
 	});
-	orderUser.addEventListener('change', async () => {
-		await displayQuestions(await filterQuestions(questions));
-	});
+	// orderUser.addEventListener('change', async () => {
+	// 	await displayQuestions(await filterQuestions(questions));
+	// });
 
 	await displayQuestions(await filterQuestions(questions));
 };
@@ -498,6 +498,8 @@ const filterQuestions = async (questions) => {
 		questions.filter(question => {
 			// Checking if the search query contains any of the following values
 			const res = [
+				`#q${question.id}`,
+				question.theme_title.toLowerCase(),
 				question.title.toLowerCase(),
 				formatDate(question.created_at),
 				formatDate(question.updated_at),
@@ -511,11 +513,11 @@ const filterQuestions = async (questions) => {
 	;
 	if (tmp.length < 1) return {message : "Aucune question ne correspond à ces critères"};
 
-	tmp = orderUser.value ?
-		tmp.filter(question => question.users.map(user => user.name).includes(orderUser.value))
-		:
-		tmp
-	;
+	// tmp = orderUser.value ?
+	// 	tmp.filter(question => question.users.map(user => user.name).includes(orderUser.value))
+	// 	:
+	// 	tmp
+	// ;
 
 	if (tmp.length < 1) return {message : "Aucune question ne correspond à ces critères"};
 
@@ -547,6 +549,7 @@ const displayQuestions = async (questions) => {
 	};
 	// Looping on all sorted questions to add them one by one
 	const sortedQuestions = sortByProperty(questions, orderProperty.value, JSON.parse(orderAscending.value));
+	console.log(sortedQuestions);
 	sortedQuestions.forEach(question => {
 		const cardContainer = document.createElement('div');
 		cardContainer.classList.add('card-container');
