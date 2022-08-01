@@ -149,7 +149,8 @@ const addResponseField = async (node, response) => {
 		removableRow.classList.add('removable-row');
 
 		// "Button" (input type radio) to select the correct response
-		const responseTag = `resp-${(new Date()).getTime()}`;
+		const responseTag = `resp-${(new Date()).getTime()}-${Math.floor(Math.random() * 1000000)}-${addResponseFieldCalls}`;
+		console.log(responseTag);
 
 		const correct = document.createElement('input');
 		correct.type = "radio";
@@ -171,7 +172,13 @@ const addResponseField = async (node, response) => {
 		input.classList.add('response');
 		input.type = 'text';
 		input.setAttribute('id', responseTag);
-		if (response) input.value = response.title;
+		if (response) input.value = (response.title.split('<br>')).map((txt, i) => {
+			if (i === (response.title.split('<br>')).length - 1) {
+				return txt;
+			} else {
+				return txt + "\n";
+			}
+		});
 		removableRow.appendChild(input);
 	
 		// "Button" (div) for removing a response linked to a question
@@ -363,7 +370,10 @@ const setEditQuestionForm = async (question) => {
 	// Replacing the previous form with the freshly created clone
 	form.parentNode.replaceChild(formClone, form);
 
-	formClone.querySelector(`.title`).value = question.title;
+	// Setting the questions' title into the edit form, replacing all the <br> with line breaks (\n)
+	formClone.querySelector(`.title`).value = (question.title.split('<br>')).map((txt, i) => {
+		return `${txt}${i === (question.title.split('<br>')).length - 1 ? '' : '\n'}`;
+	}).join('');
 	formClone.querySelector(`.correction`).value = question.correction;
 	formClone.querySelector(`.theme`).value = question.theme_id;
 	question.responses.forEach(response => {
@@ -403,7 +413,7 @@ const setEditQuestionForm = async (question) => {
 
 			console.log(editDetails);
 			addResponseFieldCalls = 0;
-			sendMessageToPanel(`La question "${editDetails.question.title}" a été mise à jour`, 'var(--color-good-message)');
+			sendMessageToPanel(`La question "${editDetails.question.title.split('<br>').map(txt => txt).join(' ')}" a été mise à jour`, 'var(--color-good-message)');
 			await setQuestions();
 			displayOverlay(false);
 			e.target.reset();

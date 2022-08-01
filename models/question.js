@@ -165,6 +165,7 @@ const create = async (payload, token) => {
  */
 const update = async (id, payload, token) => {
 	try {
+		payload.updated_at = new Date();
 		payload.updated_by = token.id;
 
 		const { responses } = payload;
@@ -174,7 +175,6 @@ const update = async (id, payload, token) => {
 		if (verif.length <= 0) {
 			throw new Error(`id ${id} not found`);
 		};
-		console.log(payload);
 		const questionResult = await knex('question').update(payload).where({id}).returning('*');
 
 		const responsesPayload = responses.map(response => {
