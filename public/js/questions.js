@@ -249,7 +249,10 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 
 		const theme = document.querySelector('.insert-overlay .theme').value.trim();
 		if (theme.length < 1) throw new Error(`Le thème ne peut être vide`);
-		console.log('theme', theme);
+
+		const score = document.querySelector('.insert-overlay .score').value.trim();
+		if ((score.toString()).length < 1) throw new Error(`Le score ne peut être vide`);
+		if (score < 0) throw new Error(`Le score ne peut être négatif`);
 
 		const responses = Array.from(document.querySelectorAll('.insert-overlay .removable-row')).map(row => {
 			if ((row.querySelector('.response').value.trim()).length < 1) throw new Error('Veuillez compléter les champs des réponses');
@@ -264,13 +267,14 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 			title,
 			correction,
 			theme_id : parseInt(theme),
+			score,
 			responses
 		});
 		if (insertDetails.error) throw new Error(insertDetails.error);
+		console.log(insertDetails.question);
 
-		// console.log(insertDetails);
 		addResponseFieldCalls = 0;
-		// sendMessageToPanel(`La question "${insertDetails.question.question.title}" a été créée`, 'var(--color-good-message)');
+		sendMessageToPanel(`La question #Q${insertDetails.question.question.id} a été créée`, 'var(--color-good-message)');
 		await setQuestions();
 		displayOverlay(false);
 		e.target.reset();
@@ -383,6 +387,7 @@ const setEditQuestionForm = async (question) => {
 		return `${txt}${i === (question.title.split('<br>')).length - 1 ? '' : '\n'}`;
 	}).join('');
 	formClone.querySelector(`.correction`).value = question.correction;
+	formClone.querySelector(`.score`).value = question.score;
 	formClone.querySelector(`.theme`).value = question.theme_id;
 	question.responses.forEach(response => {
 		addResponseField(formClone, response);
@@ -400,7 +405,10 @@ const setEditQuestionForm = async (question) => {
 
 			const theme = formClone.querySelector('.theme').value.trim();
 			if (theme.length < 1) throw new Error(`Le thème ne peut être vide`);
-			console.log('theme', theme);
+
+			const score = formClone.querySelector('.score').value.trim();
+			if (score.length < 1) throw new Error(`Le score ne peut être vide`);
+			if (score < 0) throw new Error(`Le score ne peut être négatif`);
 
 			const responses = Array.from(formClone.querySelectorAll('.removable-row')).map(row => {
 				if ((row.querySelector('.response').value.trim()).length < 1) throw new Error('Veuillez compléter les champs des réponses');
@@ -415,13 +423,14 @@ const setEditQuestionForm = async (question) => {
 				title : (title.split(/\n/)).join('<br>'),
 				correction,
 				theme_id : parseInt(theme),
+				score,
 				responses
 			});
 			if (editDetails.error) throw new Error(editDetails.error);
 
 			console.log(editDetails);
 			addResponseFieldCalls = 0;
-			sendMessageToPanel(`La question "${editDetails.question.title.split('<br>').map(txt => txt).join(' ')}" a été mise à jour`, 'var(--color-good-message)');
+			sendMessageToPanel(`La question #Q${editDetails.question.question.id} a été mise à jour`, 'var(--color-good-message)');
 			await setQuestions();
 			displayOverlay(false);
 			e.target.reset();
@@ -539,7 +548,7 @@ const filterQuestions = async (questions) => {
  * @param {Array<object>} questions 
  */
 const displayQuestions = async (questions) => {
-	const container = document.querySelector('#questions-container'); 
+	const container = document.querySelector('#questions-container');
 	const cardsBox = document.createElement('div');
 	cardsBox.classList.add('cards-box');
 
@@ -583,11 +592,26 @@ const displayQuestions = async (questions) => {
 		const questionText = document.createElement('div');
 		questionText.classList.add('question-text');
 
+		const questionRow = document.querySelector('div');
+		questionRow.classList.add('question-row');
+
 		const questionTheme = document.createElement('div');
 		questionTheme.classList.add('question-theme');
-		questionTheme.innerText = question.theme_title;
-		questionText.appendChild(questionTheme);
-		
+		questionTheme.innerHTML = `
+			<div class="theme-icon"></div>
+			<p>${question.theme_title}</p>
+		`;
+		questionRow.appendChild(questionTheme);
+
+		const questionScore = document.createElement('div');
+		questionScore.classList.add('question-score');
+		questionScore.innerHTML = `
+			<div class="score-icon"></div>
+			<p>${question.theme_title}</p>
+		`;
+		questionRow.appendChild(questionScore);
+		questionText.appendChild(questionRow);
+
 		const questionTitle = document.createElement('div');
 		questionTitle.classList.add('question-title');
 		questionTitle.innerHTML = (question.title.split('<br>')).map(txt => `<p>${txt.trim()}</p>`).join('');

@@ -8,7 +8,6 @@ import log from './log.js';
  */
 const findAll = async () => {
 	try {
-		// const result = await knex('question').select().orderBy('id');
 		const result = await knex.raw(`
 			SELECT
 				"question".id,
@@ -33,7 +32,6 @@ const findAll = async () => {
 			const responses = await knex('response').select().where('question_id', '=', question.id);
 			result.rows[i].responses = responses;
 		};
-
 		return result.rows;
 	} catch (err) {
 		throw err;
@@ -90,6 +88,7 @@ const findByChapterId = async (id) => {
  */
 const findByThemeId = async (id) => {
 	try {
+		console.log(id);
 		const result = await knex.raw(`
 			SELECT
 				question.id,
@@ -106,26 +105,8 @@ const findByThemeId = async (id) => {
 			FROM question
 			WHERE question.theme_id = ?
 		`, [id]);
+		console.log(result.rows);
 		return result.rows;
-	} catch (err) {
-		throw err;
-	};
-};
-
-/**
- * Get a question by its name in the database and returns in an object
- * @async
- * @param {string} name
- * @returns {object} the wanted question 
- */
-const findByName = async (name) => {
-	name = name.trim();
-	try {
-		if (name === "") {
-			throw new Error("Veuillez entrer un nom de question valide.");
-		};
-		const result = await knex("question").select().whereRaw('LOWER(title) = ?', [name]).first();
-		return result;
 	} catch (err) {
 		throw err;
 	};
@@ -145,7 +126,7 @@ const create = async (payload, token) => {
 
 	// Removing unallowed properties from payload
 	Object.keys(payload).forEach(property => {
-		if (!['title', 'correction', 'theme_id', 'created_by', 'updated_by'].includes(property)) {
+		if (!['title', 'correction', 'score', 'theme_id', 'created_by', 'updated_by'].includes(property)) {
 			delete payload[property];
 		};
 	});
@@ -207,6 +188,7 @@ const update = async (id, payload, token) => {
 			throw new Error(`id ${id} not found`);
 		};
 		const questionResult = await knex('question').update(payload).where({id}).returning('*');
+		// console.log(questionResult);
 
 		const responsesPayload = responses.map(response => {
 			return {
@@ -218,6 +200,11 @@ const update = async (id, payload, token) => {
 			};
 		});
 
+		const verifResponses = await knex('response').select().where('question_id', '=', id);
+
+		for (const response of verifResponses) {
+			// console.log(response);
+		};
 		const deletingResponses = await knex('response').delete().where('question_id', '=', id);
 		const responsesResult = await knex('response').insert(responsesPayload).where('question_id', '=', id);
 

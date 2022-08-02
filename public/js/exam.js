@@ -167,13 +167,13 @@ const getResponsesByQuestionId = async (id) => {
 	return await res.json();
 };
 
-const addQuestionsInSelect = async (select, themeId) => {
-	console.log(themeId);
-	const { questions } = await getQuestionsByThemeId(themeId);
-	console.log(questions);
+const addQuestionsInSelect = async (select, themeId, params = {defaultText : '-- Sélectionnez une question'}) => {
+	if (!params.defaultText) params.defaultText = '-- Sélectionnez une question';
 
-	select.innerHTML = `<option value="" disabled ${themeId ? '' : 'selected'}>-- Sélectionnez un thème</option>`;
-	select.innerHTML += sortByProperty(questions, 'title').map((question) => `<option value="${question.id}" ${themeId ? question.theme_id == themeId ? 'selected' : '' : ''}>${question.title}</option>`).join('');
+	const { questions } = await getQuestionsByThemeId(themeId);
+
+	select.innerHTML = `<option value="" disabled selected>${params.defaultText}</option>`;
+	select.innerHTML += sortByProperty(questions, 'id').map((question) => `<option value="${question.id}">#Q${question.id} : ${question.title}</option>`).join('');
 };
 
 // The listener for the insert examination form's submit event

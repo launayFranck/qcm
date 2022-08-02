@@ -68,7 +68,6 @@ router.get('/theme/:id', async (req, res) => {
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
 			if (err) throw err;
 			try {
-				console.log(req.params.id);
 				const result = await question.findByChapterId(req.params.id);
 				res.status(200).json({questions : result});
 			} catch (err) {
@@ -88,7 +87,7 @@ router.post("/", async (req, res) => {
 			if (err) throw err;
 			try {
 				const response = await question.create(req.body, user);
-				res.status(201).json(response);
+				res.status(201).json({question : response});
 			} catch (err) {
 				res.status(400).json({error : err.message});
 			};
@@ -106,7 +105,7 @@ router.put('/:id', async (req, res) => {
 			if (err) throw err;
 			try {
 				const response = await question.update(req.params.id, req.body, user);
-				res.status(200).json(response);
+				res.status(200).json({question : response});
 			} catch (err) {
 				res.status(400).json({error : err.message});
 			};
