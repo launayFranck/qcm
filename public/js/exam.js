@@ -119,6 +119,24 @@ const getChaptersByExamId = async (id) => {
 };
 
 /**
+ * Fetches a specific question by its id
+ * @param {number} id The id of the desired question
+ * @returns {Array<object>} The questions linked to the specified chapter
+ */
+ const getQuestionById = async (id) => {
+	const res = await fetch(`${hostname}/api/questions/${id}`, {
+		method: 'GET',
+		credentials: 'include',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+		}
+	});
+	return await res.json();
+};
+
+/**
  * Fetches all questions linked to a specific chapter
  * @param {number} id The id of the chapter from which to get all questions
  * @returns {Array<object>} The questions linked to the specified chapter
@@ -145,6 +163,26 @@ const getQuestionsByThemeId = async (themeId) => {
 			'Content-Type': 'application/json',
 			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
 		}
+	});
+	return await res.json();
+};
+
+/**
+ * Updates a question from the DB
+ * @param {number} id Integer referring to a question's id
+ * @param {object} payload An object containing the properties to modify
+ * @returns {object} The updated question
+ */
+const updateQuestion = async (id, payload) => {
+	const res = await fetch(`${hostname}/api/questions/${id}`, {
+		method: 'PUT',
+		credentials:'include',
+		cache:'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('Authorization')}`
+		},
+		body: JSON.stringify(payload)
 	});
 	return await res.json();
 };
@@ -332,10 +370,41 @@ const setDeleteChapterForm = async (chapter) => {
 	displayOverlay(true, deleteChapterBox);
 };
 
-const setInsertQuestionForm = async (id) => {
-	console.log("setInsertQuestionForm");
-	console.log(id);
-	// const formClone = insertQuestionBox.querySelector('form');
+/**
+ * Changes the insert question overlay
+ * @param {number} chapterId 
+ */
+const setInsertQuestionForm = async (chapterId) => {
+	const form = insertQuestionBox.querySelector('form');
+
+	const formClone = form.cloneNode(true);
+	const select = formClone.querySelector('.question');
+	select.addEventListener('change', async () => {
+		try {
+			const { question } = await getQuestionById(select.value);
+			console.log(question);
+
+			formClone.querySelector('.question-title').innerHTML = question.title.split('<br>').map(txt => `<p>${txt}</p>`).join('');
+			formClone.querySelector('.question-correction .correction-text').innerHTML = question.correction.split('<br>').map(txt => `<p>${txt}</p>`).join('');
+			formClone.querySelector('.question-responses').innerHTML = question.responses.map(response => {
+				return `
+					<div class="response-box response-${JSON.stringify(response.correct)}">
+						<div class="response-img"></div>
+						<p class="text">${response.title}</p>
+					</div>
+				`;
+			}).join('');
+		} catch (err) {
+			console.error(err.message);
+		};
+	});
+
+	formClone.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		await updateQuestion(select.value, {chapter_id : chapterId});
+	});
+
+	form.parentNode.replaceChild(formClone, form);
 };
 
 /**
@@ -543,9 +612,10 @@ const buildExam = async (examId) => {
 								// console.log(response);
 								const responseBox = document.createElement('div');
 								responseBox.classList.add('response-box');
+								responseBox.classList.add(`response-${JSON.stringify(response.correct)}`);
 
 								responseBox.innerHTML = `
-									<div class='response-${JSON.stringify(response.correct)}'></div>
+									<div class='response-img'></div>
 									<p>${response.title}</p>
 								`;
 								responsesContainer.appendChild(responseBox);

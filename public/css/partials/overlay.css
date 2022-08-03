@@ -501,3 +501,41 @@ input:disabled {
 		width: 100%;
 	}
 }
+
+/* --- Exam Page - Insert question form --- */
+
+.question-overlay .input-box {
+	max-width: 100%;
+}
+
+.question-overview {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	margin: .8rem;
+	border-radius: .4rem;
+	background-color: var(--color-bg-alt);
+}
+
+.question-overview .question-title {
+	margin: .8rem;
+	color: var(--color-text);
+}
+.question-overview .question-correction {
+	display: flex;
+	margin: .8rem;
+	color: var(--color-insert);
+}
+.question-overview .question-correction .head {
+	font-weight: bold;
+	margin-right: .8rem;
+}
+.question-overview hr {
+	margin: .8rem;
+	height: .1rem;
+	background-color: var(--color-bg-alt2);
+	border: none;
+}
+.question-overview .question-responses {
+	margin: .8rem;
+}

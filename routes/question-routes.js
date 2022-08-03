@@ -68,7 +68,7 @@ router.get('/theme/:id', async (req, res) => {
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
 			if (err) throw err;
 			try {
-				const result = await question.findByChapterId(req.params.id);
+				const result = await question.findByThemeId(req.params.id);
 				res.status(200).json({questions : result});
 			} catch (err) {
 				res.status(400).json({error : err.message});

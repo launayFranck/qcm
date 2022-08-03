@@ -46,8 +46,28 @@ const findAll = async () => {
  */
 const findById = async (id) => {
 	try {
-		const result = await knex('question').select().where({id});
-		return result;
+		const result = await knex.raw(`
+			SELECT
+				"question".id,
+				"question".title,
+				"question".chapter_id,
+				"question".theme_id,
+				"theme".title AS theme_title,
+				"question".score,
+				"question".correction,
+				"question".active,
+				"question".created_at,
+				"question".updated_at,
+				"creator".username AS "created_by",
+				"updator".username AS "updated_by"
+			FROM "question"
+			JOIN "theme" ON "question".theme_id = "theme".id
+			JOIN "user" AS "creator" ON "question".created_by = "creator".id
+			JOIN "user" as "updator" ON "question".updated_by = "updator".id
+			WHERE question.id = ?;
+		`, [id]);
+		result.rows[0].responses = await knex('response').select().where('question_id', '=', id);
+		return result.rows[0];
 	} catch (err) {
 		throw err;
 	};
@@ -101,7 +121,7 @@ const findByThemeId = async (id) => {
 				question.created_at,
 				question.updated_at,
 				question.created_by,
-				question.updated_by'
+				question.updated_by
 			FROM question
 			WHERE question.theme_id = ?
 		`, [id]);

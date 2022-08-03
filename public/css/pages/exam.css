@@ -352,32 +352,34 @@ main {
 	border-radius: .4rem;
 	overflow: hidden;
 }
-
-.response-box .response-true,
-.response-box .response-false {
-	display: flex;
-	align-self: stretch;
+.response-box .response-img {
+	min-width: 3.2rem;
 	width: 3.2rem;
-	/* height: 3.2rem; */
-	/* height: 100%; */
-	border-radius: .2rem;
-	background-position: center;
-	background-size: 50%;
-	background-repeat: no-repeat;
+	min-height: 3.2rem;
+	height: 3.2rem;
+	margin: .4rem;
+	mask: url('/img/checked.svg') no-repeat center / contain;
 }
 
-.response-box .response-true {
+.response-true .response-img {
 	background-color: var(--color-insert);
-	background-image: url('/img/check.svg');
 }
-.response-box .response-false {
-	background-color: var(--color-bg-alt3);
-	background-image: url('/img/cross.svg');
+.response-false .response-img {
+	background-color: var(--color-bg-alt2);
+}
+.response-true .response-title {
+	color: var(--color-insert);
+}
+.response-false .response-title {
+	color: var(--color-text);
 }
 
-.response-box p {
+.response-box .text {
 	display: flex;
 	padding: .8rem 1.2rem;
+}
+.response-box.response-true .text {
+	color: var(--color-insert);
 }
 
 @media screen and (max-width: 680px) {
