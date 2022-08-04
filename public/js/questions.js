@@ -598,7 +598,7 @@ const displayQuestions = async (questions) => {
 		const questionTheme = document.createElement('div');
 		questionTheme.classList.add('question-theme');
 		questionTheme.innerHTML = `
-			<div class="theme-icon"></div>
+			<div class="icon"></div>
 			<p>${question.theme_title}</p>
 		`;
 		questionRow.appendChild(questionTheme);
@@ -606,7 +606,7 @@ const displayQuestions = async (questions) => {
 		const questionScore = document.createElement('div');
 		questionScore.classList.add('question-score');
 		questionScore.innerHTML = `
-			<div class="score-icon"></div>
+			<div class="icon"></div>
 			<p>${question.score}</p>
 		`;
 		questionRow.appendChild(questionScore);

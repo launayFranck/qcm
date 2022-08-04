@@ -537,7 +537,7 @@ const displayExaminations = async (examinations) => {
 
 		const input = document.createElement('input');
 		input.type = 'checkbox';
-		
+
 		if (examination.active) {
 			input.setAttribute('checked', '');
 		} else {

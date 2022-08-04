@@ -245,8 +245,30 @@ main {
 .question-card .question-text .question-title p {
 	line-height: 2rem;
 }
-.question-card .question-text .question-theme {
+.question-card .question-text .question-row {
+	display: flex;
+	justify-content: space-between;
+}
+.question-card .question-theme,
+.question-card .question-score {
+	display: flex;
+	align-items: center;
 	margin: .8rem 0;
+}
+.question-card .question-theme .icon,
+.question-card .question-score .icon {
+	min-height: 1.6rem;
+	min-width: 1.6rem;
+	height: 1.6rem;
+	width: 1.6rem;
+	margin-right: .4rem;
+	background-color: var(--color-bg-alt2);
+}
+.question-card .question-theme .icon {
+	mask: url('/img/palette.svg') no-repeat center / contain;
+}
+.question-card .question-score .icon {
+	mask: url('/img/checked.svg') no-repeat center / contain;
 }
 
 .show-content-btn {
