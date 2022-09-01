@@ -144,10 +144,13 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 		if (insertDetails.error) throw new Error(insertDetails.error);
 
 		await setUsers();
+
+		sendMessageToPanel(`L'utilisateur ${user.firstname} ${user.lastname} (${user.username}) a été créé`, 'var(--color-delete)');
+
 		displayOverlay(false);
 		e.target.reset();
 	} catch (err) {
-		sendMessageToPanel(err.message, 'var(--color-red)');
+		sendMessageToPanel(err.message, 'var(--color-delete)');
 	};
 });
 
@@ -372,10 +375,10 @@ const setDeleteUserForm = async (user) => {
 			const deleteDetails = await deleteUser(user.id);
 
 			await setUsers();
-			sendMessageToPanel(`L'utilisateur ${user.firstname} ${user.lastname} (${user.username}) a été supprimé`, 'var(--color-green)');
+			sendMessageToPanel(`L'utilisateur ${user.firstname} ${user.lastname} (${user.username}) a été supprimé`, 'var(--color-insert)');
 			displayOverlay(false);
 		} catch (err) {
-			sendMessageToPanel(err.message, 'var(--color-red)');
+			sendMessageToPanel(err.message, 'var(--color-delete)');
 		};
 	});
 

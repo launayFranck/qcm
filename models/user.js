@@ -175,7 +175,7 @@ const create = async (payload) => {
 		Object.keys(payload).forEach(property => {
 			if (!["username", "firstname", "lastname", "email", "phone", "password", "role"].includes(property)) {
 				throw new Error(`Forbidden property : ${property}`);
-			};
+			}; 
 		});
 
 		// Hashing password and setting role if undefined

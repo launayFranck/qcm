@@ -198,6 +198,7 @@ const create = async (payload, token) => {
  * @async
  * @param {number} id of a theme
  * @param {object} payload with the new informations
+ * @param {object} token containing the logged user's info
  */
 const update = async (id, payload, token) => {
 	try {

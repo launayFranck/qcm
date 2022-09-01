@@ -236,7 +236,7 @@ const sortByProperty = (array, property, asc = true) => {
 	try {
 		/**
 		 * Turns a value into an easy sortable value
-		 * @param {any} el The value to convert in order to making it "sortable"
+		 * @param {any} el The value to convert in order to make it "sortable"
 		 * @returns {any} The converted value
 		 */
 		const makeSortable = (el) => {
