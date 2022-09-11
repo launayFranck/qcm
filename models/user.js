@@ -175,7 +175,7 @@ const create = async (payload) => {
 		Object.keys(payload).forEach(property => {
 			if (!["username", "firstname", "lastname", "email", "phone", "password", "role"].includes(property)) {
 				throw new Error(`Forbidden property : ${property}`);
-			}; 
+			};
 		});
 
 		// Hashing password and setting role if undefined
@@ -188,7 +188,7 @@ const create = async (payload) => {
 		const verif = await knex('user').select('id').whereRaw('username = ? OR email = ?', [payload.username, payload.email]);
 		if (verif.length > 0) throw new Error('Username or email already taken');
 
-		const result = await knex('user').insert(payload).returning(
+		const result = await knex('user').insert(payload).returning([
 			"id",
 			"username",
 			"firstname",
@@ -199,7 +199,7 @@ const create = async (payload) => {
 			"activated",
 			"created_at",
 			"updated_at"
-		);
+		]);
 		return result[0];
 	} catch (err) {
 		throw err;

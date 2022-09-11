@@ -141,12 +141,12 @@ document.querySelector('.insert-overlay form').addEventListener('submit', async 
 			password : password.value,
 			role : role.value
 		});
+
 		if (insertDetails.error) throw new Error(insertDetails.error);
+		
+		sendMessageToPanel(`L'utilisateur ${insertDetails.users.firstname} ${insertDetails.users.lastname} (${insertDetails.users.username}) a été créé`, 'var(--color-insert)');
 
 		await setUsers();
-
-		sendMessageToPanel(`L'utilisateur ${user.firstname} ${user.lastname} (${user.username}) a été créé`, 'var(--color-delete)');
-
 		displayOverlay(false);
 		e.target.reset();
 	} catch (err) {
@@ -278,7 +278,7 @@ const setDetails = async (users) => {
  * Creates an array inside which all roles will be stored
  * @param {Array<object>} users 
  */
- const filterRoles = async (users) => {
+const filterRoles = async (users) => {
 	let roles = {};
 	users.forEach(user => {
 		roles[user.role] = user.name;
