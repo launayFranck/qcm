@@ -53,7 +53,7 @@ app.get('/', (req, res) => {
 			if (!user) {
 				res.redirect('/login');
 				return;
-			}
+			};
 			
 			if (user.role === 1) {
 				res.redirect('/admin');
