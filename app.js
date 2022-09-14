@@ -30,7 +30,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 // • Routes Config
-// Api
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/themes', themeRouter);

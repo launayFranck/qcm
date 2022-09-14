@@ -43,7 +43,7 @@ export function jwtDecode(token, options) {
 	let pos = options.header === true ? 0 : 1;
 	try {
 		return JSON.parse(base64_url_decode(token.split(".")[pos]));
-	} catch (e) {
-		console.log(e.message);
+	} catch (err) {
+		console.log(err.message);
 	};
 };
